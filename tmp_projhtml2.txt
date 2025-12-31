@@ -1,0 +1,25 @@
+t" onclick="openTeacherImportModal()">Importer CSV</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'SUBJECTS'}">
+                            <button type="button" class="btn primary" onclick="openSubjectModal()">Nouvelle matière</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'PEDAGOGICAL_PROJECTS'}">
+                            <button type="button" class="btn primary" onclick="openProjectModal()">Nouveau projet</button>
+                            <button type="button" class="btn ghost" onclick="openProjectImportModal()">Importer CSV</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'TIMETABLE'}">
+                            <button type="button" class="btn primary">Créer un planning</button>
+                            <button type="button" class="btn ghost">Configurer les salles</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'COMMUNICATION'}">
+                            <button type="button" class="btn primary">Nouvelle annonce</button>
+                            <button type="button" class="btn ghost">Ouvrir la messagerie</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:switch="${m.code}">
+                    <div th:case="'PROFILE'">
+                        <div class="module-grid">
+                            <div class="info"><span>Identité</span><strong th:text="${est.name}">Nom</strong></div>
+                            <div class="info"><span>Directeur</span><strong th:text="${(est.directorCivility != null ? est.directorCivility + ' ' : '') + est.directo

@@ -1,0 +1,13 @@
+102501
+isplay = '';
+            subjectModalTitle.textContent = 'Créer une matière';
+            subjectModalSubtitle.textContent = "Renseignez l'intitulé et le volume horaire.";
+        }
+
+        function openSubjectModal(mode, btn) {
+            resetSubjectForm();
+            if ((mode === 'edit' || mode === 'view') && btn) {
+                subjectId.value = btn.getAttribute('data-id') || '';
+                subjectTitle.value = btn.getAttribute('data-title') || '';
+                subjectHoursTd.value = btn.getAttribute('data-td') || '0';
+                subjectHoursTp.value = btn.getAttribute(

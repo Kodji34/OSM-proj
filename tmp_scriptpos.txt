@@ -1,0 +1,7 @@
+127547
+<script>
+    (function () {
+        const links = Array.from(document.querySelectorAll('[data-module-target]'));
+        const sections = Array.from(document.querySelectorAll('.module-content'));
+
+   

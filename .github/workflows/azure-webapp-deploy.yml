@@ -1,0 +1,52 @@
+name: Build and deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - 'appmod/**'
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Maven local packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -DskipTests
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: target/*.jar
+
+      - name: Configure app settings (Entra ID)
+        if: ${{ secrets.AZURE_WEBAPP_NAME && secrets.AZURE_CLIENT_ID && secrets.AZURE_CLIENT_SECRET && secrets.AZURE_TENANT_ID }}
+        run: |
+          az webapp config appsettings set --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --settings \
+            spring.security.oauth2.client.registration.azure.client-id=${{ secrets.AZURE_CLIENT_ID }} \
+            spring.security.oauth2.client.registration.azure.client-secret=${{ secrets.AZURE_CLIENT_SECRET }} \
+            spring.security.oauth2.client.provider.azure.issuer-uri=https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}/v2.0

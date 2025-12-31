@@ -1,0 +1,9 @@
+2963:             link.addEventListener('click', function () {
+3248:                     removeBtn.addEventListener('click', () => {
+3421:             studentDocuments.addEventListener('change', renderStudentDocuments);
+3664:             input.addEventListener('input', () => toggleAutocomplete(input));
+3860:             photoFileInput.addEventListener('change', () => {
+3993:         filterRole?.addEventListener('change', applyUserFilters);
+3994:         filterYear?.addEventListener('input', applyUserFilters);
+3995:         filterClass?.addEventListener('input', applyUserFilters);
+3996:         periodType?.addEventListener('change', togglePeriods);

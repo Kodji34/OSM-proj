@@ -1,0 +1,260 @@
+            } else {
+                ModuleSubscription sub = new ModuleSubscription(est.get(), module, ModuleStatus.REQUESTED);
+                sub.setRequestedAt(LocalDateTime.now());
+                moduleSubscriptionRepository.save(sub);
+            }
+            redirectAttributes.addFlashAttribute("success", "Demande envoyee a la direction.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur demande module : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/complete-setup")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String completeSetup(RedirectAttributes redirectAttributes) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        if (!emailService.isTenantConfigured(est.get())) {
+            redirectAttributes.addFlashAttribute("error", "Configurez le SMTP de l'établissement avant de finaliser le paramétrage.");
+            return "redirect:/tenant/dashboard";
+        }
+
+        Establishment establishment = est.get();
+        int created = 0;
+        int skipped = 0;
+        int missingEmail = 0;
+        int emailFailed = 0;
+        int emailSent = 0;
+
+        Role userRole = roleRepository.findByName("USER")
+                .orElseGet(() -> roleRepository.save(new Role("USER")));
+
+        List<Employee> employees = employeeRepository.findByEstablishmentId(establishment.getId());
+        for (Employee employee : employees) {
+            String email = employee.getEmail();
+            if (email == null || email.isBlank()) {
+                missingEmail++;
+                continue;
+            }
+            String username = email.trim().toLowerCase();
+            if (userRepository.findByUsername(username).isPresent()) {
+                skipped++;
+                continue;
+            }
+            String tempPassword = buildTempPassword(employee);
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(tempPassword));
+            user.setEnabled(true);
+            user.setEstablishmentId(establishment.getId());
+            user.getRoles().add(userRole);
+            userRepository.save(user);
+            created++;
+
+            String baseUrl = tenantBaseUrl(establishment);
+            String loginUrl = baseUrl + "/tenant/login";
+            System.out.println("STAFF ACCOUNT: " + username + " / " + tempPassword);
+            System.out.println("Login link: " + loginUrl);
+
+            String subject = "OSM - Votre compte personnel";
+            String body = buildAccountEmailBody(establishment, username, tempPassword, loginUrl);
+            if (emailService.sendForTenant(establishment, email, subject, body)) {
+                emailSent++;
+            } else {
+                emailFailed++;
+            }
+        }
+
+        if (!establishment.isReady()) {
+            establishment.setReady(true);
+            establishment.setReadyAt(LocalDateTime.now());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            establishment.setReadyBy(auth != null ? auth.getName() : "SYSTEM");
+            establishmentRepository.save(establishment);
+        }
+
+        redirectAttributes.addFlashAttribute(
+                "success",
+                "Parametrage termine. Comptes crees: " + created +
+                        ", existants: " + skipped +
+                        ", sans email: " + missingEmail +
+                        ", emails envoyes: " + emailSent +
+                        ", emails en echec: " + emailFailed + "."
+        );
+        return "redirect:/tenant/dashboard";
+    }
+
+    @GetMapping("/api/tenant")
+    public ResponseEntity<?> tenantInfo() {
+        Optional<Establishment> est = loadCurrentTenant();
+        return est.<ResponseEntity<?>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private Optional<Establishment> loadCurrentTenant() {
+        Long id = TenantContext.getCurrentTenantId();
+        if (id == null) return Optional.empty();
+        return establishmentRepository.findById(id);
+    }
+
+    private List<Role> tenantAssignableRoles() {
+        Set<String> allowed = allowedRoleNamesForCurrentUser();
+        return roleRepository.findAll().stream()
+                .filter(r -> allowed.contains(r.getName()))
+                .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
+                .toList();
+    }
+
+    private Set<String> allowedRoleNamesForCurrentUser() {
+        Set<String> currentRoles = currentUserRoleNames();
+        Set<String> allowed = new java.util.HashSet<>();
+        if (currentRoles.contains("SUPER_ADMIN")) {
+            allowed.addAll(Set.of("ADMIN", "DIRECTEUR", "SECRETAIRE", "COMPTABLE", "DIRECTEUR_RH", "ENSEIGNANT", "APPRENANT"));
+        }
+        if (currentRoles.contains("ADMIN")) {
+            allowed.addAll(Set.of("DIRECTEUR", "SECRETAIRE", "COMPTABLE", "DIRECTEUR_RH"));
+        }
+        if (currentRoles.contains("DIRECTEUR_RH")) {
+            allowed.add("ENSEIGNANT");
+        }
+        if (currentRoles.contains("SECRETAIRE") || currentRoles.contains("COMPTABLE")) {
+            allowed.add("APPRENANT");
+        }
+        return allowed;
+    }
+
+    private boolean canManageUser(User user, Set<String> allowedRoles, boolean isSuperAdmin) {
+        if (isSuperAdmin) return true;
+        Set<String> targetRoles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        if (targetRoles.contains("ADMIN")) return false;
+        for (String role : targetRoles) {
+            if (allowedRoles.contains(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<String> currentUserRoleNames() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities() == null) return Set.of();
+        return auth.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring("ROLE_".length()))
+                .collect(Collectors.toSet());
+    }
+
+    private boolean isSuperAdmin() {
+        return currentUserRoleNames().contains("SUPER_ADMIN");
+    }
+
+    private String buildTempPassword(Employee employee) {
+        String base = employee.getId() != null ? employee.getId().toString() : Long.toString(System.currentTimeMillis() % 10000);
+        return "Emp" + base + "2024!";
+    }
+
+    private String buildTempStudentPassword() {
+        long seed = System.currentTimeMillis() % 100000;
+        return "Std" + seed + "!";
+    }
+
+    private String buildTempTeacherPassword() {
+        long seed = System.currentTimeMillis() % 100000;
+        return "Ens" + seed + "!";
+    }
+
+    private boolean looksLikeEmail(String value) {
+        if (value == null) return false;
+        String v = value.trim();
+        return v.contains("@") && v.contains(".");
+    }
+
+    private String tenantBaseUrl(Establishment establishment) {
+        String base = establishment.getAccessUrl();
+        if (base == null || base.isBlank()) {
+            base = "http://localhost:8081";
+        }
+        return base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+    }
+
+    private void applyAcademicYearData(String yearLabel,
+                                       String periodType,
+                                       String startDate,
+                                       String endDate,
+                                       String term1Start,
+                                       String term1End,
+                                       String term2Start,
+                                       String term2End,
+                                       String term3Start,
+                                       String term3End,
+                                       AcademicYear year) {
+        PeriodType type = "TRIMESTER".equalsIgnoreCase(periodType) ? PeriodType.TRIMESTER : PeriodType.SEMESTER;
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        LocalDate t1Start = LocalDate.parse(term1Start);
+        LocalDate t1End = LocalDate.parse(term1End);
+        LocalDate t2Start = LocalDate.parse(term2Start);
+        LocalDate t2End = LocalDate.parse(term2End);
+        LocalDate t3Start = null;
+        LocalDate t3End = null;
+
+        if (type == PeriodType.SEMESTER) {
+            boolean hasTrimesterValues = (term3Start != null && !term3Start.isBlank())
+                    || (term3End != null && !term3End.isBlank());
+            if (hasTrimesterValues) {
+                throw new IllegalArgumentException("Organisation invalide : choisissez soit semestres, soit trimestres.");
+            }
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("La date de debut doit preceder la date de fin.");
+        }
+        if (t1Start.isAfter(t1End) || t2Start.isAfter(t2End)) {
+            throw new IllegalArgumentException("Dates de periode invalides.");
+        }
+        if (t1Start.isBefore(start) || t2End.isAfter(end)) {
+            throw new IllegalArgumentException("Les periodes doivent etre dans l'annee.");
+        }
+        if (t1End.isAfter(t2Start)) {
+            throw new IllegalArgumentException("La periode 2 doit commencer apres la periode 1.");
+        }
+        if (type == PeriodType.TRIMESTER) {
+            if (term3Start == null || term3Start.isBlank() || term3End == null || term3End.isBlank()) {
+                throw new IllegalArgumentException("Les dates du trimestre 3 sont requises.");
+            }
+            t3Start = LocalDate.parse(term3Start);
+            t3End = LocalDate.parse(term3End);
+            if (t3Start.isAfter(t3End)) {
+                throw new IllegalArgumentException("Dates du trimestre 3 invalides.");
+            }
+            if (t2End.isAfter(t3Start)) {
+                throw new IllegalArgumentException("Le trimestre 3 doit commencer apres le trimestre 2.");
+            }
+            if (t3End.isAfter(end)) {
+                throw new IllegalArgumentException("Le trimestre 3 depasse la fin de l'annee.");
+            }
+        }
+
+        year.setAcademicYear(yearLabel);
+        year.setStartDate(start);
+        year.setEndDate(end);
+        year.setPeriodType(type);
+        year.setTerm1Start(t1Start);
+        year.setTerm1End(t1End);
+        year.setTerm2Start(t2Start);
+        year.setTerm2End(t2End);
+        year.setTerm3Start(t3Start);
+        year.setTerm3End(t3End);
+    }
+
+    private String buildAccountEmailBody(Establishment establishment, String username, String tempPassword, String loginUrl) {
+        return "Bonjour,\n\n" +
+                "Votre compte OSM a ete cree.\n\n" +
+                "Etablissement : " + establishment.getName() + "\n" +
+                "Identifiant   : " + username + "\n" +
+                "Mot de passe  : " + tempPassword + "\n\n" +
+                "Connexion : " + loginUrl + "\n\n" +
+                "Conseil : changez le mot de passe apres votre premiere connexion.\n\n" +
+                "OSM Open Suku Manager";
+    }
+}

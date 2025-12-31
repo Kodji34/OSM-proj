@@ -1,0 +1,352 @@
+:root {
+  --bg: #F5F7FB !important;
+  --surface: #FFFFFF !important;
+  --surface2: #F3F4F6 !important;
+  --border: rgba(31, 41, 55, 0.18) !important;
+  --ink: #1F2937 !important;
+  --muted: #6B7280 !important;
+  --primary: #1E88E5 !important;
+  --primary-700: #1669B2 !important;
+  --accent: #FF6F61 !important;
+  --accent-ink: #1F2937 !important;
+  --accent-soft: rgba(255, 111, 97, 0.12) !important;
+  --radius: 18px !important;
+  --danger: #FF6F61 !important;
+  --warning: #F6C945 !important;
+  --success: #2BB673 !important;
+  --shadow-dark: rgba(15, 23, 42, 0.08) !important;
+  --shadow-light: rgba(255, 255, 255, 0.9) !important;
+  --on-primary: #ffffff !important;
+  --success-ink: color-mix(in srgb, var(--success) 22%, var(--ink) 78%) !important;
+  --warning-ink: color-mix(in srgb, var(--warning) 22%, var(--ink) 78%) !important;
+  --danger-ink: color-mix(in srgb, var(--danger) 22%, var(--ink) 78%) !important;
+  --glass-06: color-mix(in srgb, var(--surface) 6%, transparent) !important;
+  --glass-08: color-mix(in srgb, var(--surface) 8%, transparent) !important;
+  --glass-10: color-mix(in srgb, var(--surface) 10%, transparent) !important;
+  --glass-12: color-mix(in srgb, var(--surface) 12%, transparent) !important;
+  --glass-18: color-mix(in srgb, var(--surface) 18%, transparent) !important;
+  --ink-06: color-mix(in srgb, var(--ink) 6%, transparent) !important;
+  --text: var(--ink) !important;
+  --azure: var(--primary) !important;
+  --muted-light: var(--muted) !important;
+  --secondary: var(--surface) !important;
+  --primary-hover: var(--primary-700) !important;
+  --p: var(--primary) !important;
+  --s: var(--ink) !important;
+}
+
+@supports (color: color-mix(in srgb, #000000 50%, #ffffff 50%)) {
+  :root {
+    --primary-700: color-mix(in srgb, var(--primary) 72%, #000000 28%) !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+html body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+html body * {
+  color: inherit !important;
+}
+
+html body h1,
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+  color: var(--primary) !important;
+}
+
+html body a {
+  color: var(--primary) !important;
+  text-decoration: none;
+}
+
+html body a:hover {
+  color: var(--primary) !important;
+  text-decoration: underline !important;
+}
+
+.muted,
+.text-muted,
+.hint,
+.help,
+.note,
+.caption,
+.meta,
+.meta-line,
+.subtle {
+  color: var(--muted) !important;
+}
+
+html body input,
+html body select,
+html body textarea {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--ink) !important;
+}
+
+html body input::placeholder,
+html body textarea::placeholder {
+  color: var(--muted) !important;
+}
+
+html body select option {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.glass,
+.card,
+.panel,
+.navbar,
+.topbar,
+.sidebar,
+.filters,
+.filters-panel,
+.inline-form,
+.table-panel,
+.table-container,
+.list-panel,
+.module-card,
+.module-lane,
+.module-panel,
+.module-box,
+.module-summary,
+.ticket-card,
+.ticket-message,
+.user-pill,
+.alert,
+.stats-card,
+.stat-card,
+.stat,
+.tile,
+.section,
+.section-panel,
+.section-card,
+.form-card,
+.form-panel,
+details.ticket-details,
+.tag,
+.status-badge,
+.status-pill,
+[class*="panel"],
+[class*="card"] {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08) !important;
+}
+
+html body table,
+html body th,
+html body td {
+  color: var(--ink) !important;
+  border-color: var(--border) !important;
+}
+
+html body th {
+  background: var(--surface2) !important;
+  color: var(--muted) !important;
+}
+
+html body tr:nth-child(even) td {
+  background: #f8fafc !important;
+}
+
+.btn,
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+button.btn,
+a.btn,
+.nav-btn,
+.nav-link,
+.icon-btn,
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-neutral,
+.btn.ghost,
+.btn.primary,
+.btn.secondary,
+.btn-small,
+.btn.tiny {
+  background: #ffffff !important;
+  border: 1.5px solid var(--primary) !important;
+  color: var(--primary) !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+}
+
+html body .btn,
+html body button,
+html body a.btn,
+html body .nav-btn,
+html body .nav-link,
+html body .icon-btn,
+html body input[type="button"],
+html body input[type="submit"],
+html body input[type="reset"] {
+  background: #ffffff !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  transition: none !important;
+  background-image: none !important;
+}
+
+.btn *,
+button * {
+  color: inherit !important;
+}
+
+html body .nav-link.active,
+html body .btn.active,
+html body .is-active {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+.status-active,
+.status-on,
+.status-enabled,
+.status-validated,
+.status-valid,
+.status-deployed,
+.status-ok {
+  color: var(--success) !important;
+}
+
+.status-inactive,
+.status-off,
+.status-disabled,
+.status-rejected,
+.status-suspended,
+.status-failed {
+  color: var(--danger) !important;
+}
+
+.status-pending,
+.status-requested,
+.status-waiting {
+  color: var(--warning) !important;
+}
+
+.subject-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.subject-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface2);
+}
+
+.subject-item input {
+  margin: 0;
+}
+
+.class-stack {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.level-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.level-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  background: var(--surface);
+}
+
+.level-title {
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.level-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.level-group-title {
+  font-weight: 600;
+  color: var(--ink);
+  margin: 4px 0 8px;
+}
+
+.room-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.room-table th,
+.room-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.room-table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.class-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.class-table th,
+.class-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.class-table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.over-capacity {
+  color: var(--danger) !important;
+}

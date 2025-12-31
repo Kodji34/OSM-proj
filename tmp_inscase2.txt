@@ -1,0 +1,25 @@
+                  <h3 style="margin:0;">
+                            <span th:text="${item.module.name}">Module</span>
+                        </h3>
+                        <p class="muted" th:text="${item.module.description}">Description</p>
+                    </div>
+                    <div class="section-actions">
+                        <div class="action-group" th:if="${item.module.code == 'INSERTION_PRO'}">
+                            <button type="button" class="btn primary"
+                                    th:classappend="${item.status.name() != 'ACTIVE' ? ' disabled' : ''}"
+                                    onclick="openInsertionModal()">Nouvelle insertion</button>
+                            <button type="button" class="btn ghost"
+                                    th:classappend="${item.status.name() != 'ACTIVE' ? ' disabled' : ''}"
+                                    onclick="openInsertionImportModal()">Importer CSV</button>
+                        </div>
+                        <span class="badge" th:classappend="${item.status.name() == 'ACTIVE' ? ' ok' : ' warn'}"
+                              th:text="${item.status.name() == 'ACTIVE' ? 'Actif' : 'Inactif'}">Actif</span>
+                        <button type="button" class="btn primary" th:classappend="${item.status.name() != 'ACTIVE' ? ' disabled' : ''}">Ouvrir</button>
+                        <button type="button" class="btn ghost">Voir le détail</button>
+                        <form th:if="${isTenantAdmin}" method="post"
+                              th:action="@{'/tenant/app/modules/toggle?tenantId=' + ${est.id}}"
+                              style="display:inline;">
+                            <input type="hidden" name="moduleId" th:value="${item.module.id}">
+                            <input type="hidden" name="status" th:value="${item.status.name() == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'}">
+                            <button type="submit" class="btn ghost"
+                                 

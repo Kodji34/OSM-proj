@@ -1,0 +1,127 @@
+@PostMapping("/tenant/dashboard/users")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String createUser(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String role,
+            @RequestParam(required = false) String observation,
+            @RequestParam(required = false) String photoUrl,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            if (!emailService.isTenantConfigured(est.get())) {
+                redirectAttributes.addFlashAttribute("error", "Configurez le SMTP de l'établissement avant de créer des utilisateurs.");
+                return "redirect:/tenant/dashboard";
+            }
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            if (username.isBlank() || password.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom d'utilisateur et mot de passe sont requis.");
+                return "redirect:/tenant/dashboard";
+            }
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom et prenoms sont requis.");
+                return "redirect:/tenant/dashboard";
+            }
+            if (userRepository.findByUsername(username).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Ce nom d'utilisateur existe déjà.");
+                return "redirect:/tenant/dashboard";
+            }
+            if (!allowedRoles.contains(role)) {
+                redirectAttributes.addFlashAttribute("error", "Rôle non autorisé pour votre profil.");
+                return "redirect:/tenant/dashboard";
+            }
+            Role r = roleRepository.findByName(role)
+                    .orElseThrow(() -> new IllegalArgumentException("Rôle invalide: " + role));
+            User u = new User();
+            u.setUsername(username);
+            u.setPassword(passwordEncoder.encode(password));
+            u.setFirstName(firstName.trim());
+            u.setLastName(lastName.trim());
+            u.setEnabled(true);
+            u.setEstablishmentId(est.get().getId());
+            u.getRoles().add(r);
+            if (observation != null && !observation.isBlank()) {
+                u.setObservation(observation.trim());
+            }
+            if (photoUrl != null && !photoUrl.isBlank()) {
+                u.setPhotoUrl(photoUrl.trim());
+            }
+            u.setArchived(false);
+            userRepository.save(u);
+
+            boolean emailSent = false;
+            boolean emailAttempted = false;
+            if (looksLikeEmail(username)) {
+                emailAttempted = true;
+                String loginUrl = tenantBaseUrl(est.get()) + "/tenant/login";
+                String subject = "OSM - Compte créé";
+                String body = buildAccountEmailBody(est.get(), username, password, loginUrl);
+                emailSent = emailService.sendForTenant(est.get(), username, subject, body);
+            }
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    emailSent ? "Utilisateur créé et email envoyé." :
+                            (emailAttempted ? "Utilisateur créé mais email non envoyé (verifier SMTP)." : "Utilisateur créé.")
+            );
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur création utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/users/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String updateUser(
+            @RequestParam Long userId,
+            @RequestParam String role,
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String observation,
+            @RequestParam(required = false) String photoUrl,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            boolean superAdmin = isSuperAdmin();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+            if (!est.get().getId().equals(user.getEstablishmentId())) {
+                throw new IllegalStateException("Utilisateur hors de ce locataire.");
+            }
+            if (!canManageUser(user, allowedRoles, superAdmin)) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier cet utilisateur.");
+                return "redirect:/tenant/dashboard";
+            }
+            if (!allowedRoles.contains(role)) {
+                redirectAttributes.addFlashAttribute("error", "Rôle non autorisé pour votre profil.");
+                return "redirect:/tenant/dashboard";
+            }
+            Role r = roleRepository.findByName(role)
+                    .orElseThrow(() -> new IllegalArgumentException("Rôle invalide: " + role));
+            user.getRoles().clear();
+            user.getRoles().add(r);
+            if (password != null && !password.isBlank()) {
+                user.setPassword(passwordEncoder.encode(password));
+            }
+            user.setFirstName(firstName != null && !firstName.isBlank() ? firstName.trim() : null);
+            user.setLastName(lastName != null && !lastName.isBlank() ? lastName.trim() : null);
+            user.setObservation(observation != null ? observation.trim() : null);
+            user.setPhotoUrl(photoUrl != null && !photoUrl.isBlank() ? photoUrl.trim() : null);
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("success", "Utilisateur mis à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur mise à jour utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/users/reset")

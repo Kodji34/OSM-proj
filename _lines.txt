@@ -1,0 +1,7 @@
+851:                        <textarea id="ppNews" name="publicNews" rows="3" th:text="${est.publicNews}"
+926:                                    <td colspan="6" class="muted">Aucun personnel enregistré.</td>
+1049:                                    <td colspan="6" class="muted">Aucune année scolaire enregistrée.</td>
+1155:                                <tr th:if="${tenantUsers == null or tenantUsers.isEmpty()}"><td colspan="8" class="muted">Aucun utilisateur.</td></tr>
+1196:                    <div th:case="*">
+1263:                        <input id="userPassword" name="password" type="password" required minlength="6" placeholder="••••••••">
+1276:                        <textarea id="userObservation" name="observation" rows="3" placeholder="Notes, service ou remarques..."></textarea>

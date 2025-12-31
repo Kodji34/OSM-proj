@@ -1,0 +1,18 @@
+    <div class="field">
+                        <label for="subjectHoursCm">Heures CM</label>
+                        <input id="subjectHoursCm" name="hoursCm" type="number" min="0" step="1" value="0">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" onclick="closeSubjectModal()">Annuler</button>
+                    <button type="submit" class="btn primary" id="subjectSubmit">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const subjectModal = document.getElementById('subjectModal');
+        const subjectForm = document.getElementById('subjectForm');
+        const subjectId = document.getElementById('subjectId');
+        co

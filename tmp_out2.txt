@@ -1,0 +1,301 @@
+1800:                                              data-contact=${i.contactName},
+1801:                                              data-email=${i.contactEmail},
+1802:                                              data-phone=${i.contactPhone},
+1803:                                              data-description=${i.description},
+1804:                                              data-archived=${i.archived}">
+1805:                                     <td th:text="${i.type}">Type</td>
+1806:                                     <td th:text="${i.partnerName}">Partenaire</td>
+1807:                                     <td th:text="${i.title != null ? i.title : '\u2014'}">Intitul\xe9</td>
+1808:                                     <td th:text="${i.levelOrClass != null ? i.levelOrClass : '\u2014'}">Niveau</td>
+1809:                                     <td th:text="${i.startDate != null ? #temporals.format(i.startDate, 'dd/MM/yyyy') : '\u2014'} + ' - ' + ${i.endDate != null ? #temporals.format(i.endDate, 'dd/MM/yyyy') : '\u2014'}">P\xe9riode</td>
+1810:                                     <td>
+1811:                                         <div class="action-icons">
+1812:                                             <button type="button" class="icon-btn" title="Voir"
+1813:                                                     th:attr="data-id=${i.id},
+1814:                                                              data-type=${i.type},
+1815:                                                              data-partner=${i.partnerName},
+1816:                                                              data-title=${i.title},
+1817:                                                              data-level=${i.levelOrClass},
+1818:                                                              data-start=${i.startDate},
+1819:                                                              data-end=${i.endDate},
+1820:                                                              data-responsible=${i.responsible},
+1821:                                                              data-contact=${i.contactName},
+1822:                                                              data-email=${i.contactEmail},
+1823:                                                              data-phone=${i.contactPhone},
+1824:                                                              data-description=${i.description},
+1825:                                                              data-archived=${i.archived}"
+1826:                                                     onclick="openInsertionModal('view', this)">&#128065;</button>
+1827:                                             <button type="button" class="icon-btn" title="Modifier"
+1828:                                                     th:attr="data-id=${i.id},
+1829:                                                              data-type=${i.type},
+1830:                                                              data-partner=${i.partnerName},
+1831:                                                              data-title=${i.title},
+1832:                                                              data-level=${i.levelOrClass},
+1833:                                                              data-start=${i.startDate},
+1834:                                                              data-end=${i.endDate},
+1835:                                                              data-responsible=${i.responsible},
+1836:                                                              data-contact=${i.contactName},
+1837:                                                              data-email=${i.contactEmail},
+1838:                                                              data-phone=${i.contactPhone},
+1839:                                                              data-description=${i.description},
+1840:                                                              data-archived=${i.archived}"
+1841:                                                     onclick="openInsertionModal('edit', this)">&#9998;</button>
+1842:                                             <form method="post" th:action="@{'/tenant/app/insertion/archive?tenantId=' + ${est.id}}" style="display:inline;">
+1843:                                                 <input type="hidden" name="insertionId" th:value="${i.id}">
+1844:                                                 <input type="hidden" name="archived" th:value="${!i.archived}">
+1845:                                                 <button type="submit" class="icon-btn" th:title="${i.archived ? 'Restaurer' : 'Archiver'}"
+1846:                                                         th:text="${i.archived ? '\u21ba' : '\u23f8'}">\u23f8</button>
+1847:                                             </form>
+1848:                                             <form method="post" th:action="@{'/tenant/app/insertion/delete?tenantId=' + ${est.id}}" style="display:inline;">
+1849:                                                 <input type="hidden" name="insertionId" th:value="${i.id}">
+1850:                                                 <button type="submit" class="icon-btn danger" title="Supprimer"
+1851:                                                         onclick="return confirm('Supprimer cette insertion ?');">&#128465;</button>
+1852:                                             </form>
+1853:                                         </div>
+1854:                                     </td>
+1855:                                 </tr>
+1856:                                 <tr th:if="${insertions == null or insertions.isEmpty()}">
+1857:                                     <td colspan="6" class="muted">Aucune insertion enregistr\xe9e.</td>
+1858:                                 </tr>
+1859:                                 </tbody>
+1860:                             </table>
+1861:                         </div>
+1862:                     </div>
+1863:                     <div th:case="'CAREER_PATHS'">
+1864:                         <div class="module-grid">
+1865:                             <div class="info"><span>Parcours</span><strong th:text="${careerPathsCount}">0</strong></div>
+1866:                             <div class="info"><span>Niveaux</span><strong th:text="${levels != null ? levels.size() : 0}">0</strong></div>
+1867:                         </div>
+1868:                         <div class="class-cards" style="margin-top:10px;">
+1869:                             <div class="class-card" th:each="p : ${careerPaths}">
+1870:                                 <div>
+1871:                                     <h5 th:text="${p.name}">Parcours</h5>
+1872:                                     <div class="muted" th:text="${p.level != null ? p.level.name : 'Sans niveau'}">Niveau</div>
+1873:                                 </div>
+1874:                                 <div class="class-meta">
+1875:                                     <div>Matieres <span th:text="${p.subjects != null ? p.subjects.size() : 0}">0</span></div>
+1876:                                     <div>Projets <span th:text="${p.projects != null ? p.projects.size() : 0}">0</span></div>
+1877:                                     <div>Stages <span th:text="${p.insertions != null ? p.insertions.size() : 0}">0</span></div>
+1878:                                     <div>Apprenants <span th:text="${p.students != null ? p.students.size() : 0}">0</span></div>
+1879:                                     <div>Statut <span th:text="${p.archived ? 'Archive' : 'Actif'}">Actif</span></div>
+1880:                                 </div>
+1881:                                 <div class="class-actions">
+1882:                                     <button type="button" class="icon-btn"
+1883:                                             title="Voir"
+1884:                                             th:attr="data-id=${p.id},
+1885:                                                      data-name=${p.name},
+1886:                                                      data-description=${p.description},
+1887:                                                      data-level=${p.level != null ? p.level.id : ''},
+1888:                                                      data-subjects=${p.subjects != null ? #strings.listJoin(p.subjects.![id], ',') : ''},
+1889:                                                      data-projects=${p.projects != null ? #strings.listJoin(p.projects.![id], ',') : ''},
+1890:                                                      data-insertions=${p.insertions != null ? #strings.listJoin(p.insertions.![id], ',') : ''},
+1891:                                                      data-students=${p.students != null ? #strings.listJoin(p.students.![id], ',') : ''},
+1892:                                                      data-archived=${p.archived}"
+1893:                                             onclick="openCareerPathModal('view', this)">&#128065;</button>
+1894:                                     <button type="button" class="icon-btn"
+1895:                                             title="Modifier"
+1896:                                             th:attr="data-id=${p.id},
+1897:                                                      data-name=${p.name},
+1898:                                                      data-description=${p.description},
+1899:                                                      data-level=${p.level != null ? p.level.id : ''},
+1900:                                                      data-subjects=${p.subjects != null ? #strings.listJoin(p.subjects.![id], ',') : ''},
+1901:                                                      data-projects=${p.projects != null ? #strings.listJoin(p.projects.![id], ',') : ''},
+1902:                                                      data-insertions=${p.insertions != null ? #strings.listJoin(p.insertions.![id], ',') : ''},
+1903:                                                      data-students=${p.students != null ? #strings.listJoin(p.students.![id], ',') : ''},
+1904:                                                      data-archived=${p.archived}"
+1905:                                             onclick="openCareerPathModal('edit', this)">&#9998;</button>
+1906:                                     <form th:action="@{'/tenant/app/career-paths/archive?tenantId=' + ${est.id}}"
+1907:                                           method="post" onsubmit="return confirm('Changer le statut de ce parcours ?');">
+1908:                                         <input type="hidden" name="pathId" th:value="${p.id}">
+1909:                                         <input type="hidden" name="archived" th:value="${!p.archived}">
+1910:                                         <button type="submit" class="icon-btn" th:title="${p.archived ? 'Restaurer' : 'Archiver'}">&#128451;</button>
+1911:                                     </form>
+1912:                                     <form th:action="@{'/tenant/app/career-paths/delete?tenantId=' + ${est.id}}"
+1913:                                           method="post" onsubmit="return confirm('Supprimer d\xe9finitivement ce parcours ?');">
+1914:                                         <input type="hidden" name="pathId" th:value="${p.id}">
+1915:                                         <button type="submit" class="icon-btn danger" title="Supprimer">&#128465;</button>
+1916:                                     </form>
+1917:                                 </div>
+1918:                             </div>
+1919:                             <div class="muted" th:if="${careerPaths == null or careerPaths.isEmpty()}">
+1920:                                 Aucun parcours enregistr\xe9.
+1921:                             </div>
+1922:                         </div>
+1923:                     </div>
+1924:                     <div th:case="*">
+1925:                         <p class="muted">Module pr\xeat \xe0 \xeatre configur\xe9.</p>
+1926:                     </div>
+1927:                 </div>
+1928:                 <p class="muted" th:if="${item.status.name() != 'ACTIVE'}">Module inactif. Fonctionnalit\xe9 en cours de d\xe9ploiement.</p>
+1929:             </section>
+1930:         </main>
+1931:     </div>
+1932: 
+1933:     <footer class="page-footer">
+1934:         <div>\xa9 EdiTik - OSM Open Suku Manager</div>
+1935:         <div class="legal">Mentions l\xe9gales - Tous droits r\xe9serv\xe9s.</div>
+1936:     </footer>
+1937: 
+1938:     <div id="subjectModal" class="modal-overlay">
+1939:         <div class="modal">
+1940:             <h3 id="subjectModalTitle">Cr\xe9er une mati\xe8re</h3>
+1941:             <small id="subjectModalSubtitle">Renseignez l'intitul\xe9 et le volume horaire.</small>
+1942:             <form id="subjectForm" method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/subjects?tenantId=' + ${est.id}}">
+1943:                 <input type="hidden" id="subjectId" name="subjectId">
+1944:                 <div class="form-grid">
+1945:                     <div class="field">
+1946:                         <label for="subjectTitle">Intitul\xe9</label>
+1947:                         <input id="subjectTitle" name="title" type="text" required placeholder="ex: Math\xe9matiques">
+1948:                     </div>
+1949:                     <div class="field">
+1950:                         <label for="subjectHoursTd">Heures TD</label>
+1951:                         <input id="subjectHoursTd" name="hoursTd" type="number" min="0" step="1" value="0">
+1952:                     </div>
+1953:                     <div class="field">
+1954:                         <label for="subjectHoursTp">Heures TP</label>
+1955:                         <input id="subjectHoursTp" name="hoursTp" type="number" min="0" step="1" value="0">
+1956:                     </div>
+1957:                     <div class="field">
+1958:                         <label for="subjectHoursCm">Heures CM</label>
+1959:                         <input id="subjectHoursCm" name="hoursCm" type="number" min="0" step="1" value="0">
+1960:                     </div>
+1961:                     <div class="field">
+1962:                         <label for="subjectCoefficient">Coefficient</label>
+1963:                         <input id="subjectCoefficient" name="coefficient" type="number" min="0" step="1" value="1">
+1964:                     </div>
+1965:                     <div class="field">
+1966:                         <label for="subjectProgramFile">Programme (PDF)</label>
+1967:                         <input id="subjectProgramFile" name="programFile" type="file" accept="application/pdf">
+1968:                         <div id="subjectProgramPreview" class="muted" style="margin-top:6px; display:none;">
+1969:                             Programme actuel:
+1970:                             <a id="subjectProgramLink" href="#" target="_blank" rel="noopener">Voir</a>
+1971:                         </div>
+1972:                     </div>
+1973:                     <div class="field full">
+1974:                         <label>Niveaux s\xe9lectionn\xe9s</label>
+1975:                         <div id="subjectLevelList" class="selected-list"></div>
+1976:                         <div class="inline-actions">
+1977:                             <select id="subjectLevelSelect" data-input-name="levelIds" data-auto-select="true"
+1978:                                     data-list="subjectLevelList" data-inputs="subjectLevelInputs"
+1979:                                     data-empty="subjectLevelEmpty">
+1980:                                 <option value="">-- Ajouter un niveau --</option>
+1981:                                 <option th:each="l : ${levels}" th:value="${l.id}" th:text="${l.name}">Niveau</option>
+1982:                             </select>
+1983:                         </div>
+1984:                         <small id="subjectLevelEmpty" class="muted">Aucun niveau s\xe9lectionn\xe9.</small>
+1985:                         <div id="subjectLevelInputs"></div>
+1986:                         <span class="muted" th:if="${levels == null or levels.isEmpty()}">Aucun niveau disponible.</span>
+1987:                     </div>
+1988:                 </div>
+1989:                 <div class="modal-actions">
+1990:                     <button type="button" class="btn ghost" onclick="closeSubjectModal()">Annuler</button>
+1991:                     <button type="submit" class="btn primary" id="subjectSubmit">Enregistrer</button>
+1992:                 </div>
+1993:             </form>
+1994:         </div>
+1995:     </div>
+1996: 
+1997:     <div id="projectModal" class="modal-overlay">
+1998:         <div class="modal">
+1999:             <h3 id="projectModalTitle">Cr\xe9er un projet p\xe9dagogique</h3>
+2000:             <small id="projectModalSubtitle">Renseignez les informations principales du projet.</small>
+2001:             <form id="projectForm" method="post" th:action="@{'/tenant/app/projects?tenantId=' + ${est.id}}">
+2002:                 <input type="hidden" id="projectId" name="projectId">
+2003:                 <div class="form-grid">
+2004:                     <div class="field">
+2005:                         <label for="projectTitle">Titre</label>
+2006:                         <input id="projectTitle" name="title" type="text" required placeholder="ex: Laboratoire mobile">
+2007:                     </div>
+2008:                     <div class="field">
+2009:                         <label for="projectYear">Ann\xe9e scolaire</label>
+2010:                         <select id="projectYear" name="academicYear" required>
+2011:                             <option value="">-- Choisir --</option>
+2012:                             <option th:each="y : ${academicYears}" th:value="${y.academicYear}" th:text="${y.academicYear}">Ann\xe9e</option>
+2013:                         </select>
+2014:                     </div>
+2015:                     <div class="field">
+2016:                         <label for="projectResponsible">Responsable</label>
+2017:                         <select id="projectResponsible" name="responsible" required>
+2018:                             <option value="">-- Choisir --</option>
+2019:                             <option th:each="n : ${staffCandidates}" th:value="${n}" th:text="${n}">Nom</option>
+2020:                         </select>
+2021:                     </div>
+2022:                     <div class="field">
+2023:                         <label for="projectStatus">Statut</label>
+2024:                         <input id="projectStatus" name="status" type="text" placeholder="ex: Planifi\xe9">
+2025:                     </div>
+2026:                     <div class="field">
+2027:                         <label for="projectBudget">Budget</label>
+2028:                         <input id="projectBudget" name="budget" type="number" min="0" step="0.01" placeholder="ex: 2500">
+2029:                     </div>
+2030:                     <div class="field full">
+2031:                         <label for="projectDescription">Description</label>
+2032:                         <textarea id="projectDescription" name="description" rows="3" placeholder="R\xe9sum\xe9 du projet"></textarea>
+2033:                     </div>
+2034:                 </div>
+2035:                 <div class="modal-actions">
+2036:                     <button type="button" class="btn ghost" onclick="closeProjectModal()">Annuler</button>
+2037:                     <button type="submit" class="btn primary" id="projectSubmit">Enregistrer</button>
+2038:                 </div>
+2039:             </form>
+2040:         </div>
+2041:     </div>
+2042: 
+2043:     <div id="projectImportModal" class="modal-overlay">
+2044:         <div class="modal">
+2045:             <h3>Importer des projets</h3>
+2046:             <small>CSV ou saisie multiple : titre, ann\xe9e, responsable, statut, budget, description.</small>
+2047:             <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/projects/import?tenantId=' + ${est.id}}">
+2048:                 <div class="form-grid">
+2049:                     <div class="field full">
+2050:                         <label for="projectsFile">Fichier CSV</label>
+2051:                         <input id="projectsFile" name="projectsFile" type="file" accept=".csv,text/csv">
+2052:                     </div>
+2053:                     <div class="field full">
+2054:                         <label for="projectsInput">Saisie multiple</label>
+2055:                         <textarea id="projectsInput" name="projectsInput" rows="4" placeholder="Titre,Annee,Responsable,Statut,Budget,Description"></textarea>
+2056:                     </div>
+2057:                 </div>
+2058:                 <div class="modal-actions">
+2059:                     <button type="button" class="btn ghost" onclick="closeProjectImportModal()">Annuler</button>
+2060:                     <button type="submit" class="btn primary">Importer</button>
+2061:                 </div>
+2062:             </form>
+2063:         </div>
+2064:     </div>
+2065: 
+2066:     <div id="insertionModal" class="modal-overlay">
+2067:         <div class="modal">
+2068:             <h3 id="insertionModalTitle">Cr\xe9er une insertion professionnelle</h3>
+2069:             <small id="insertionModalSubtitle">Renseignez les informations principales.</small>
+2070:             <form id="insertionForm" method="post" th:action="@{'/tenant/app/insertion?tenantId=' + ${est.id}}">
+2071:                 <input type="hidden" id="insertionId" name="insertionId">
+2072:                 <div class="form-grid">
+2073:                     <div class="field">
+2074:                         <label for="insertionType">Type</label>
+2075:                         <select id="insertionType" name="type" required>
+2076:                             <option value="">Choisir</option>
+2077:                             <option value="Stage">Stage</option>
+2078:                             <option value="Alternance">Alternance</option>
+2079:                             <option value="Emploi">Emploi</option>
+2080:                         </select>
+2081:                     </div>
+2082:                     <div class="field">
+2083:                         <label for="insertionPartner">Partenaire</label>
+2084:                         <input id="insertionPartner" name="partnerName" type="text" required placeholder="Nom du partenaire">
+2085:                     </div>
+2086:                     <div class="field">
+2087:                         <label for="insertionTitle">Intitul\xe9</label>
+2088:                         <input id="insertionTitle" name="title" type="text" placeholder="ex: Stage Dev">
+2089:                     </div>
+2090:                     <div class="field">
+2091:                         <label for="insertionLevel">Niveau / Classe</label>
+2092:                         <input id="insertionLevel" name="levelOrClass" type="text" placeholder="ex: L2 Info">
+2093:                     </div>
+2094:                     <div class="field">
+2095:                         <label for="insertionStart">Date d\xe9but</label>
+2096:                         <input id="insertionStart" name="startDate" type="date">
+2097:                     </div>
+2098:                     <div class="field">
+2099:                         <label for="insertionEnd">Date fin</label>
+2100:                         <input id="insertionEnd" name="endDate" type="date">

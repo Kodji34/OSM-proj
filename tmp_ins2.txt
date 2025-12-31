@@ -1,0 +1,39 @@
+rtion.setStartDate(parts.length > 4 && !parts[4].trim().isBlank() ? LocalDate.parse(parts[4].trim()) : null);
+                insertion.setEndDate(parts.length > 5 && !parts[5].trim().isBlank() ? LocalDate.parse(parts[5].trim()) : null);
+                insertion.setResponsible(parts.length > 6 ? parts[6].trim() : null);
+                insertion.setContactName(parts.length > 7 ? parts[7].trim() : null);
+                insertion.setContactEmail(parts.length > 8 ? parts[8].trim() : null);
+                insertion.setContactPhone(parts.length > 9 ? parts[9].trim() : null);
+                if (parts.length > 10) {
+                    StringBuilder desc = new StringBuilder();
+                    for (int i = 10; i < parts.length; i++) {
+                        if (desc.length() > 0) desc.append(" ");
+                        desc.append(parts[i].trim());
+                    }
+                    insertion.setDescription(desc.toString());
+                }
+                professionalInsertionRepository.save(insertion);
+                created++;
+            }
+            redirectAttributes.addFlashAttribute("success", "Import insertion terminé. Créés: " + created + ", ignorés: " + skipped + ".");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import insertion : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-insertion_pro";
+    }
+
+    @PostMapping("/tenant/app/students/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','SECRETAIRE','COMPTABLE')")
+    public String updateStudent(
+            @RequestParam Long studentId,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) String observation,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-t

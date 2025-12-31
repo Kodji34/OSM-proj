@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:style="${'--primary:' + (est != null and est.themePrimary != null ? est.themePrimary : appThemePrimary) + ';--primary-700:' + (est != null and est.themePrimary != null ? est.themePrimary : appThemePrimary) + ';--accent:' + (est != null and est.themePrimary != null ? est.themePrimary : appThemePrimary) + ';'}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion client - OSM</title>
+    <style>
+        
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background:
+                radial-gradient(900px 600px at 12% 15%, var(--accent-soft), transparent 60%),
+                var(--bg);
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:14px;
+            color:var(--ink);
+            position: relative;
+        }
+        .shell {
+            width:100%;
+            max-width:1100px;
+            display:grid;
+            grid-template-columns:1.1fr 1fr;
+            gap:22px;
+        }
+        .panel {
+            background:var(--surface);
+            border-radius:var(--radius);
+            padding:30px;
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 14px 14px 28px var(--shadow-dark), -14px -14px 28px var(--shadow-light);
+            animation:rise 0.5s ease-out;
+        }
+        .brand {
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+        .brand .pill {
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            padding:6px 12px;
+            border-radius:999px;
+            background:var(--accent-soft);
+            color:var(--accent-ink);
+            font-weight:700;
+            width:max-content;
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        }
+        h1 { font-size:1.9rem; }
+        p { color:var(--muted); line-height:1.6; }
+        .form-group { margin-top:16px; }
+        label { display:block; margin-bottom:8px; font-weight:600; }
+        input {
+            width:100%;
+            padding:12px;
+            border:none;
+            border-radius:14px;
+            font-size:1rem;
+            background:var(--surface);
+            color:var(--ink);
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.75), inset -6px -6px 12px rgba(255,255,255,0.95);
+        }
+        input:focus {
+            outline: 3px solid rgba(15,23,42,0.14);
+            outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
+        }
+        .btn {
+            width:100%;
+            padding:12px;
+            margin-top:16px;
+            background:var(--surface);
+            color:var(--accent-ink);
+            border: 1px solid rgba(15,23,42,0.06);
+            border-radius:14px;
+            font-size:1rem;
+            font-weight:700;
+            cursor:pointer;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            transition:transform 0.2s, box-shadow 0.2s;
+        }
+        .alert {
+            padding:12px;
+            margin-top:12px;
+            border-radius:var(--radius);
+            background:var(--surface);
+            color:var(--warning);
+            border: 1px solid rgba(15,23,42,0.06);
+            font-weight:600;
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.65), inset -6px -6px 12px rgba(255,255,255,0.9);
+        }
+        .side {
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+        }
+        .side-card {
+            padding:16px;
+            border-radius:var(--radius);
+            background:var(--surface);
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.65), inset -6px -6px 12px rgba(255,255,255,0.9);
+        }
+        .role-hint {
+            margin-top:10px;
+            padding:8px 12px;
+            border-radius:12px;
+            background: var(--surface2);
+            border: 1px solid rgba(255,255,255,0.18);
+            font-weight:600;
+            color: #ffffff;
+            box-shadow: var(--shadow-soft);
+        }
+        .side-card strong { display:block; margin-bottom:6px; }
+        .page-footer {
+            margin-top: 18px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.78rem;
+            position: absolute;
+            left: 0;
+            bottom: 12px;
+            width: 100%;
+        }
+        .page-footer .legal {
+            font-size: 0.65rem;
+            opacity: 0.85;
+        }
+        @keyframes rise {
+            from { transform:translateY(10px); opacity:0; }
+            to { transform:translateY(0); opacity:1; }
+        }
+        @media (max-width: 860px) {
+            .shell { grid-template-columns:1fr; }
+        }
+
+        /* ---- Flat design overrides ---- */
+        :root {
+            --bg:#f4f7fb;
+            --surface:#ffffff;
+            --surface2:#f1f5f9;
+            --border:#e2e8f0;
+            --ink:#0f172a;
+            --muted:#64748b;
+            --primary:#2563eb;
+            --secondary:#14b8a6;
+            --accent:#f59e0b;
+            --danger:#dc2626;
+            --warning:#d97706;
+            --success:#15803d;
+            --shadow:none;
+            --shadow-soft:none;
+        }
+        body {
+            background: var(--bg);
+            background-image: none;
+            color: var(--ink);
+            --primary: var(--p);
+            --secondary: var(--s);
+        }
+        .panel,
+        .side-card,
+        .alert {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+        .brand .pill {
+            background: color-mix(in srgb, var(--primary) 12%, #ffffff 88%);
+            color: var(--ink);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+        input {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--ink);
+            box-shadow: none;
+        }
+        input:focus { outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent); }
+        .btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: 1px solid var(--primary);
+            box-shadow: none;
+        }
+        .role-hint {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            box-shadow: none;
+        }
+        input,
+        select,
+        textarea {
+            color: var(--ink);
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            color: var(--ink);
+        }
+        .btn,
+        button,
+        a.btn {
+            background: #1e88e5;
+            border-color: #1e88e5;
+            color: #ffffff;
+        }
+        .btn:focus,
+        .btn:active,
+        button:focus,
+        button:active,
+        a.btn:focus,
+        a.btn:active {
+            background: var(--surface2);
+            border-color: #1e88e5;
+            color: #1e88e5;
+        }
+        /* Unified text colors */
+        body, p, span, div, label, li, td, th, h1, h2, h3, h4, h5, h6 {
+            color: var(--ink);
+        }
+        .muted, .hint, .help, .note, .caption, .meta-line {
+            color: var(--muted) !important;
+        }
+        a:not(.btn) {
+            color: var(--ink);
+        }
+        input, select, textarea {
+            color: var(--ink) !important;
+            background: var(--surface) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--muted) !important;
+        }
+        select option {
+            color: var(--ink);
+            background: var(--surface);
+        }
+        /* Global text/link enforcement */
+        :root {
+            --primary: #1e88e5;
+            --primary-hover: #1f2937;
+            --secondary: #f3f4f6;
+            --text: #1f2937;
+            --muted: #1f2937;
+            --bg: #f3f4f6;
+            --surface: #f3f4f6;
+            --success: #1e88e5;
+            --warning: #1e88e5;
+            --danger: #1e88e5;
+        }
+        body { color: var(--text); }
+        body, body * { color: var(--text) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:visited { color: var(--primary) !important; }
+        a:hover { color: var(--primary) !important; text-decoration: underline; }
+        input, select, textarea, option { color: var(--text) !important; }
+        input::placeholder, textarea::placeholder { color: var(--text) !important; opacity: 0.7; }
+        .muted, .hint, .help, .note, .caption, .meta, .meta-line, .subtle { color: var(--muted) !important; opacity: 0.7; }
+        .btn, .btn * { color: inherit !important; }
+        /* Primary button style for all buttons */
+        .btn,
+        button,
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        button.btn,
+        a.btn,
+        .nav-btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-success,
+        .btn-danger,
+        .btn-warning,
+        .btn-neutral {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+            box-shadow: none !important;
+            text-decoration: none;
+        }
+        /* Palette enforcement: Azure + Slate + Light Gray */
+        :root {
+            --primary: #1e88e5;
+            --primary-hover: #1f2937;
+            --secondary: #f3f4f6;
+            --bg: #f3f4f6;
+            --surface: #f3f4f6;
+            --surface2: #f3f4f6;
+            --border: rgba(31, 41, 55, 0.18);
+            --ink: #1f2937;
+            --muted: rgba(31, 41, 55, 0.75);
+            --accent: #1e88e5;
+            --accent-ink: #1f2937;
+            --accent-soft: rgba(30, 136, 229, 0.12);
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #16a34a;
+        }
+
+        body { background: var(--bg) !important; color: var(--ink) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:hover { color: var(--primary-hover) !important; }
+        p, span, li, label, small, td, th { color: var(--ink) !important; }
+        .muted, .text-muted, .meta-line { color: var(--muted) !important; }
+        table, th, td { color: var(--ink) !important; }
+        input, select, textarea, option {
+            color: var(--ink) !important;
+            background-color: var(--secondary) !important;
+            border-color: var(--border) !important;
+        }
+        input::placeholder, textarea::placeholder { color: var(--muted) !important; }
+        .btn, .btn-primary, .btn-secondary, .btn-neutral, .btn.primary, .btn.secondary,
+        button, input[type="button"], input[type="submit"], input[type="reset"], .nav-btn {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+        }
+        .btn *, button * { color: inherit !important; }
+        .status-active,
+        .status-badge.status-active { color: var(--success) !important; }
+        .status-inactive,
+        .status-badge.status-inactive { color: var(--danger) !important; }
+        /* Azure text + login button style */
+        :root {
+            --azure:#1E88E5;
+            --muted-light:#6b7280;
+        }
+        body, h1, h2, h3, h4, h5, h6,
+        p, label, span, div, small, strong, li {
+            color: var(--azure);
+        }
+        .muted,
+        .hint,
+        .help,
+        .note,
+        .caption,
+        .meta,
+        .subtle {
+            color: var(--muted-light) !important;
+            font-size: 0.82rem;
+        }
+        input, select, textarea {
+            color: var(--ink) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--muted-light) !important;
+        }
+        .btn,
+        button,
+        input[type="submit"] {
+            background: var(--azure) !important;
+            border-color: var(--azure) !important;
+            color: #ffffff !important;
+        }
+        /* Fix contrast on login inputs/buttons */
+        body input,
+        body select,
+        body textarea {
+            color: var(--ink) !important;
+            background: var(--surface) !important;
+        }
+        body input::placeholder,
+        body textarea::placeholder {
+            color: var(--muted) !important;
+        }
+        body .btn,
+        body button,
+        body input[type="submit"] {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--on-primary) !important;
+        }
+        /* Tenant palette overrides */
+        :root {
+            --primary: var(--p);
+            --primary-700: var(--p);
+            --accent: var(--p);
+            --primary-hover: color-mix(in srgb, var(--p) 85%, #000 15%);
+            --accent-soft: color-mix(in srgb, var(--p) 15%, transparent);
+        }
+        .btn,
+        button,
+        a.btn,
+        input[type="submit"] {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: #ffffff !important;
+        }
+        /* soft-outline buttons */
+        .btn, button, a.btn, .nav-btn, .nav-link, .icon-btn,
+        input[type="button"], input[type="submit"], input[type="reset"] {
+            background: #ffffff !important;
+            border: 12px solid var(--primary, #1e88e5) !important;
+            border-radius: 999px !important;
+            color: var(--primary, #1e88e5) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            text-decoration: none;
+        }
+    </style>
+    <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/theme.css">
+</head>
+<body th:with="p=${est != null and est.themePrimary != null ? est.themePrimary : '#1E88E5'}, s=${est != null and est.themeSecondary != null ? est.themeSecondary : '#1F2937'}"
+      th:style="'--p:' + p + ';--s:' + s + ';--primary:' + p + ';--primary-700:' + p + ';--accent:' + p + ';'">
+    <div class="shell">
+        <div class="panel">
+            <div class="brand">
+                <span class="pill">Connexion client</span>
+                <h1 th:text="${est != null ? est.name : 'OSM Etablissement'}">OSM Etablissement</h1>
+                <p>Acces reserve au personnel. Utilisez vos identifiants pour ouvrir l'application.</p>
+                <div class="role-hint" th:if="${param.role}">
+                    <span th:switch="${param.role[0]}">
+                        <span th:case="'ADMIN'">Acces Administrateur client</span>
+                        <span th:case="'STAFF'">Acces Personnel administratif</span>
+                        <span th:case="'TEACHER'">Acces Enseignant</span>
+                        <span th:case="'STUDENT'">Acces Apprenant</span>
+                        <span th:case="*">Acces client</span>
+                    </span>
+                </div>
+            </div>
+
+            <div th:if="${param.error}" class="alert">
+                Identifiants invalides. Veuillez reessayer.
+            </div>
+
+            <form method="post" action="/login">
+                <input type="hidden" name="loginType" value="tenant">
+                <input type="hidden" name="tenant" th:value="${param.tenant != null ? param.tenant[0] : (est != null ? est.slug : '')}">
+                <input type="hidden" name="tenantId" th:value="${param.tenantId != null ? param.tenantId[0] : (est != null ? est.id : '')}">
+                <input type="hidden" name="role" th:value="${param.role != null ? param.role[0] : ''}">
+                <div class="form-group">
+                    <label for="username">Adresse email</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Se connecter</button>
+            </form>
+        </div>
+
+        <div class="panel side">
+            <div class="side-card">
+                <strong>Acces personnel</strong>
+                <p>Les comptes sont generes a la fin du parametrage.</p>
+            </div>
+            <div class="side-card">
+                <strong>Besoin d'aide ?</strong>
+                <p>Contactez l'administrateur de l'etablissement pour obtenir vos identifiants.</p>
+            </div>
+            <div class="side-card">
+                <strong>Instance</strong>
+                <p th:text="${est != null and est.accessUrl != null ? est.accessUrl : 'URL non definie'}">URL</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer">
+        <div>© EdiTik - OSM Open Suku Manager</div>
+        <div class="legal">Mentions légales - Tous droits réservés.</div>
+    </footer>
+    <style>
+        :root {
+            --btn-bg: var(--primary);
+            --btn-text: #ffffff;
+            --btn-hover-bg: var(--surface2);
+            --btn-hover-text: var(--primary);
+        }
+        button, .btn, a.btn, input[type="submit"], input[type="button"] {
+            background: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
+        }
+        button:focus, button:active, .btn:focus, .btn:active, a.btn:focus, a.btn:active {
+            background: var(--btn-hover-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-hover-text) !important;
+        }
+        input, select, textarea {
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+            border-color: var(--border) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #64748b !important;
+        }
+        body, button, input, select, textarea {
+            font-family: "Segoe UI", sans-serif !important;
+        }
+        a:hover {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        button, .btn, a.btn, input[type="submit"], input[type="button"] {
+            background: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            transition: none !important;
+        }
+    </style>
+</body>
+</html>

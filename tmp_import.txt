@@ -1,0 +1,9 @@
+        <button type="button" class="btn primary" onclick="openClassModal()">Ajouter une classe</button>
+                            <button type="button" class="btn ghost" onclick="openLevelModal()">Importer des niveaux</button>
+                            <button type="button" class="btn ghost" onclick="openRoomModal()">Ajouter une salle</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'STUDENTS'}">
+                            <button type="button" class="btn primary" onclick="openStudentModal()">Nouvel apprenant</button>
+                            <button type="button" class="btn ghost" onclick="openStudentImportModal()">Importer CSV</button>
+                        </div>
+                        <div class="action-group" th:i

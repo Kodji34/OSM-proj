@@ -1,0 +1,12 @@
+"${p.budget != null ? p.budget : '—'}">0</td>
+                                    <td>
+                                        <span class="badge ok" th:if="${!p.archived}">Actif</span>
+                                        <span class="badge warn" th:if="${p.archived}">Archivé</span>
+                                    </td>
+                                    <td>
+                                        <div class="action-icons">
+                                            <button type="button" class="icon-btn" title="Voir"
+                                                    th:attr="data-id=${p.id},
+                                                             data-title=${p.title},
+                                                             data-year=${p.academicYear},
+              

@@ -1,0 +1,79 @@
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User teacher = userRepository.findById(teacherId)
+                    .orElseThrow(() -> new IllegalArgumentException("Enseignant introuvable."));
+            if (!tenantId.equals(teacher.getEstablishmentId())) {
+                throw new IllegalStateException("Enseignant hors de ce locataire.");
+            }
+            boolean isTeacher = teacher.getRoles().stream().anyMatch(r -> "ENSEIGNANT".equals(r.getName()));
+            if (!isTeacher) {
+                throw new IllegalStateException("Cet utilisateur n'est pas un enseignant.");
+            }
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                throw new IllegalArgumentException("Nom et prenoms sont requis.");
+            }
+            if (email == null || email.isBlank()) {
+                throw new IllegalArgumentException("Email est requis.");
+            }
+            String username = email.trim().toLowerCase();
+            userRepository.findByUsername(username)
+                    .filter(existing -> !existing.getId().equals(teacherId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Cet email est déjà utilisé.");
+                    });
+            SchoolClass schoolClass = null;
+            if (schoolClassId != null) {
+                schoolClass = schoolClassRepository.findById(schoolClassId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+                if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                    throw new IllegalStateException("Classe hors de ce locataire.");
+                }
+            }
+            teacher.setFirstName(firstName.trim());
+            teacher.setLastName(lastName.trim());
+            teacher.setEmail(email.trim());
+            teacher.setUsername(username);
+            teacher.setTeacherType(teacherType != null && !teacherType.isBlank() ? teacherType.trim().toUpperCase() : "TITULAIRE");
+            teacher.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            teacher.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            teacher.setSchoolClass(schoolClass);
+            teacher.setObservation(observation != null && !observation.isBlank() ? observation.trim() : null);
+            userRepository.save(teacher);
+            redirectAttributes.addFlashAttribute("success", "Enseignant mis a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/teachers/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String archiveTeacher(
+            @RequestParam Long teacherId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User teacher = userRepository.findById(teacherId)
+                    .orElseThrow(() -> new IllegalArgumentException("Enseignant introuvable."));
+            if (!tenantId.equals(teacher.getEstablishmentId())) {
+                throw new IllegalStateException("Enseignant hors de ce locataire.");
+            }
+            teacher.setArchived(archived);
+            if (archived) {
+                teacher.setEnabled(false);
+            }
+            userRepository.save(teacher);
+            redirectAttributes.addFlashAttribute("success", archived ? "Enseignant archivé." : "Enseignant restauré.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }

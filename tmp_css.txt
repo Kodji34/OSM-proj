@@ -1,0 +1,25 @@
+265:        .modal-overlay {
+409:        .class-cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+863:                        <div class="modal-overlay" id="academicYearModal"
+1167:                        <div class="class-cards" style="margin-top:10px;">
+1168:                            <div class="class-card" th:each="p : ${careerPaths}">
+1242:                                <div class="class-cards">
+1243:                                    <div class="class-card" th:each="c : ${classes}">
+1297:                                    <div class="class-card" th:each="r : ${rooms}">
+1723:                        <div class="class-cards" style="margin-top:10px;">
+1724:                            <div class="class-card" th:each="p : ${careerPaths}">
+1793:    <div id="subjectModal" class="modal-overlay">
+1841:    <div id="projectModal" class="modal-overlay">
+1881:    <div id="projectImportModal" class="modal-overlay">
+1904:    <div id="insertionModal" class="modal-overlay">
+1969:    <div id="insertionImportModal" class="modal-overlay">
+1992:    <div id="careerPathModal" class="modal-overlay">
+2502:    <div id="userModal" class="modal-overlay">
+2559:    <div id="studentModal" class="modal-overlay">
+2641:    <div id="studentImportModal" class="modal-overlay">
+2664:    <div id="teacherModal" class="modal-overlay">
+2733:    <div id="teacherImportModal" class="modal-overlay">
+2756:    <div id="classModal" class="modal-overlay">
+2838:    <div id="levelModal" class="modal-overlay">
+2863:    <div id="roomModal" class="modal-overlay">
+2924:    <div id="badgeModal" class="modal-overlay">

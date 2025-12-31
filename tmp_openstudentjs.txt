@@ -1,0 +1,28 @@
+141247
+e.display = 'flex';
+        }
+
+        function closeStudentImportModal() {
+            if (studentImportModal) studentImportModal.style.display = 'none';
+        }
+
+        window.openStudentModal = openStudentModal;
+        window.closeStudentModal = closeStudentModal;
+        window.openStudentImportModal = openStudentImportModal;
+        window.closeStudentImportModal = closeStudentImportModal;
+
+        function resetTeacherForm() {
+            if (!teacherForm) return;
+            teacherForm.action = `/tenant/app/teachers?tenantId=${tenantId}`;
+            teacherForm.onsubmit = null;
+            if (teacherIdInput) teacherIdInput.value = '';
+            if (teacherFirstName) {
+                teacherFirstName.value = '';
+                teacherFirstName.readOnly = false;
+            }
+            if (teacherLastName) {
+                teacherLastName.value = '';
+                teacherLastName.readOnly = false;
+            }
+            if (teacherEmail) {
+                teache

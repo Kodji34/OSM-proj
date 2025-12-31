@@ -1,0 +1,11 @@
+                           data-start=${i.startDate},
+                                             data-end=${i.endDate},
+                                             data-responsible=${i.responsible},
+                                             data-contact=${i.contactName},
+                                             data-email=${i.contactEmail},
+                                             data-phone=${i.contactPhone},
+                                             data-description=${i.description},
+                                             data-archived=${i.archived}">
+                                    <td th:text="${i.type}">Type</td>
+                                    <td th:text="${i.partnerName}">Partenaire</td>
+                                    <td th:text="${i.title != nu

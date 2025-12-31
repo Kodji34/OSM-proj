@@ -1,0 +1,18 @@
+cherLastName" name="lastName" type="text" required placeholder="ex: Mensah">
+                    </div>
+                    <div class="field">
+                        <label for="teacherFirstName">Prenoms</label>
+                        <input id="teacherFirstName" name="firstName" type="text" required placeholder="ex: Awa">
+                    </div>
+                    <div class="field">
+                        <label for="teacherEmail">Email</label>
+                        <input id="teacherEmail" name="email" type="email" required placeholder="ex: enseignant@etablissement.com">
+                    </div>
+                    <div class="field">
+                        <label for="teacherType">Type</label>
+                        <select id="teacherType" name="teacherType">
+                            <option value="TITULAIRE">Titulaire</option>
+                            <option value="VACATAIRE">Vacataire</option>
+                        </select>
+                    </div>
+    

@@ -1,0 +1,13 @@
+utton>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'STUDENTS'}">
+                            <button type="button" class="btn primary" onclick="openStudentModal()">Nouvel apprenant</button>
+                            <button type="button" class="btn ghost" onclick="openStudentImportModal()">Importer CSV</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'TEACHERS'}">
+                            <button type="button" class="btn primary" onclick="openTeacherModal()">Nouvel enseignant</button>
+                            <button type="button" class="btn ghost" onclick="openTeacherImportModal()">Importer CSV</button>
+                        </div>
+                        <div class="action-group" th:if="${m.code == 'SUBJECTS'}">
+                            <button type="button" class="btn primary" onclick="openSubjectModal()">Nouvelle matière</button>
+                        <

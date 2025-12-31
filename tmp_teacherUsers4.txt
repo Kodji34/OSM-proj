@@ -1,0 +1,11 @@
+              data-phone-mobile=${t.phoneMobile},
+                                                             data-type=${t.teacherType},
+                                                             data-class-id=${t.schoolClass != null ? t.schoolClass.id : ''},
+                                                             data-class-name=${t.schoolClass != null ? t.schoolClass.name : ''},
+                                                             data-observation=${t.observation},
+                                                             data-photo=${t.photoUrl}"
+                                                    onclick="openTeacherModal('view', this)">&#128065;</button>
+                                            <button type="button" class="icon-btn"
+                                                    title="Modifier"
+                                                    th:attr="data-id=${t.id},
+                                                             data-first-name=${t.f

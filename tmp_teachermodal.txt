@@ -1,0 +1,30 @@
+seStudentImportModal()">Annuler</button>
+                    <button type="submit" class="btn primary">Importer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="teacherModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="teacherModalTitle">Créer un enseignant</h3>
+            <small id="teacherModalSubtitle">Ajoutez un enseignant et affectez-le à une classe.</small>
+            <form id="teacherForm" method="post" th:action="@{'/tenant/app/teachers?tenantId=' + ${est.id}}">
+                <input type="hidden" id="teacherId" name="teacherId">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="teacherLastName">Nom</label>
+                        <input id="teacherLastName" name="lastName" type="text" required placeholder="ex: Mensah">
+                    </div>
+                    <div class="field">
+                        <label for="teacherFirstName">Prenoms</label>
+                        <input id="teacherFirstName" name="firstName" type="text" required placeholder="ex: Awa">
+                    </div>
+                    <div class="field">
+                        <label for="teacherEmail">Email</label>
+                        <input id="teacherEmail" name="email" type="email" required placeholder="ex: enseignant@etablissement.com">
+                    </div>
+                    <div class="field">
+                        <label for="teacherType">Type</label>
+                        <select id="teacherType" name="teacherType">
+           

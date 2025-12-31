@@ -1,0 +1,3 @@
+p=pathlib.Path('src/main/resources/templates/tenant-app.html'
+data=p.read_text(encoding='utf-8',errors='replace'
+print(data[1150:1350]

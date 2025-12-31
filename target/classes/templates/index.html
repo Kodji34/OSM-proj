@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:style="${'--primary:' + appThemePrimary + ';--primary-700:' + appThemePrimary + ';--accent:' + appThemePrimary + ';'}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSM - Accueil</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+        :root {
+            --bg:#e9eef6;
+            --surface:#e9eef6;
+            --shadow-dark: rgba(163,177,198,0.55);
+            --shadow-light: rgba(255,255,255,0.85);
+            --ink:#0f172a;
+            --muted:#64748b;
+            --accent:#4a56e2;
+            --accent-ink: var(--ink);
+            --accent-ink: color-mix(in srgb, var(--accent) 25%, var(--ink) 75%);
+            --accent-soft: rgba(74,86,226,0.10);
+            --accent-soft: color-mix(in srgb, var(--accent) 10%, #ffffff 90%);
+            --warning:#b45309;
+            --radius: 18px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background:
+                radial-gradient(900px 600px at 12% 15%, var(--accent-soft), transparent 60%),
+                var(--bg);
+            min-height: 100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 26px;
+            color:var(--ink);
+        }
+        .container {
+            background:var(--surface);
+            border-radius:var(--radius);
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 18px 18px 36px var(--shadow-dark), -18px -18px 36px var(--shadow-light);
+            padding: 36px;
+            max-width: 760px;
+            width: 100%;
+        }
+        h1 { margin-bottom: 10px; font-size: 2.2em; }
+        .subtitle { color:var(--muted); font-size: 1.05em; margin-bottom: 18px; }
+        .btn-group { display:flex; gap: 12px; flex-wrap:wrap; }
+        .btn {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding: 10px 14px;
+            border-radius: 14px;
+            background:var(--surface);
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            color:var(--accent-ink);
+            font-weight:900;
+            text-decoration:none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .features {
+            margin-top: 18px;
+            background:var(--surface);
+            border: 1px solid rgba(15,23,42,0.06);
+            border-radius:var(--radius);
+            padding: 18px;
+            box-shadow: inset 8px 8px 16px rgba(163,177,198,0.6), inset -8px -8px 16px rgba(255,255,255,0.9);
+        }
+        .feature-item { margin: 10px 0; display:flex; align-items:center; gap: 10px; color:var(--muted); }
+        .feature-item::before {
+            content: "\\2022";
+            display:inline-grid;
+            place-items:center;
+            width: 28px;
+            height: 28px;
+            background:var(--surface);
+            color:var(--accent-ink);
+            border-radius: 999px;
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            flex-shrink: 0;
+        }
+        .credentials {
+            margin: 16px 0;
+            padding: 14px;
+            border-radius:var(--radius);
+            background:var(--surface);
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: inset 8px 8px 16px rgba(163,177,198,0.6), inset -8px -8px 16px rgba(255,255,255,0.9);
+        }
+        .credentials h3 { color:var(--warning); margin-bottom: 10px; }
+        .credential-item { color:var(--muted); margin: 5px 0; font-family: "Segoe UI", sans-serif; }
+
+        /* Flat design overrides */
+        :root {
+            --bg: #f4f7fb;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --border: #e2e8f0;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --secondary: #14b8a6;
+            --accent: #f59e0b;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --success: #15803d;
+        }
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Segoe UI", sans-serif;
+        }
+        .container,
+        .credentials,
+        .feature-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+        .btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--ink);
+            box-shadow: none;
+        }
+        .btn.btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+        .btn.btn-secondary {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: #ffffff;
+        }
+        .subtitle,
+        .credential-item { color: var(--muted); }
+        .btn,
+        button,
+        a.btn {
+            background: #1e88e5;
+            border-color: #1e88e5;
+            color: #ffffff;
+        }
+        .btn:focus,
+        .btn:active,
+        button:focus,
+        button:active,
+        a.btn:focus,
+        a.btn:active {
+            background: var(--surface2);
+            border-color: #1e88e5;
+            color: #1e88e5;
+        }
+        /* Unified text colors */
+        body, p, span, div, label, li, td, th, h1, h2, h3, h4, h5, h6 {
+            color: var(--ink);
+        }
+        .muted, .hint, .help, .note, .caption, .meta-line {
+            color: var(--muted) !important;
+        }
+        a:not(.btn) {
+            color: var(--ink);
+        }
+        input, select, textarea {
+            color: var(--ink) !important;
+            background: var(--surface) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--muted) !important;
+        }
+        select option {
+            color: var(--ink);
+            background: var(--surface);
+        }
+        /* Global text/link enforcement */
+        :root {
+            --primary: #1e88e5;
+            --primary-hover: #1f2937;
+            --secondary: #f3f4f6;
+            --text: #1f2937;
+            --muted: #1f2937;
+            --bg: #f3f4f6;
+            --surface: #f3f4f6;
+            --success: #1e88e5;
+            --warning: #1e88e5;
+            --danger: #1e88e5;
+        }
+        body { color: var(--text); }
+        body, body * { color: var(--text) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:visited { color: var(--primary) !important; }
+        a:hover { color: var(--primary) !important; text-decoration: underline; }
+        input, select, textarea, option { color: var(--text) !important; }
+        input::placeholder, textarea::placeholder { color: var(--text) !important; opacity: 0.7; }
+        .muted, .hint, .help, .note, .caption, .meta, .meta-line, .subtle { color: var(--muted) !important; opacity: 0.7; }
+        .btn, .btn * { color: inherit !important; }
+        /* Primary button style for all buttons */
+        .btn,
+        button,
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        button.btn,
+        a.btn,
+        .nav-btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-success,
+        .btn-danger,
+        .btn-warning,
+        .btn-neutral {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+            box-shadow: none !important;
+            text-decoration: none;
+        }
+        /* Palette enforcement: Azure + Slate + Light Gray */
+        :root {
+            --primary: #1e88e5;
+            --primary-hover: #1f2937;
+            --secondary: #f3f4f6;
+            --bg: #f3f4f6;
+            --surface: #f3f4f6;
+            --surface2: #f3f4f6;
+            --border: rgba(31, 41, 55, 0.18);
+            --ink: #1f2937;
+            --muted: rgba(31, 41, 55, 0.75);
+            --accent: #1e88e5;
+            --accent-ink: #1f2937;
+            --accent-soft: rgba(30, 136, 229, 0.12);
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #16a34a;
+        }
+
+        body { background: var(--bg) !important; color: var(--ink) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:hover { color: var(--primary-hover) !important; }
+        p, span, li, label, small, td, th { color: var(--ink) !important; }
+        .muted, .text-muted, .meta-line { color: var(--muted) !important; }
+        table, th, td { color: var(--ink) !important; }
+        input, select, textarea, option {
+            color: var(--ink) !important;
+            background-color: var(--secondary) !important;
+            border-color: var(--border) !important;
+        }
+        input::placeholder, textarea::placeholder { color: var(--muted) !important; }
+        .btn, .btn-primary, .btn-secondary, .btn-neutral, .btn.primary, .btn.secondary,
+        button, input[type="button"], input[type="submit"], input[type="reset"], .nav-btn {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+        }
+        .btn *, button * { color: inherit !important; }
+        .status-active,
+        .status-badge.status-active { color: var(--success) !important; }
+        .status-inactive,
+        .status-badge.status-inactive { color: var(--danger) !important; }
+    </style>
+    <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+    <div class="container">
+        <h1>OSM Open Suku Manager</h1>
+        <p class="subtitle">Plateforme SaaS de gestion des etablissements scolaires</p>
+
+        <div class="credentials">
+            <h3>Identifiants par d&eacute;faut</h3>
+            <div class="credential-item"><strong>Utilisateur :</strong> superadmin</div>
+            <div class="credential-item"><strong>Mot de passe :</strong> admin</div>
+        </div>
+
+        <div class="btn-group">
+            <a href="/dashboard" class="btn btn-primary">Tableau de bord</a>
+            <a href="/api/establishments" class="btn btn-secondary" target="_blank">API Establishments</a>
+        </div>
+
+        <div class="features">
+            <h3 style="margin-bottom: 20px; color: #333;">Fonctionnalit&eacute;s disponibles</h3>
+            <div class="feature-item">Gestion des &eacute;tablissements scolaires</div>
+            <div class="feature-item">Support multi-types (Primaire, Secondaire, Sup&eacute;rieur)</div>
+            <div class="feature-item">Activation d'adh&eacute;sion par Super Admin</div>
+            <div class="feature-item">Configuration et d&eacute;ploiement des &eacute;tablissements</div>
+            <div class="feature-item">Authentification s&eacute;curis&eacute;e avec Spring Security</div>
+            <div class="feature-item">API REST compl&egrave;te</div>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #999; font-size: 0.9em;">
+                <strong>Documentation :</strong> Consultez le README.md pour les d&eacute;tails d'installation et d'utilisation
+            </p>
+        </div>
+    </div>
+    <style>
+        :root {
+            --btn-bg: var(--primary);
+            --btn-text: #ffffff;
+            --btn-hover-bg: var(--surface2);
+            --btn-hover-text: var(--primary);
+        }
+        button, .btn, a.btn, input[type="submit"], input[type="button"] {
+            background: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
+        }
+        button:focus, button:active, .btn:focus, .btn:active, a.btn:focus, a.btn:active {
+            background: var(--btn-hover-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-hover-text) !important;
+        }
+        body, button, input, select, textarea {
+            font-family: "Segoe UI", sans-serif !important;
+        }
+        a:hover {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        /* soft-outline buttons */
+        .btn, button, a.btn, .nav-btn, .nav-link, .icon-btn,
+        input[type="button"], input[type="submit"], input[type="reset"] {
+            background: #ffffff !important;
+            border: 1.5px solid var(--primary, #1e88e5) !important;
+            color: var(--primary, #1e88e5) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            text-decoration: none;
+        }
+    </style>
+</body>
+</html>

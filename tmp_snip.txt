@@ -1,0 +1,13 @@
+99464
+
+    </div>
+
+    <footer class="page-footer">
+        <div>© EdiTik - OSM Open Suku Manager</div>
+        <div class="legal">Mentions légales - Tous droits réservés.</div>
+    </footer>
+
+    <div id="subjectModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="subjectModalTitle">Créer une matière</h3>
+            <small id="subjectModalSubtitle">Renseignez l'intitulé et le 

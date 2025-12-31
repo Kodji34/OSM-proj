@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:style="${'--primary:' + appThemePrimary + ';--primary-700:' + appThemePrimary + ';--accent:' + appThemePrimary + ';'}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - OSM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+        :root {
+            --ink:#1F2937;
+            --muted:#6B7280;
+            --bg:#F5F7FB;
+            --surface:#FFFFFF;
+            --shadow-dark: rgba(163,177,198,0.55);
+            --shadow-light: rgba(255,255,255,0.85);
+            --accent:#FF6F61;
+            --accent-ink: var(--ink);
+            --accent-ink: color-mix(in srgb, var(--accent) 25%, var(--ink) 75%);
+            --accent-soft: rgba(255, 111, 97, 0.12);
+            --accent-soft: color-mix(in srgb, var(--accent) 10%, #ffffff 90%);
+            --warning:#F6C945;
+            --radius: 18px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background:
+                radial-gradient(900px 600px at 12% 15%, var(--accent-soft), transparent 60%),
+                var(--bg);
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:24px;
+            color:var(--ink);
+        }
+        .login-shell {
+            width:100%;
+            max-width:900px;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:24px;
+            align-items:stretch;
+        }
+        .panel {
+            background:var(--surface);
+            border-radius:var(--radius);
+            padding:32px;
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 14px 14px 28px var(--shadow-dark), -14px -14px 28px var(--shadow-light);
+            animation:rise 0.6s ease-out;
+        }
+        .brand {
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+        .brand .tag {
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            font-weight:700;
+            color:var(--accent-ink);
+            background:var(--accent-soft);
+            padding:6px 12px;
+            border-radius:999px;
+            width:max-content;
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        }
+        h1 { font-size:2rem; }
+        p { color:var(--muted); line-height:1.5; }
+        .form-group { margin-top:18px; }
+        label { display:block; margin-bottom:8px; font-weight:600; }
+        input {
+            width:100%;
+            padding:12px;
+            border:none;
+            border-radius:14px;
+            font-size:1rem;
+            background:var(--surface);
+            color:var(--ink);
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.75), inset -6px -6px 12px rgba(255,255,255,0.95);
+        }
+        input:focus {
+            outline: 3px solid rgba(15,23,42,0.14);
+            outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
+        }
+        .btn {
+            width:100%;
+            padding:12px;
+            margin-top:18px;
+            background:var(--surface);
+            color:var(--accent-ink);
+            border: 1px solid rgba(15,23,42,0.06);
+            border-radius:14px;
+            font-size:1rem;
+            font-weight:700;
+            cursor:pointer;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            transition:transform 0.2s, box-shadow 0.2s;
+        }
+        .alert {
+            padding:12px;
+            margin-top:14px;
+            border-radius:var(--radius);
+            background:var(--surface);
+            color:var(--warning);
+            border: 1px solid rgba(15,23,42,0.06);
+            font-weight:600;
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.65), inset -6px -6px 12px rgba(255,255,255,0.9);
+        }
+        .credentials {
+            margin-top:18px;
+            padding:14px;
+            border-radius:var(--radius);
+            background:var(--surface);
+            border: 1px dashed rgba(15,23,42,0.16);
+            color:var(--ink);
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.55), inset -6px -6px 12px rgba(255,255,255,0.9);
+        }
+        .credentials code { font-weight:700; }
+        .side {
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            gap:24px;
+        }
+        .side .stat {
+            padding:16px;
+            border-radius:var(--radius);
+            background:var(--surface);
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: inset 6px 6px 12px rgba(163,177,198,0.65), inset -6px -6px 12px rgba(255,255,255,0.9);
+        }
+        .side .stat strong { display:block; margin-bottom:6px; }
+        @keyframes rise {
+            from { transform:translateY(12px); opacity:0; }
+            to { transform:translateY(0); opacity:1; }
+        }
+        @media (max-width: 860px) {
+            .login-shell { grid-template-columns:1fr; }
+        }
+
+        /* --- Glassmorphism override --- */
+        :root {
+            --p:#7c3aed;
+            --s:#22d3ee;
+            --bg:#0b1020;
+            --surface: rgba(255,255,255,0.10);
+            --surface2: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.18);
+            --ink:#eef2ff;
+            --muted: rgba(231,237,255,0.72);
+            --shadow: 0 14px 34px rgba(0,0,0,0.22);
+            --shadow-soft: 0 8px 18px rgba(0,0,0,0.16);
+            --radius: 18px;
+            --warning: #fbbf24;
+            --danger: #fb7185;
+        }
+        body {
+            background:
+                    radial-gradient(900px 600px at 12% 15%, color-mix(in srgb, var(--p) 60%, transparent), transparent 60%),
+                    radial-gradient(820px 520px at 92% 10%, rgba(236,72,153,0.35), transparent 55%),
+                    radial-gradient(900px 640px at 18% 95%, rgba(34,211,238,0.25), transparent 60%),
+                    linear-gradient(135deg, #0b1020 0%, #161a33 40%, #2a1452 100%);
+            background-attachment: fixed;
+            color: var(--ink);
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+        p { color: var(--muted); }
+        .brand .tag {
+            color: #ffffff;
+            background: color-mix(in srgb, var(--p) 35%, rgba(255,255,255,0.08));
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: var(--shadow-soft);
+        }
+        label { font-weight: 600; }
+        input {
+            background: var(--surface2);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: none;
+            color: #ffffff;
+        }
+        input:focus { outline: 3px solid rgba(124,58,237,0.35); }
+        .btn {
+            background: linear-gradient(135deg, rgba(124,58,237,0.85), rgba(34,211,238,0.35));
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: var(--shadow-soft);
+            font-weight: 650;
+        }
+        .alert {
+            background: color-mix(in srgb, var(--danger) 16%, rgba(255,255,255,0.08));
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: var(--shadow-soft);
+        }
+        .credentials,
+        .side .stat {
+            background: var(--surface2);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: var(--shadow-soft);
+            color: #ffffff;
+        }
+        .credentials p { color: rgba(255,255,255,0.88); }
+        .credentials code { color: #ffffff; }
+
+        /* Flat design overrides */
+        :root {
+            --bg: #F5F7FB;
+            --surface: #FFFFFF;
+            --surface2: #F3F4F6;
+            --border: rgba(31, 41, 55, 0.18);
+            --ink: #1F2937;
+            --muted: #6B7280;
+            --primary: #1E88E5;
+            --secondary: #F3F4F6;
+            --accent: #FF6F61;
+            --danger: #FF6F61;
+            --warning: #F6C945;
+            --success: #2BB673;
+        }
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Segoe UI", sans-serif;
+        }
+        .login-shell,
+        .panel,
+        .credentials,
+        .panel.side,
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+        .btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: none;
+        }
+        .alert {
+            background: #ffffff;
+            color: var(--ink);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+        label { color: var(--ink); }
+        input, select, textarea {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--ink);
+            box-shadow: none;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            color: var(--ink);
+        }
+        .btn,
+        button,
+        a.btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+        .btn:focus,
+        .btn:active,
+        button:focus,
+        button:active,
+        a.btn:focus,
+        a.btn:active {
+            background: var(--surface2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        /* Unified text colors */
+        body, p, span, div, label, li, td, th, h1, h2, h3, h4, h5, h6 {
+            color: var(--ink);
+        }
+        .muted, .hint, .help, .note, .caption, .meta-line {
+            color: var(--muted) !important;
+        }
+        a:not(.btn) {
+            color: var(--ink);
+        }
+        input, select, textarea {
+            color: var(--ink) !important;
+            background: var(--surface) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--muted) !important;
+        }
+        select option {
+            color: var(--ink);
+            background: var(--surface);
+        }
+        /* Global text/link enforcement */
+        :root {
+            --primary: #1E88E5;
+            --primary-hover: #1669B2;
+            --secondary: #F3F4F6;
+            --text: #1F2937;
+            --muted: #6B7280;
+            --bg: #F5F7FB;
+            --surface: #FFFFFF;
+            --success: #2BB673;
+            --warning: #F6C945;
+            --danger: #FF6F61;
+        }
+        body { color: var(--text); }
+        body, body * { color: var(--text) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:visited { color: var(--primary) !important; }
+        a:hover { color: var(--primary) !important; text-decoration: underline; }
+        input, select, textarea, option { color: var(--text) !important; }
+        input::placeholder, textarea::placeholder { color: var(--text) !important; opacity: 0.7; }
+        .muted, .hint, .help, .note, .caption, .meta, .meta-line, .subtle { color: var(--muted) !important; opacity: 0.7; }
+        .btn, .btn * { color: inherit !important; }
+        /* Primary button style for all buttons */
+        .btn,
+        button,
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        button.btn,
+        a.btn,
+        .nav-btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-success,
+        .btn-danger,
+        .btn-warning,
+        .btn-neutral {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+            box-shadow: none !important;
+            text-decoration: none;
+        }
+        /* Palette enforcement: Azure + Slate + Light Gray */
+        :root {
+            --primary: #1E88E5;
+            --primary-hover: #1669B2;
+            --secondary: #F3F4F6;
+            --bg: #F5F7FB;
+            --surface: #FFFFFF;
+            --surface2: #F3F4F6;
+            --border: rgba(31, 41, 55, 0.18);
+            --ink: #1F2937;
+            --muted: rgba(107, 114, 128, 0.75);
+            --accent: #FF6F61;
+            --accent-ink: #1F2937;
+            --accent-soft: rgba(255, 111, 97, 0.12);
+            --danger: #FF6F61;
+            --warning: #F6C945;
+            --success: #2BB673;
+        }
+
+        body { background: var(--bg) !important; color: var(--ink) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:hover { color: var(--primary-hover) !important; }
+        p, span, li, label, small, td, th { color: var(--ink) !important; }
+        .muted, .text-muted, .meta-line { color: var(--muted) !important; }
+        table, th, td { color: var(--ink) !important; }
+        input, select, textarea, option {
+            color: var(--ink) !important;
+            background-color: var(--secondary) !important;
+            border-color: var(--border) !important;
+        }
+        input::placeholder, textarea::placeholder { color: var(--muted) !important; }
+        .btn, .btn-primary, .btn-secondary, .btn-neutral, .btn.primary, .btn.secondary,
+        button, input[type="button"], input[type="submit"], input[type="reset"], .nav-btn {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+        }
+        .btn *, button * { color: inherit !important; }
+        .status-active,
+        .status-badge.status-active { color: var(--success) !important; }
+        .status-inactive,
+        .status-badge.status-inactive { color: var(--danger) !important; }
+        /* Azure text + login button style */
+        :root {
+            --azure: var(--primary);
+            --muted-light: var(--muted);
+        }
+        body, h1, h2, h3, h4, h5, h6,
+        p, label, span, div, small, strong, li {
+            color: var(--ink);
+        }
+        .muted,
+        .hint,
+        .help,
+        .note,
+        .caption,
+        .meta,
+        .subtle {
+            color: var(--muted-light) !important;
+            font-size: 0.82rem;
+        }
+        input, select, textarea {
+            color: var(--ink) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--muted-light) !important;
+        }
+        .btn,
+        button,
+        input[type="submit"] {
+            background: var(--azure) !important;
+            border-color: var(--azure) !important;
+            color: #ffffff !important;
+        }
+        /* Fix contrast on login inputs/buttons */
+        body input,
+        body select,
+        body textarea {
+            color: var(--ink) !important;
+            background: var(--surface) !important;
+        }
+        body input::placeholder,
+        body textarea::placeholder {
+            color: var(--muted) !important;
+        }
+        body .btn,
+        body button,
+        body input[type="submit"] {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--on-primary) !important;
+        }
+        /* soft-outline buttons */
+        .btn, button, a.btn, .nav-btn, .nav-link, .icon-btn,
+        input[type="button"], input[type="submit"], input[type="reset"] {
+            background: #ffffff !important;
+            border: 1.5px solid var(--primary, #1e88e5) !important;
+            color: var(--primary, #1e88e5) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            text-decoration: none;
+        }
+    </style>
+    <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+    <div class="login-shell">
+        <div class="panel">
+            <div class="brand">
+                <span class="tag">OSM Open Suku Manager</span>
+                <h1>Connexion</h1>
+                <p>Acces securise a votre espace de gestion. Utilisez vos identifiants.</p>
+            </div>
+
+            <div th:if="${param.error}" class="alert">
+                Erreur: identifiants invalides. Veuillez reessayer.
+            </div>
+
+            <form method="post" action="/login">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Se connecter</button>
+            </form>
+
+            <div class="credentials">
+                <p><strong>Identifiants de test:</strong></p>
+                <p>Utilisateur: <code>superadmin</code></p>
+                <p>Mot de passe: <code>admin</code></p>
+            </div>
+        </div>
+
+        <div class="panel side">
+            <div class="stat">
+                <strong>Admin editeur</strong>
+                <p>Gestion SaaS, creation, validation, activation et modules.</p>
+            </div>
+            <div class="stat">
+                <strong>Admin etablissement</strong>
+                <p>Parametrage, utilisateurs, modules et lancement de l'application.</p>
+            </div>
+            <div class="stat">
+                <strong>Accessibilite</strong>
+                <p>Contrastes renforces, focus visible, navigation simple.</p>
+            </div>
+        </div>
+    </div>
+    <style>
+        :root {
+            --btn-bg: var(--primary);
+            --btn-text: #ffffff;
+            --btn-hover-bg: var(--surface2);
+            --btn-hover-text: var(--primary);
+        }
+        button, .btn, a.btn, input[type="submit"], input[type="button"] {
+            background: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
+        }
+        button:focus, button:active, .btn:focus, .btn:active, a.btn:focus, a.btn:active {
+            background: var(--btn-hover-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-hover-text) !important;
+        }
+        input, select, textarea {
+            background: #F3F4F6 !important;
+            color: #1F2937 !important;
+            border-color: var(--border) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #6B7280 !important;
+        }
+        body, button, input, select, textarea {
+            font-family: "Segoe UI", sans-serif !important;
+        }
+        a:hover {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        button, .btn, a.btn, input[type="submit"], input[type="button"] {
+            background: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            transition: none !important;
+        }
+    </style>
+</body>
+</html>

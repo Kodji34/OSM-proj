@@ -1,0 +1,10 @@
+</div>
+    </div>
+
+    <script>
+        const subjectModal = document.getElementById('subjectModal');
+        const subjectForm = document.getElementById('subjectForm');
+        const subjectId = document.getElementById('subjectId');
+        const subjectTitle = document.getElementById('subjectTitle');
+        const subjectHoursTd = document.getElementById('subjectHoursTd');
+        const subjectHoursTp = document.getElementById('subjec

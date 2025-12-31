@@ -1,0 +1,28 @@
+
+    </div>
+
+    <footer class="page-footer">
+        <div>© EdiTik - OSM Open Suku Manager</div>
+        <div class="legal">Mentions légales - Tous droits réservés.</div>
+    </footer>
+
+    <div id="subjectModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="subjectModalTitle">Créer une matière</h3>
+            <small id="subjectModalSubtitle">Renseignez l'intitulé et le volume horaire.</small>
+            <form id="subjectForm" method="post" th:action="@{'/tenant/app/subjects?tenantId=' + ${est.id}}">
+                <input type="hidden" id="subjectId" name="subjectId">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="subjectTitle">Intitulé</label>
+                        <input id="subjectTitle" name="title" type="text" required placeholder="ex: Mathématiques">
+                    </div>
+                    <div class="field">
+                        <label for="subjectHoursTd">Heures TD</label>
+                        <input id="subjectHoursTd" name="hoursTd" type="number" min="0" step="1" value="0">
+                    </div>
+                    <div class="field">
+                        <label for="subjectHoursTp">Heures TP</label>
+                        <input id="subjectHoursTp" name="hoursTp" type="number" min="0" step="1" value="0">
+                    </div>
+                

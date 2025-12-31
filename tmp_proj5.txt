@@ -1,0 +1,38 @@
+.setEstablishment(est.get());
+                project.setTitle(title);
+                project.setAcademicYear(parts.length > 1 ? parts[1].trim() : null);
+                project.setResponsible(parts.length > 2 ? parts[2].trim() : null);
+                project.setStatus(parts.length > 3 ? parts[3].trim() : null);
+                if (parts.length > 4 && !parts[4].trim().isBlank()) {
+                    project.setBudget(new java.math.BigDecimal(parts[4].trim().replace(",", ".")));
+                }
+                if (parts.length > 5) {
+                    StringBuilder desc = new StringBuilder();
+                    for (int i = 5; i < parts.length; i++) {
+                        if (desc.length() > 0) desc.append(" ");
+                        desc.append(parts[i].trim());
+                    }
+                    project.setDescription(desc.toString());
+                }
+                pedagogicalProjectRepository.save(project);
+                created++;
+            }
+            redirectAttributes.addFlashAttribute("success", "Import projets terminé. Créés: " + created + ", ignorés: " + skipped + ".");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import projets : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+    }
+
+    @PostMapping("/tenant/app/insertion")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String saveInsertion(
+            @RequestParam(required = false) Long insertionId,
+            @RequestParam String type,
+            @RequestParam String partnerName,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String levelOrClass,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String responsible,
+            @

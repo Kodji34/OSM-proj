@@ -1,0 +1,24 @@
+()">Annuler</button>
+                    <button type="submit" class="btn primary" id="studentSubmit">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="studentImportModal" class="modal-overlay">
+        <div class="modal">
+            <h3>Importer des apprenants</h3>
+            <small>CSV ou saisie multiple : prenom, nom, email, téléphone, classe.</small>
+            <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/students/import?tenantId=' + ${est.id}}">
+                <div class="form-grid">
+                    <div class="field full">
+                        <label for="studentsFile">Fichier CSV</label>
+                        <input id="studentsFile" name="studentsFile" type="file" accept=".csv,text/csv">
+                    </div>
+                    <div class="field full">
+                        <label for="studentsInput">Saisie multiple</label>
+                        <textarea id="studentsInput" name="studentsInput" rows="4" placeholder="Prenom,Nom,Email,Telephone,Classe"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                   

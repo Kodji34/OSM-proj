@@ -1,0 +1,18 @@
+103684
+ subjectHoursCm.readOnly = true;
+                    subjectSubmit.style.display = 'none';
+                }
+            }
+            subjectModal.style.display = 'flex';
+        }
+
+        function closeSubjectModal() {
+            subjectModal.style.display = 'none';
+        }
+    </script>
+
+    <div id="userModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="userModalTitle">Créer un utilisateur</h3>
+            <small id="userModalSubtitle">L'administrateur crée le personnel administratif et les comptes internes.</small>
+            <form id="userForm" method="pos

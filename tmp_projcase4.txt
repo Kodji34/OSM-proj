@@ -1,0 +1,9 @@
+                                               data-responsible=${p.responsible},
+                                                             data-status=${p.status},
+                                                             data-budget=${p.budget},
+                                                             data-description=${p.description},
+                                                             data-archived=${p.archived}"
+                                                    onclick="openProjectModal('view', this)">&#128065;</button>
+                                            <button type="button" class="icon-btn" title="Modifier"
+                                                    th:attr="data-id=${p.id},
+                                                             data-titl

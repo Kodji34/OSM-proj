@@ -1,0 +1,7 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "workbench.editor.autoLockGroups": {
+        "chatgpt.conversationEditor": true
+    }
+}

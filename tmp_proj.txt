@@ -1,0 +1,28 @@
+directAttributes.addFlashAttribute("error", "Erreur matière : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-subjects";
+    }
+
+    @PostMapping("/tenant/app/projects")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String saveProject(
+            @RequestParam(required = false) Long projectId,
+            @RequestParam String title,
+            @RequestParam(required = false) String academicYear,
+            @RequestParam(required = false) String responsible,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String budget,
+            @RequestParam(required = false) String description,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            String trimmedTitle = title != null ? title.trim() : "";
+            if (trimmedTitle.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Titre requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+            }
+            pedagogicalProjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, trimmedTitle)
+                  

@@ -1,0 +1,2208 @@
+83:             justify-content:center;
+84:             gap:8px;
+85:             padding: 10px 14px;
+86:             border-radius: 14px;
+87:             border: 1px solid var(--primary);
+88:             background: var(--surface);
+89:             color: var(--primary);
+90:             text-decoration:none;
+91:             font-weight: 600;
+92:             box-shadow: none;
+93:             cursor:pointer;
+94:             transition: none;
+95:         }
+96:         .btn.primary {
+97:             border-color: var(--primary);
+98:             background: var(--surface);
+99:             color: var(--primary);
+100:         }
+101:         .btn.ghost { background: transparent; }
+102:         .module-content .btn:hover,
+103:         .module-content .icon-btn:hover,
+104:         .module-content a.btn:hover,
+105:         .module-content button:hover {
+106:             background: var(--surface) !important;
+107:             border-color: var(--primary) !important;
+108:             color: var(--primary) !important;
+109:             text-decoration: underline !important;
+110:         }
+111:         .module-content .btn:hover *,
+112:         .module-content .icon-btn:hover * {
+113:             color: inherit !important;
+114:         }
+115:         .module-content .btn.active,
+116:         .module-content .nav-link.active,
+117:         .module-content .module-tab.active,
+118:         .module-content .module-btn.active {
+119:             background: var(--primary) !important;
+120:             border-color: var(--primary) !important;
+121:             color: #ffffff !important;
+122:         }
+123:         .module-content .btn.active *,
+124:         .module-content .nav-link.active *,
+125:         .module-content .module-tab.active *,
+126:         .module-content .module-btn.active * {
+127:             color: #ffffff !important;
+128:         }
+129:         .inline-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:6px; }
+130:         .inline-actions select { min-width: 220px; }
+131:         .selected-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+132:         .selected-item {
+212:             overflow: hidden;
+213:             display: grid;
+214:             place-items: center;
+215:             font-weight: 700;
+216:             color: #ffffff;
+217:         }
+218:         .avatar img { width: 100%; height: 100%; object-fit: cover; }
+219:         .pager { display:flex; align-items:center; gap:8px; margin-top:10px; justify-content:flex-end; flex-wrap:wrap; }
+220:         .pager button { padding:6px 10px; border-radius: 12px; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); color:#fff; cursor:pointer; }
+221:         .pager button:disabled { opacity:0.45; cursor:default; }
+222:         .pager .info { color: var(--muted); font-size:0.9rem; }
+223:         .stats-inline { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; justify-content:flex-end; }
+224:         .stat-chip {
+225:             padding: 6px 10px;
+226:             border-radius: 12px;
+227:             background: var(--surface2);
+228:             border: 1px solid var(--border);
+229:             color: #ffffff;
+230:             font-size: 0.85rem;
+231:         }
+232:         .action-icons { display:flex; gap:6px; flex-wrap:wrap; }
+233:         .icon-btn {
+234:             padding: 6px 8px;
+235:             border-radius: 10px;
+236:             border: 1px solid var(--primary);
+237:             background: var(--surface);
+238:             color: var(--primary);
+239:             cursor: pointer;
+240:             box-shadow: none;
+241:             font-size: 0.9rem;
+242:         }
+243:         .icon-btn.danger { border-color: rgba(251,113,133,0.6); color: #fda4af; }
+244:         .new-badge {
+245:             padding: 2px 8px;
+246:             border-radius: 999px;
+247:             background: rgba(251,191,36,0.8);
+248:             color: #2a1a00;
+249:             font-size: 0.7rem;
+250:             border: 1px solid rgba(255,255,255,0.22);
+251:         }
+252:         .page-footer {
+253:             margin-top: 18px;
+254:             text-align: center;
+255:             color: var(--muted);
+256:             font-size: 0.78rem;
+257:         }
+258:         .page-footer .legal {
+259:             font-size: 0.65rem;
+260:             opacity: 0.85;
+261:         }
+262:         table { width:100%; border-collapse: collapse; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.14); }
+263:         th, td { padding: 9px; border-bottom: 1px solid rgba(255,255,255,0.10); text-align:left; font-size:0.9rem; }
+264:         th { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.88); font-weight: 640; }
+265:         .modal-overlay {
+266:             position: fixed;
+267:             inset: 0;
+268:             background: rgba(15, 23, 42, 0.25);
+269:             display: none;
+270:             align-items: center;
+271:             justify-content: center;
+272:             padding: 20px;
+273:             z-index: 1000;
+274:         }
+275:         .modal,
+276:         .modal-card {
+277:             width: 100%;
+278:             max-width: 760px;
+279:             padding: 18px;
+280:             border-radius: 18px;
+281:             background: var(--surface);
+282:             border: 1px solid var(--border);
+283:             box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+284:         }
+285:         .modal {
+452:             width: 18px;
+453:             height: 18px;
+454:             border-radius: 999px;
+455:             display: inline-grid;
+456:             place-items: center;
+457:             font-size: 0.8rem;
+458:             font-weight: 700;
+459:             color: #2a1a00;
+460:             background: rgba(251,191,36,0.7);
+461:             border: 1px solid rgba(255,255,255,0.18);
+462:             margin-right: 6px;
+463:         }
+464:         .nav-badge { background: var(--surface2); border-color: var(--border); color: var(--muted); }
+465:         .nav-badge.paid { background: color-mix(in srgb, var(--accent) 16%, #ffffff 84%); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 28%, #ffffff 72%); }
+466:         .badge.accent { background: color-mix(in srgb, var(--primary) 12%, #ffffff 88%); color: var(--ink); }
+467:         .badge.ok { background: color-mix(in srgb, var(--success) 14%, #ffffff 86%); color: var(--success); }
+468:         .badge.warn { background: color-mix(in srgb, var(--warning) 18%, #ffffff 82%); color: var(--warning); }
+469:         th { background: var(--surface2); color: var(--muted); }
+470:         tr:nth-child(even) td { background: var(--surface2); }
+471:         .stat-chip { background: var(--surface2); color: var(--muted); border-color: var(--border); }
+472:         .icon-btn.danger { border-color: color-mix(in srgb, var(--danger) 40%, #ffffff 60%); color: var(--danger); }
+473:         .card,
+474:         .panel,
+475:         .section-card,
+476:         .module-card,
+477:         .table-wrap,
+478:         .filters,
+479:         .stat,
+480:         .summary-card {
+481:             color: var(--ink);
+482:         }
+483:         .muted,
+484:         .hint,
+485:         .help,
+486:         .note,
+487:         .caption {
+488:             color: var(--muted);
+489:         }
+490:         input::placeholder,
+491:         textarea::placeholder {
+492:             color: #94a3b8;
+520:         }
+521:         input, select, textarea {
+522:             color: var(--ink) !important;
+523:             background: var(--surface) !important;
+524:         }
+525:         input::placeholder, textarea::placeholder {
+526:             color: var(--muted) !important;
+527:         }
+528:         select option {
+529:             color: var(--ink);
+530:             background: var(--surface);
+531:         }
+532:         .muted, .hint, .help, .note, .caption, .meta, .meta-line, .subtle { color: var(--muted) !important; opacity: 0.7; }
+533:         .btn, .btn * { color: inherit !important; }
+534:         /* Primary button style for all buttons */
+535:         strong, b { font-weight: 400 !important; }
+536:         .status-active,
+537:         .status-badge.status-active { color: var(--success) !important; }
+538:         .status-inactive,
+539:         .status-badge.status-inactive { color: var(--danger) !important; }
+540:         .glass, .card, .nav-link, .badge, .pill, .stat-chip, .icon-btn, .module-card {
+541:             box-shadow: none !important;
+542:             backdrop-filter: none !important;
+543:             -webkit-backdrop-filter: none !important;
+544:         }
+545:         .nav-link, button.nav-link {
+546:             background: #ffffff !important;
+547:             color: var(--primary) !important;
+548:             border-color: var(--primary) !important;
+549:         }
+550:         .nav-link.active {
+551:             background: var(--primary) !important;
+552:             color: #ffffff !important;
+553:             border-color: var(--primary) !important;
+554:         }
+555:         .nav-badge, .badge, .pill, .stat-chip, .icon-btn {
+556:             background: color-mix(in srgb, var(--bg) 85%, var(--secondary) 15%) !important;
+557:             color: var(--ink) !important;
+558:             border-color: var(--border) !important;
+559:         }
+560:         .badge.accent, .new-badge {
+561:             background: color-mix(in srgb, var(--primary) 18%, var(--bg) 82%) !important;
+562:             color: var(--ink) !important;
+563:             border-color: color-mix(in srgb, var(--primary) 30%, var(--bg) 70%) !important;
+564:         }
+565:         .glass,
+566:         .card,
+567:         .panel,
+568:         .section-card,
+569:         .module-card,
+570:         .table-wrap,
+571:         .table-wrapper,
+572:         .filters,
+573:         .filters-panel,
+574:         .stat,
+575:         .summary-card,
+607:         .stat-card,
+608:         .tile,
+609:         .section,
+610:         .section-panel,
+611:         .section-card,
+612:         .form-card,
+613:         .form-panel,
+614:         .sidebar,
+615:         .nav-panel {
+616:             border-color: var(--primary) !important;
+617:         }
+618:         input,
+619:         select,
+620:         textarea {
+621:             border-color: var(--primary) !important;
+622:         }
+623:         .btn,
+624:         button,
+625:         a.btn,
+626:         .nav-link,
+627:         .icon-btn {
+628:             border-color: var(--primary) !important;
+629:             transition: none !important;
+630:         }
+631:     </style>
+632:     <link rel="stylesheet" href="/theme.css">
+633:     <link rel="stylesheet" href="/theme.css">
+634:     <style>
+635:         .module-nav,
+636:         .module-nav * {
+637:             pointer-events: auto !important;
+638:         }
+639:         .module-nav {
+640:             position: relative;
+641:             z-index: 5;
+642:         }
+643:         .module-nav .nav-link,
+644:         .module-content .btn,
+645:         .module-content .module-btn,
+646:         .module-content .module-tab {
+647:             position: relative;
+786:                         <div class="table-wrap">
+787:                             <table>
+788:                                 <thead>
+789:                                 <tr>
+790:                                     <th>Ann\xe9e</th>
+791:                                     <th>Organisation</th>
+792:                                     <th>P\xe9riode 1</th>
+793:                                     <th>P\xe9riode 2</th>
+794:                                     <th>P\xe9riode 3</th>
+795:                                     <th>Actions</th>
+796:                                 </tr>
+797:                                 </thead>
+798:                                 <tbody>
+799:                                 <tr th:each="y : ${academicYears}">
+800:                                     <td th:text="${y.academicYear}">2024-2025</td>
+801:                                     <td th:text="${y.periodType == T(com.example.school.entity.PeriodType).SEMESTER ? 'Semestres' : 'Trimestres'}">Semestres</td>
+802:                                     <td th:text="${#temporals.format(y.term1Start,'dd/MM/yyyy') + ' \u2192 ' + #temporals.format(y.term1End,'dd/MM/yyyy')}">Periode 1</td>
+803:                                     <td th:text="${#temporals.format(y.term2Start,'dd/MM/yyyy') + ' \u2192 ' + #temporals.format(y.term2End,'dd/MM/yyyy')}">Periode 2</td>
+804:                                     <td th:text="${y.periodType == T(com.example.school.entity.PeriodType).TRIMESTER ? (#temporals.format(y.term3Start,'dd/MM/yyyy') + ' \u2192 ' + #temporals.format(y.term3End,'dd/MM/yyyy')) : '\u2014'}">Periode 3</td>
+805:                                     <td>
+806:                                         <button type="button" class="icon-btn"
+807:                                                 th:attr="data-year-id=${y.id},
+808:                                                          data-year=${y.academicYear},
+809:                                                          data-start=${#temporals.format(y.startDate,'yyyy-MM-dd')},
+810:                                                          data-end=${#temporals.format(y.endDate,'yyyy-MM-dd')},
+811:                                                          data-type=${y.periodType},
+812:                                                          data-t1s=${#temporals.format(y.term1Start,'yyyy-MM-dd')},
+813:                                                          data-t1e=${#temporals.format(y.term1End,'yyyy-MM-dd')},
+814:                                                          data-t2s=${#temporals.format(y.term2Start,'yyyy-MM-dd')},
+815:                                                          data-t2e=${#temporals.format(y.term2End,'yyyy-MM-dd')},
+816:                                                          data-t3s=${y.term3Start != null ? #temporals.format(y.term3Start,'yyyy-MM-dd') : ''},
+817:                                                          data-t3e=${y.term3End != null ? #temporals.format(y.term3End,'yyyy-MM-dd') : ''}"
+818:                                                 onclick="startEditAcademicYear(this)" title="Modifier">\u270e</button>
+819:                                         <form th:action="@{'/tenant/app/academic-year/archive?tenantId=' + ${est.id}}"
+820:                                               method="post" style="display:inline;">
+821:                                             <input type="hidden" name="yearId" th:value="${y.id}">
+822:                                             <input type="hidden" name="archived" th:value="${!y.archived}">
+823:                                             <button type="submit" class="icon-btn"
+824:                                                     th:title="${y.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+825:                                         </form>
+826:                                     </td>
+827:                                 </tr>
+828:                                 <tr th:if="${academicYears == null or academicYears.isEmpty()}">
+829:                                     <td colspan="6" class="muted">Aucune ann\xe9e scolaire enregistr\xe9e.</td>
+830:                                 </tr>
+831:                                 </tbody>
+832:                             </table>
+833:                         </div>
+834:                     </div>
+835:                     <div style="border:1px solid var(--border-color); border-radius:12px; padding:16px; background:var(--panel-bg, #fff);">
+836:                         <h3 style="margin:0 0 10px 0;">Informations et statistiques</h3>
+837:                         <div class="info-grid">
+838:                             <div class="info"><span>Pays / Ville</span><strong th:text="${est.country + ' / ' + est.city}">Pays</strong></div>
+839:                             <div class="info"><span>Adresse</span><strong th:text="${est.address}">Adresse</strong></div>
+840:                             <div class="info"><span>Contact</span><strong th:text="${(est.directorCivility != null ? est.directorCivility + ' ' : '') + est.directorName}">Contact</strong></div>
+841:                             <div class="info"><span>URL</span><strong th:text="${est.accessUrl != null ? est.accessUrl : 'Non d\xe9finie'}">URL</strong></div>
+842:                         </div>
+843:                         <div class="info-grid" style="margin-top:14px;">
+847:                             <div class="info"><span>Apprenants</span><strong th:text="${studentsCount != null ? studentsCount : 0}">0</strong></div>
+848:                         </div>
+849:                         <div class="info-grid" style="margin-top:10px;">
+850:                             <div class="info"><span>Parcours</span><strong th:text="${careerPathsCount != null ? careerPathsCount : 0}">0</strong></div>
+851:                             <div class="info"><span>Projets</span><strong th:text="${projectsCount != null ? projectsCount : 0}">0</strong></div>
+852:                             <div class="info"><span>Salles</span><strong th:text="${roomsCount != null ? roomsCount : 0}">0</strong></div>
+853:                         </div>
+854:                         <form class="grid" style="grid-template-columns: 1fr; gap:10px; margin-top:14px;"
+855:                               method="post" th:action="@{'/tenant/app/public-page?tenantId=' + ${est.id}}">
+856:                             <div class="field">
+857:                                 <label for="ppNews">Annonces</label>
+858:                                 <textarea id="ppNews" name="publicNews" rows="3" th:text="${est.publicNews}"
+859:                                           placeholder="Annonces internes (texte libre)"></textarea>
+860:                             </div>
+861:                             <div style="display:flex; justify-content:flex-end;">
+862:                                 <button type="submit" class="btn primary">Enregistrer</button>
+863:                             </div>
+864:                         </form>
+865:                     </div>
+866:                 </div>
+867:                 <div class="modal-overlay" id="academicYearModal"
+868:                      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:999; align-items:center; justify-content:center; padding:24px;"
+869:                      onclick="closeAcademicYearModal()">
+870:                     <div class="modal-card card"
+871:                          style="width:min(920px, 92vw); max-height:90vh; overflow:auto;"
+872:                          onclick="event.stopPropagation()">
+873:                         <div class="modal-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px;">
+874:                             <h3>Cr\xe9er / Modifier une ann\xe9e scolaire</h3>
+875:                             <button type="button" class="icon-btn" onclick="closeAcademicYearModal()">\u2715</button>
+876:                         </div>
+877:                         <p style="margin:0 0 12px 0; font-size:12px; color:var(--text-muted);">
+878:                             Choisissez l\u2019organisation, puis renseignez les dates de l\u2019ann\xe9e et des p\xe9riodes.
+879:                         </p>
+880:                         <form id="academicYearForm"
+881:                               th:action="@{'/tenant/app/academic-year?tenantId=' + ${est.id}}"
+882:                               method="post">
+883:                             <input type="hidden" id="academicYearId" name="yearId">
+884:                             <div class="form-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:12px;">
+885:                                 <div class="field">
+886:                                     <label for="academicYear">Ann\xe9e scolaire</label>
+887:                                     <input id="academicYear" name="academicYear" type="text" placeholder="2024-2025" required>
+888:                                 </div>
+889:                                 <div class="field">
+890:                                     <label for="yearStart">D\xe9but</label>
+891:                                     <input id="yearStart" name="startDate" type="date" required>
+892:                                 </div>
+893:                                 <div class="field">
+894:                                     <label for="yearEnd">Fin</label>
+895:                                     <input id="yearEnd" name="endDate" type="date" required>
+956:                         <div class="action-group" th:if="${m.code == 'USERS'}">
+957:                             <button type="button" class="btn primary" onclick="openUserModal()">Cr\xe9er un utilisateur</button>
+958:                         </div>
+959:                         <div class="action-group" th:if="${m.code == 'ACADEMIC_YEAR'}">
+960:                             <button type="button" class="btn primary" onclick="openAcademicYearModal()">Cr\xe9er une ann\xe9e</button>
+961:                         </div>
+962:                         <div class="action-group" th:if="${m.code == 'CLASSES'}">
+963:                             <button type="button" class="btn primary" onclick="openClassModal()">Ajouter une classe</button>
+964:                             <button type="button" class="btn ghost" onclick="openLevelModal()">Importer des niveaux</button>
+965:                             <button type="button" class="btn ghost" onclick="openRoomModal()">Ajouter une salle</button>
+966:                         </div>
+967:                         <div class="action-group" th:if="${m.code == 'STUDENTS'}">
+968:                             <button type="button" class="btn primary" onclick="openStudentModal()">Nouvel apprenant</button>
+969:                             <button type="button" class="btn ghost" onclick="openStudentImportModal()">Importer CSV</button>
+970:                         </div>
+971:                         <div class="action-group" th:if="${m.code == 'TEACHERS'}">
+972:                             <button type="button" class="btn primary" onclick="openTeacherModal()">Nouvel enseignant</button>
+973:                             <button type="button" class="btn ghost" onclick="openTeacherImportModal()">Importer CSV</button>
+974:                         </div>
+975:                         <div class="action-group" th:if="${m.code == 'SUBJECTS'}">
+976:                             <button type="button" class="btn primary" onclick="openSubjectModal()">Nouvelle mati\xe8re</button>
+977:                         </div>
+978:                         <div class="action-group" th:if="${m.code == 'PEDAGOGICAL_PROJECTS'}">
+979:                             <button type="button" class="btn primary" onclick="openProjectModal()">Nouveau projet</button>
+980:                             <button type="button" class="btn ghost" onclick="openProjectImportModal()">Importer CSV</button>
+981:                         </div>
+982:                         <div class="action-group" th:if="${m.code == 'CAREER_PATHS'}">
+983:                             <button type="button" class="btn primary" onclick="openCareerPathModal()">Nouveau parcours</button>
+984:                         </div>
+985:                         <div class="action-group" th:if="${m.code == 'TIMETABLE'}">
+986:                             <button type="button" class="btn primary">Cr\xe9er un planning</button>
+987:                             <button type="button" class="btn ghost">Configurer les salles</button>
+988:                         </div>
+989:                         <div class="action-group" th:if="${m.code == 'COMMUNICATION'}">
+990:                             <button type="button" class="btn primary">Nouvelle annonce</button>
+991:                             <button type="button" class="btn ghost">Ouvrir la messagerie</button>
+992:                         </div>
+993:                     </div>
+994:                 </div>
+995: 
+996:                 <div th:switch="${m.code}">
+1078:                                             <span th:text="${u.username != null && !u.username.isEmpty() ? #strings.substring(u.username,0,1).toUpperCase() : 'U'}">U</span>
+1079:                                         </div>
+1080:                                     </td>
+1081:                                     <td th:text="${u.lastName != null && !u.lastName.isBlank() ? u.lastName : '\u2014'}">\u2014</td>
+1082:                                     <td th:text="${u.firstName != null && !u.firstName.isBlank() ? u.firstName : '\u2014'}">\u2014</td>
+1083:                                     <td>
+1084:                                         <strong th:text="${u.username}">utilisateur</strong>
+1085:                                         <div class="muted" style="font-size:0.85rem;" th:text="${u.lastLoginAt != null ? 'Derni\xe8re connexion : ' + #temporals.format(u.lastLoginAt, 'dd/MM/yyyy HH:mm') : 'Jamais connect\xe9'}">Derni\xe8re connexion</div>
+1086:                                     </td>
+1087:                                     <td th:text="${u.email != null && !u.email.isBlank() ? u.email : '\u2014'}">\u2014</td>
+1088:                                     <td th:text="${u.phoneFixed != null && !u.phoneFixed.isBlank() ? u.phoneFixed : '\u2014'}">\u2014</td>
+1089:                                     <td th:text="${u.phoneMobile != null && !u.phoneMobile.isBlank() ? u.phoneMobile : '\u2014'}">\u2014</td>
+1090:                                     <td th:text="${#strings.listJoin(u.roles.?[name == 'ADMIN' or name == 'DIRECTEUR' or name == 'SECRETAIRE' or name == 'COMPTABLE' or name == 'DIRECTEUR_RH'].![name], ', ')}">roles</td>
+1091:                                     <td>
+1092:                                         <span class="badge ok" th:if="${u.enabled}">Actif</span>
+1093:                                         <span class="badge warn" th:unless="${u.enabled}">Inactif</span>
+1094:                                         <span class="badge warn" th:if="${u.archived}" style="margin-left:6px;">Archiv\xe9</span>
+1095:                                     </td>
+1096:                                     <td th:text="${u.observation != null && !u.observation.isBlank() ? u.observation : '\u2014'}">\u2014</td>
+1097:                                     <td>
+1098:                                         <div class="action-icons">
+1099:                                             <button type="button" class="icon-btn"
+1100:                                                     title="Voir"
+1101:                                                     th:attr="data-id=${u.id},
+1102:                                                              data-username=${u.username},
+1103:                                                              data-first-name=${u.firstName},
+1104:                                                              data-last-name=${u.lastName},
+1105:                                                              data-email=${u.email},
+1106:                                                              data-phone-fixed=${u.phoneFixed},
+1107:                                                              data-phone-mobile=${u.phoneMobile},
+1108:                                                              data-role=${#strings.listJoin(u.roles.![name], ',')},
+1109:                                                              data-observation=${u.observation},
+1110:                                                              data-photo=${u.photoUrl}"
+1111:                                                     onclick="openUserModal('view', this)">&#128065;</button>
+1112:                                             <button type="button" class="icon-btn"
+1113:                                                     title="Modifier"
+1114:                                                     th:attr="data-id=${u.id},
+1115:                                                              data-username=${u.username},
+1116:                                                              data-first-name=${u.firstName},
+1117:                                                              data-last-name=${u.lastName},
+1118:                                                              data-email=${u.email},
+1119:                                                              data-phone-fixed=${u.phoneFixed},
+1120:                                                              data-phone-mobile=${u.phoneMobile},
+1121:                                                              data-role=${#strings.listJoin(u.roles.![name], ',')},
+1122:                                                              data-observation=${u.observation},
+1123:                                                              data-photo=${u.photoUrl}"
+1124:                                                     onclick="openUserModal('edit', this)">\u270e</button>
+1125:                                             <form th:action="@{'/tenant/dashboard/users/toggle?tenantId=' + ${est.id}}" method="post" onsubmit="return confirm('Basculer le statut de cet utilisateur ?');">
+1126:                                                 <input type="hidden" name="userId" th:value="${u.id}">
+1127:                                                 <input type="hidden" name="enabled" th:value="${!u.enabled}">
+1128:                                                 <button type="submit" class="icon-btn" th:title="${u.enabled ? 'D\xe9sactiver' : 'Activer'}">\u23fb</button>
+1129:                                             </form>
+1130:                                             <form th:action="@{'/tenant/dashboard/users/archive?tenantId=' + ${est.id}}" method="post" onsubmit="return confirm('Changer l''\xe9tat archiv\xe9 de cet utilisateur ?');">
+1131:                                                 <input type="hidden" name="userId" th:value="${u.id}">
+1132:                                                 <input type="hidden" name="archived" th:value="${!u.archived}">
+1133:                                                 <button type="submit" class="icon-btn" th:title="${u.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+1134:                                             </form>
+1135:                                             <form th:action="@{'/tenant/dashboard/users/delete?tenantId=' + ${est.id}}" method="post" onsubmit="return confirm('Supprimer d\xe9finitivement cet utilisateur ?');">
+1136:                                                 <input type="hidden" name="userId" th:value="${u.id}">
+1137:                                                 <button type="submit" class="icon-btn danger" title="Supprimer">\U0001f5d1</button>
+1138:                                             </form>
+1139:                                         </div>
+1140:                                     </td>
+1141:                                 </tr>
+1142:                                 <tr th:if="${tenantUsers == null or tenantUsers.isEmpty()}"><td colspan="11" class="muted">Aucun utilisateur.</td></tr>
+1143:                                 </tbody>
+1144:                             </table>
+1145:                         </div>
+1146:                     </div>
+1147:                     <div th:case="'SUBJECTS'">
+1148:                         <div class="table-wrap">
+1149:                             <table>
+1150:                                 <thead>
+1151:                                 <tr>
+1152:                                     <th>Intitul\xe9</th>
+1153:                                     <th>Heures TD</th>
+1154:                                     <th>Heures TP</th>
+1155:                                     <th>Heures CM</th>
+1156:                                     <th>Coefficient</th>
+1157:                                     <th>Programme</th>
+1170:                                              data-levels=${s.levels != null ? #strings.listJoin(s.levels.![id], ',') : ''},
+1171:                                              data-program-name=${s.programName},
+1172:                                              data-program-url=@{'/tenant/app/subjects/' + ${s.id} + '/program?tenantId=' + ${est.id}},
+1173:                                              data-archived=${s.archived}">
+1174:                                     <td th:text="${s.title}">Mati\xe8re</td>
+1175:                                     <td th:text="${s.hoursTd}">0</td>
+1176:                                     <td th:text="${s.hoursTp}">0</td>
+1177:                                     <td th:text="${s.hoursCm}">0</td>
+1178:                                     <td th:text="${s.coefficient != null ? s.coefficient : '-'}">-</td>
+1179:                                     <td>
+1180:                                         <a th:if="${s.programData != null}"
+1181:                                            th:href="@{'/tenant/app/subjects/' + ${s.id} + '/program?tenantId=' + ${est.id}}"
+1182:                                            target="_blank" rel="noopener">Programme</a>
+1183:                                         <span th:if="${s.programData == null}" class="muted">-</span>
+1184:                                     </td>
+1185:                                     <td>
+1186:                                         <span class="badge ok" th:if="${!s.archived}">Actif</span>
+1187:                                         <span class="badge warn" th:if="${s.archived}">Archiv\xe9</span>
+1188:                                     </td>
+1189:                                     <td>
+1190:                                         <div class="action-icons">
+1191:                                             <button type="button" class="icon-btn" title="Voir"
+1192:                                                     th:attr="data-id=${s.id},
+1193:                                                              data-title=${s.title},
+1194:                                                              data-td=${s.hoursTd},
+1195:                                                              data-tp=${s.hoursTp},
+1196:                                                              data-cm=${s.hoursCm},
+1197:                                                              data-coefficient=${s.coefficient},
+1198:                                                              data-levels=${s.levels != null ? #strings.listJoin(s.levels.![id], ',') : ''},
+1199:                                                              data-program-name=${s.programName},
+1200:                                                              data-program-url=@{'/tenant/app/subjects/' + ${s.id} + '/program?tenantId=' + ${est.id}},
+1201:                                                              data-archived=${s.archived}"
+1202:                                                     onclick="openSubjectModal('view', this)">&#128065;</button>
+1203:                                             <button type="button" class="icon-btn" title="Modifier"
+1204:                                                     th:attr="data-id=${s.id},
+1205:                                                              data-title=${s.title},
+1206:                                                              data-td=${s.hoursTd},
+1207:                                                              data-tp=${s.hoursTp},
+1208:                                                              data-cm=${s.hoursCm},
+1209:                                                              data-coefficient=${s.coefficient},
+1210:                                                              data-levels=${s.levels != null ? #strings.listJoin(s.levels.![id], ',') : ''},
+1211:                                                              data-program-name=${s.programName},
+1212:                                                              data-program-url=@{'/tenant/app/subjects/' + ${s.id} + '/program?tenantId=' + ${est.id}},
+1213:                                                              data-archived=${s.archived}"
+1214:                                                     onclick="openSubjectModal('edit', this)">\u270e</button>
+1215:                                             <form th:action="@{'/tenant/app/subjects/archive?tenantId=' + ${est.id}}"
+1216:                                                   method="post" style="display:inline;">
+1217:                                                 <input type="hidden" name="subjectId" th:value="${s.id}">
+1218:                                                 <input type="hidden" name="archived" th:value="${!s.archived}">
+1219:                                                 <button type="submit" class="icon-btn"
+1220:                                                         th:title="${s.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+1221:                                             </form>
+1222:                                             <form th:action="@{'/tenant/app/subjects/delete?tenantId=' + ${est.id}}"
+1223:                                                   method="post" style="display:inline;"
+1224:                                                   onsubmit="return confirm('Supprimer d\xe9finitivement cette mati\xe8re ?');">
+1225:                                                 <input type="hidden" name="subjectId" th:value="${s.id}">
+1226:                                                 <button type="submit" class="icon-btn danger" title="Supprimer">\U0001f5d1</button>
+1227:                                             </form>
+1228:                                         </div>
+1229:                                     </td>
+1230:                                 </tr>
+1231:                                 <tr th:if="${subjects == null or subjects.isEmpty()}">
+1232:                                     <td colspan="8" class="muted">Aucune mati\xe8re enregistr\xe9e.</td>
+1233:                                 </tr>
+1234:                                 </tbody>
+1235:                             </table>
+1236:                         </div>
+1237:                     </div>
+1238:                     <div th:case="'CAREER_PATHS'">
+1239:                         <div class="module-grid">
+1240:                             <div class="info"><span>Parcours</span><strong th:text="${careerPathsCount}">0</strong></div>
+1241:                             <div class="info"><span>Niveaux</span><strong th:text="${levels != null ? levels.size() : 0}">0</strong></div>
+1242:                         </div>
+1243:                         <div class="class-cards" style="margin-top:10px;">
+1244:                             <div class="class-card" th:each="p : ${careerPaths}">
+1245:                                 <div>
+1246:                                     <h5 th:text="${p.name}">Parcours</h5>
+1247:                                     <div class="muted" th:text="${p.level != null ? p.level.name : 'Sans niveau'}">Niveau</div>
+1248:                                 </div>
+1249:                                 <div class="class-meta">
+1250:                                     <div>Matieres <span th:text="${p.subjects != null ? p.subjects.size() : 0}">0</span></div>
+1251:                                     <div>Projets <span th:text="${p.projects != null ? p.projects.size() : 0}">0</span></div>
+1252:                                     <div>Stages <span th:text="${p.insertions != null ? p.insertions.size() : 0}">0</span></div>
+1253:                                     <div>Apprenants <span th:text="${p.students != null ? p.students.size() : 0}">0</span></div>
+1254:                                     <div>Statut <span th:text="${p.archived ? 'Archive' : 'Actif'}">Actif</span></div>
+1255:                                 </div>
+1256:                                 <div class="class-actions">
+1257:                                     <button type="button" class="icon-btn"
+1258:                                             title="Voir"
+1259:                                             th:attr="data-id=${p.id},
+1260:                                                      data-name=${p.name},
+1261:                                                      data-description=${p.description},
+1262:                                                      data-level=${p.level != null ? p.level.id : ''},
+1263:                                                      data-subjects=${p.subjects != null ? #strings.listJoin(p.subjects.![id], ',') : ''},
+1264:                                                      data-projects=${p.projects != null ? #strings.listJoin(p.projects.![id], ',') : ''},
+1265:                                                      data-insertions=${p.insertions != null ? #strings.listJoin(p.insertions.![id], ',') : ''},
+1266:                                                      data-students=${p.students != null ? #strings.listJoin(p.students.![id], ',') : ''},
+1267:                                                      data-archived=${p.archived}"
+1268:                                             onclick="openCareerPathModal('view', this)">&#128065;</button>
+1269:                                     <button type="button" class="icon-btn"
+1270:                                             title="Modifier"
+1271:                                             th:attr="data-id=${p.id},
+1272:                                                      data-name=${p.name},
+1273:                                                      data-description=${p.description},
+1274:                                                      data-level=${p.level != null ? p.level.id : ''},
+1275:                                                      data-subjects=${p.subjects != null ? #strings.listJoin(p.subjects.![id], ',') : ''},
+1276:                                                      data-projects=${p.projects != null ? #strings.listJoin(p.projects.![id], ',') : ''},
+1277:                                                      data-insertions=${p.insertions != null ? #strings.listJoin(p.insertions.![id], ',') : ''},
+1278:                                                      data-students=${p.students != null ? #strings.listJoin(p.students.![id], ',') : ''},
+1279:                                                      data-archived=${p.archived}"
+1280:                                             onclick="openCareerPathModal('edit', this)">&#9998;</button>
+1281:                                     <form th:action="@{'/tenant/app/career-paths/archive?tenantId=' + ${est.id}}"
+1282:                                           method="post" onsubmit="return confirm('Changer le statut de ce parcours ?');">
+1283:                                         <input type="hidden" name="pathId" th:value="${p.id}">
+1284:                                         <input type="hidden" name="archived" th:value="${!p.archived}">
+1285:                                         <button type="submit" class="icon-btn" th:title="${p.archived ? 'Restaurer' : 'Archiver'}">&#128451;</button>
+1286:                                     </form>
+1287:                                     <form th:action="@{'/tenant/app/career-paths/delete?tenantId=' + ${est.id}}"
+1288:                                           method="post" onsubmit="return confirm('Supprimer d\xe9finitivement ce parcours ?');">
+1289:                                         <input type="hidden" name="pathId" th:value="${p.id}">
+1290:                                         <button type="submit" class="icon-btn danger" title="Supprimer">&#128465;</button>
+1291:                                     </form>
+1292:                                 </div>
+1293:                             </div>
+1294:                             <div class="muted" th:if="${careerPaths == null or careerPaths.isEmpty()}">
+1295:                                 Aucun parcours enregistr\xe9.
+1296:                             </div>
+1297:                         </div>
+1298:                     </div>
+1299:                     <div th:case="'ACADEMIC_YEAR'">
+1300:                         <div class="module-grid">
+1301:                             <div class="info"><span>Ann\xe9e active</span><strong>2024-2025</strong></div>
+1302:                             <div class="info"><span>P\xe9riodes</span><strong>3 trimestres</strong></div>
+1303:                         </div>
+1304:                     </div>
+1305:                     <div th:case="'CLASSES'">
+1306:                         <div class="module-grid">
+1307:                             <div class="info"><span>Classes</span><strong th:text="${classesCount}">0</strong></div>
+1308:                             <div class="info"><span>Salles</span><strong th:text="${roomsCount}">0</strong></div>
+1309:                             <div class="info"><span>Niveaux</span><strong th:text="${levelsCount}">0</strong></div>
+1310:                         </div>
+1311:                         <div class="class-stack">
+1312:                             <div class="panel-block">
+1313:                                 <div class="section-head" style="margin-bottom:8px;">
+1314:                                     <div>
+1315:                                         <h4 style="margin:0;">Niveaux d'\xe9tude</h4>
+1316:                                         <p class="muted" style="margin:4px 0 0 0;">Vue rapide des niveaux existants.</p>
+1317:                                     </div>
+1318:                                 </div>
+1319:                                 <div class="level-cards">
+1320:                                     <div class="level-card" th:each="lvl : ${levels}">
+1321:                                         <div class="level-title" th:text="${lvl.name}">Niveau</div>
+1322:                                         <div class="class-meta">
+1323:                                             <div>Classes <span th:text="${classesByLevel[lvl.id] != null ? classesByLevel[lvl.id].size() : 0}">0</span></div>
+1324:                                         </div>
+1325:                                         <div class="level-actions">
+1326:                                             <button type="button" class="icon-btn"
+1327:                                                     title="Modifier"
+1328:                                                     th:attr="data-id=${lvl.id},data-name=${lvl.name}"
+1329:                                                     onclick="openLevelEditModal(this)">\u270e</button>
+1330:                                             <form th:action="@{'/tenant/app/levels/archive?tenantId=' + ${est.id}}" method="post"
+1331:                                                   onsubmit="return confirm('Changer le statut de ce niveau ?');">
+1332:                                                 <input type="hidden" name="levelId" th:value="${lvl.id}">
+1333:                                                 <input type="hidden" name="archived" th:value="${!lvl.archived}">
+1334:                                                 <button type="submit" class="icon-btn" th:title="${lvl.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+1335:                                             </form>
+1336:                                             <form th:action="@{'/tenant/app/levels/delete?tenantId=' + ${est.id}}" method="post"
+1337:                                                   onsubmit="return confirm('Supprimer d\xe9finitivement ce niveau ?');">
+1338:                                                 <input type="hidden" name="levelId" th:value="${lvl.id}">
+1339:                                                 <button type="submit" class="icon-btn danger" title="Supprimer">\U0001f5d1</button>
+1340:                                             </form>
+1341:                                         </div>
+1342:                                     </div>
+1343:                                     <div class="muted" th:if="${levels == null or levels.isEmpty()}">
+1344:                                         Aucun niveau enregistr\xe9.
+1345:                                     </div>
+1346:                                 </div>
+1347:                             </div>
+1348:                             <div class="panel-block">
+1349:                                 <div class="section-head" style="margin-bottom:8px;">
+1350:                                     <div>
+1351:                                         <h4 style="margin:0;">Salles</h4>
+1352:                                         <p class="muted" style="margin:4px 0 0 0;">Capacit\xe9, places disponibles et attribution.</p>
+1353:                                     </div>
+1354:                                 </div>
+1355:                                 <div class="room-table">
+1356:                                     <table>
+1357:                                         <thead>
+1358:                                         <tr>
+1359:                                             <th>Salle</th>
+1360:                                             <th>Capacit\xe9</th>
+1361:                                             <th>Places disponibles</th>
+1362:                                             <th>Classe attribu\xe9e</th>
+1363:                                             <th>Actions</th>
+1364:                                         </tr>
+1365:                                         </thead>
+1366:                                         <tbody>
+1367:                                         <tr th:each="r : ${rooms}"
+1368:                                             th:with="roomId=${r != null ? r.id : null},
+1369:                                                      assigned=${roomEffectifs != null and roomId != null ? roomEffectifs[roomId] : null},
+1370:                                                      capacity=${r.capacity},
+1371:                                                      remaining=${capacity != null ? capacity - (assigned != null ? assigned : 0) : null},
+1372:                                                      roomClasses=${classes != null and roomId != null ? classes.?[room != null and room.id != null and room.id == roomId] : null}">
+1373:                                             <td th:text="${r.name}">Salle</td>
+1374:                                             <td th:text="${capacity != null ? capacity : '\u2014'}">\u2014</td>
+1375:                                             <td th:text="${remaining != null ? remaining : '\u2014'}"
+1376:                                                 th:classappend="${remaining != null and remaining < 0} ? ' over-capacity' : ''">\u2014</td>
+1377:                                             <td th:text="${roomClasses != null and !roomClasses.isEmpty() ? (#lists.size(roomClasses) == 1 ? roomClasses[0].name : #lists.size(roomClasses) + ' classes') : '\u2014'}">\u2014</td>
+1378:                                             <td class="class-actions">
+1379:                                                 <button type="button" class="icon-btn"
+1380:                                                         title="Modifier"
+1381:                                                         th:attr="data-id=${r.id},
+1382:                                                                  data-name=${r.name},
+1383:                                                                  data-capacity=${r.capacity}"
+1384:                                                         onclick="openRoomModal('edit', this)">\u270e</button>
+1385:                                                 <form th:action="@{'/tenant/app/rooms/archive?tenantId=' + ${est.id}}" method="post"
+1386:                                                       onsubmit="return confirm('Changer le statut de cette salle ?');">
+1387:                                                     <input type="hidden" name="roomId" th:value="${r.id}">
+1388:                                                     <input type="hidden" name="archived" th:value="${!r.archived}">
+1389:                                                     <button type="submit" class="icon-btn" th:title="${r.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+1390:                                                 </form>
+1391:                                                 <form th:action="@{'/tenant/app/rooms/delete?tenantId=' + ${est.id}}" method="post"
+1392:                                                       onsubmit="return confirm('Supprimer d\xe9finitivement cette salle ?');">
+1393:                                                     <input type="hidden" name="roomId" th:value="${r.id}">
+1394:                                                     <button type="submit" class="icon-btn danger" title="Supprimer">\U0001f5d1</button>
+1395:                                                 </form>
+1396:                                             </td>
+1397:                                         </tr>
+1398:                                         <tr th:if="${rooms == null or rooms.isEmpty()}">
+1399:                                             <td colspan="5" class="muted">Aucune salle enregistr\xe9e.</td>
+1400:                                         </tr>
+1401:                                         </tbody>
+1402:                                     </table>
+1403:                                 </div>
+1404:                             </div>
+1405:                             <div class="panel-block">
+1406:                                 <div class="section-head" style="margin-bottom:8px;">
+1407:                                     <div>
+1408:                                         <h4 style="margin:0;">Classes</h4>
+1409:                                         <p class="muted" style="margin:4px 0 0 0;">Classes par niveau et salle.</p>
+1410:                                     </div>
+1411:                                 </div>
+1412:                                 <div class="class-table">
+1413:                                     <table>
+1414:                                         <thead>
+1419:                                             <th>Effectif</th>
+1420:                                             <th>Capacit\xe9 salle</th>
+1421:                                             <th>Surplus</th>
+1422:                                             <th>Actions</th>
+1423:                                         </tr>
+1424:                                         </thead>
+1425:                                         <tbody>
+1426:                                         <tr th:each="c : ${classes}"
+1427:                                             th:with="eff=${classEffectifs[c.id]},
+1428:                                                      capacity=${c.room != null ? c.room.capacity : null},
+1429:                                                      surplus=${eff != null and capacity != null and eff > capacity ? eff - capacity : 0}">
+1430:                                             <td th:text="${c.name}">Classe</td>
+1431:                                             <td th:text="${c.level != null ? c.level.name : 'Sans niveau'}">Niveau</td>
+1432:                                             <td th:text="${c.room != null ? c.room.name : '\u2014'}">\u2014</td>
+1433:                                             <td th:text="${eff != null ? eff : '\u2014'}"
+1434:                                                 th:classappend="${eff != null and capacity != null and eff > capacity} ? ' over-capacity' : ''">\u2014</td>
+1435:                                             <td th:text="${capacity != null ? capacity : '\u2014'}">\u2014</td>
+1436:                                             <td th:text="${eff != null and capacity != null ? (surplus > 0 ? surplus : 0) : '\u2014'}"
+1437:                                                 th:classappend="${eff != null and capacity != null and surplus > 0} ? ' over-capacity' : ''">\u2014</td>
+1438:                                             <td class="class-actions">
+1439:                                                 <button type="button" class="icon-btn"
+1440:                                                         title="Modifier"
+1441:                                                         th:attr="data-id=${c.id},
+1442:                                                                  data-name=${c.name},
+1443:                                                                  data-level=${c.level != null ? c.level.id : ''},
+1444:                                                                  data-year=${c.academicYear != null ? c.academicYear.id : ''},
+1445:                                                                  data-room=${c.room != null ? c.room.id : ''},
+1446:                                                                  data-responsible-staff=${c.responsibleStaff},
+1447:                                                                  data-delegate=${c.delegateStudent},
+1448:                                                                  data-effectif=${classEffectifs[c.id]}"
+1449:                                                         onclick="openClassModal('edit', this)">\u270e</button>
+1450:                                                 <form th:action="@{'/tenant/app/classes/archive?tenantId=' + ${est.id}}" method="post"
+1451:                                                       onsubmit="return confirm('Changer le statut de cette classe ?');">
+1452:                                                     <input type="hidden" name="classId" th:value="${c.id}">
+1453:                                                     <input type="hidden" name="archived" th:value="${!c.archived}">
+1454:                                                     <button type="submit" class="icon-btn" th:title="${c.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+1455:                                                 </form>
+1456:                                                 <form th:action="@{'/tenant/app/classes/delete?tenantId=' + ${est.id}}" method="post"
+1457:                                                       onsubmit="return confirm('Supprimer d\xe9finitivement cette classe ?');">
+1458:                                                     <input type="hidden" name="classId" th:value="${c.id}">
+1459:                                                     <button type="submit" class="icon-btn danger" title="Supprimer">\U0001f5d1</button>
+1460:                                                 </form>
+1461:                                             </td>
+1462:                                         </tr>
+1463:                                         <tr th:if="${classes == null or classes.isEmpty()}">
+1464:                                             <td colspan="7" class="muted">Aucune classe enregistr\xe9e.</td>
+1465:                                         </tr>
+1466:                                         </tbody>
+1467:                                     </table>
+1468:                                 </div>
+1469:                             </div>
+1470:                         </div>
+1471:                     </div>
+1472:                     <div th:case="'STUDENTS'">
+1473:                         <div class="module-grid">
+1474:                             <div class="info"><span>Apprenants</span><strong th:text="${studentsCount != null ? studentsCount : 0}">0</strong></div>
+1475:                             <div class="info"><span>Archiv\xe9s</span><strong th:text="${studentUsers != null ? studentUsers.?[archived].size() : 0}">0</strong></div>
+1476:                         </div>
+1477:                         <div class="table-wrap">
+1478:                             <table id="studentsTable">
+1479:                                 <thead>
+1484:                                 <tbody>
+1485:                                 <tr th:each="s : ${studentUsers}">
+1486:                                     <td>
+1487:                                         <div class="avatar" th:if="${s.photoUrl}">
+1488:                                             <img th:src="${s.photoUrl}" alt="photo">
+1489:                                         </div>
+1490:                                         <div class="avatar" th:unless="${s.photoUrl}">
+1491:                                             <span th:text="${s.firstName != null && !s.firstName.isBlank() ? #strings.substring(s.firstName,0,1).toUpperCase() : 'A'}">A</span>
+1492:                                         </div>
+1493:                                     </td>
+1494:                                     <td th:text="${s.lastName != null && !s.lastName.isBlank() ? s.lastName : '\u2014'}">\u2014</td>
+1495:                                     <td th:text="${s.firstName != null && !s.firstName.isBlank() ? s.firstName : '\u2014'}">\u2014</td>
+1496:                                     <td th:text="${s.email != null && !s.email.isBlank() ? s.email : '\u2014'}">\u2014</td>
+1497:                                     <td th:text="${s.schoolClass != null ? s.schoolClass.name : '\u2014'}">\u2014</td>
+1498:                                     <td>
+1499:                                         <span class="badge ok" th:if="${s.enabled}">Actif</span>
+1500:                                         <span class="badge warn" th:unless="${s.enabled}">Inactif</span>
+1501:                                         <span class="badge warn" th:if="${s.archived}" style="margin-left:6px;">Archiv\xe9</span>
+1502:                                     </td>
+1503:                                     <td>
+1504:                                         <div class="action-icons">
+1505:                                             <button type="button" class="icon-btn"
+1506:                                                     title="Voir"
+1507:                                                     th:attr="data-id=${s.id},
+1508:                                                              data-first-name=${s.firstName},
+1509:                                                              data-last-name=${s.lastName},
+1510:                                                              data-email=${s.email},
+1511:                                                              data-phone-fixed=${s.phoneFixed},
+1512:                                                              data-phone-mobile=${s.phoneMobile},
+1513:                                                      data-class-id=${s.schoolClass != null ? s.schoolClass.id : ''},
+1514:                                                      data-career-path-id=${studentCareerPathById[s.id]},
+1515:                                                      data-class-name=${s.schoolClass != null ? s.schoolClass.name : ''},
+1516:                                                              data-observation=${s.observation},
+1517:                                                              data-photo=${s.photoUrl},
+1518:                                                              data-subjects=${s.subjects != null ? #strings.listJoin(s.subjects.![id], ',') : ''}"
+1519:                                                     onclick="openStudentModal('view', this)">&#128065;</button>
+1520:                                             <button type="button" class="icon-btn"
+1521:                                                     title="Modifier"
+1522:                                                     th:attr="data-id=${s.id},
+1523:                                                              data-first-name=${s.firstName},
+1524:                                                              data-last-name=${s.lastName},
+1525:                                                              data-email=${s.email},
+1526:                                                              data-phone-fixed=${s.phoneFixed},
+1527:                                                              data-phone-mobile=${s.phoneMobile},
+1528:                                                              data-class-id=${s.schoolClass != null ? s.schoolClass.id : ''},
+1529:                                                              data-career-path-id=${studentCareerPathById[s.id]},
+1530:                                                              data-class-name=${s.schoolClass != null ? s.schoolClass.name : ''},
+1531:                                                              data-observation=${s.observation},
+1532:                                                              data-photo=${s.photoUrl},
+1533:                                                              data-subjects=${s.subjects != null ? #strings.listJoin(s.subjects.![id], ',') : ''}"
+1534:                                                     onclick="openStudentModal('edit', this)">\u270e</button>
+1535:                                             <form th:action="@{'/tenant/app/students/archive?tenantId=' + ${est.id}}" method="post"
+1536:                                                   onsubmit="return confirm('Changer l''\xe9tat archiv\xe9 de cet apprenant ?');">
+1537:                                                 <input type="hidden" name="studentId" th:value="${s.id}">
+1538:                                                 <input type="hidden" name="archived" th:value="${!s.archived}">
+1539:                                                 <button type="submit" class="icon-btn" th:title="${s.archived ? 'Restaurer' : 'Archiver'}">\U0001f5c3</button>
+1540:                                             </form>
+1541:                                             <form th:action="@{'/tenant/app/students/delete?tenantId=' + ${est.id}}" method="post"
+1542:                                                   onsubmit="return confirm('Supprimer d\xe9finitivement cet apprenant ?');">
+1543:                                                 <input type="hidden" name="studentId" th:value="${s.id}">
+1544:                                                 <button type="submit" class="icon-btn danger" title="Supprimer">\U0001f5d1</button>
+1545:                                             </form>
+1546:                                         </div>
+1547:                                     </td>
+1548:                                 </tr>
+1549:                                 <tr th:if="${studentUsers == null or studentUsers.isEmpty()}">
+1550:                                     <td colspan="7" class="muted">Aucun apprenant enregistr\xe9.</td>
+1551:                                 </tr>
+1552:                                 </tbody>
+1553:                             </table>
+1554:                         </div>
+1555:                     </div>
+1556:                     <div th:case="'TEACHERS'">
+1557:                         <div class="module-grid">
+1558:                             <div class="info"><span>Enseignants</span><strong th:text="${teachersCount != null ? teachersCount : 0}">0</strong></div>
+1559:                             <div class="info"><span>Enseignants titulaires</span><strong th:text="${teachersTitulaireCount != null ? teachersTitulaireCount : 0}">0</strong></div>
+1560:                             <div class="info"><span>Vacataires</span><strong th:text="${teachersVacataireCount != null ? teachersVacataireCount : 0}">0</strong></div>
+1561:                         </div>
+1562:                         <div class="table-wrap">
+1563:                             <table id="teachersTable">
+1564:                                 <thead>
+1570:                                 <tr th:each="t : ${teacherUsers}">
+1571:                                     <td>
+1572:                                         <div class="avatar" th:if="${t.photoUrl}">
+1573:                                             <img th:src="${t.photoUrl}" alt="photo">
+1574:                                         </div>
+1575:                                         <div class="avatar" th:unless="${t.photoUrl}">
+1576:                                             <span th:text="${t.firstName != null && !t.firstName.isBlank() ? #strings.substring(t.firstName,0,1).toUpperCase() : 'E'}">E</span>
+1577:                                         </div>
+1578:                                     </td>
+1579:                                     <td th:text="${t.lastName != null && !t.lastName.isBlank() ? t.lastName : '\u2014'}">\u2014</td>
+1580:                                     <td th:text="${t.firstName != null && !t.firstName.isBlank() ? t.firstName : '\u2014'}">\u2014</td>
+1581:                                     <td th:text="${t.email != null && !t.email.isBlank() ? t.email : '\u2014'}">\u2014</td>
+1582:                                     <td th:text="${t.teacherType != null && !t.teacherType.isBlank() ? t.teacherType : 'TITULAIRE'}">TITULAIRE</td>
+1583:                                     <td th:text="${t.schoolClass != null ? t.schoolClass.name : '\u2014'}">\u2014</td>
+1584:                                     <td>
+1585:                                         <span class="badge ok" th:if="${t.enabled}">Actif</span>
+1586:                                         <span class="badge warn" th:unless="${t.enabled}">Inactif</span>
+1587:                                         <span class="badge warn" th:if="${t.archived}" style="margin-left:6px;">Archiv\xe9</span>
+1588:                                     </td>
+1589:                                     <td>
+1590:                                         <div class="action-icons">
+1591:                                             <button type="button" class="icon-btn"
+1592:                                                     title="Voir"
+1593:                                                     th:attr="data-id=${t.id},
+1594:                                                              data-first-name=${t.firstName},
+1595:                                                              data-last-name=${t.lastName},
+1596:                                                              data-email=${t.email},
+1597:                                                              data-phone-fixed=${t.phoneFixed},
+1598:                                                              data-phone-mobile=${t.phoneMobile},
+1599:                                                              data-type=${t.teacherType},
+1600:                                                              data-class-id=${t.schoolClass != null ? t.schoolClass.id : ''},
+1601:                                                              data-class-name=${t.schoolClass != null ? t.schoolClass.name : ''},
+1602:                                                              data-observation=${t.observation},
+1603:                                                              data-subjects=${t.subjects != null ? #strings.listJoin(t.subjects.![id], ',') : ''},
+1604:                                                              data-photo=${t.photoUrl}"
+1605:                                                     onclick="openTeacherModal('view', this)">&#128065;</button>
+1606:                                             <button type="button" class="icon-btn"
+1607:                                                     title="Modifier"
+1608:                                                     th:attr="data-id=${t.id},
+1609:                                                              data-first-name=${t.firstName},
+1610:                                                              data-last-name=${t.lastName},
+1611:                                                              data-email=${t.email},
+1612:                                                              data-phone-fixed=${t.phoneFixed},
+1613:                                                              data-phone-mobile=${t.phoneMobile},
+1614:                                                              data-type=${t.teacherType},
+1615:                                                              data-class-id=${t.schoolClass != null ? t.schoolClass.id : ''},
+1616:                                                              data-class-name=${t.schoolClass != null ? t.schoolClass.name : ''},
+1617:                                                              data-observation=${t.observation},
+1618:                                                              data-subjects=${t.subjects != null ? #strings.listJoin(t.subjects.![id], ',') : ''},
+1619:                                                              data-photo=${t.photoUrl}"
+1620:                                                     onclick="openTeacherModal('edit', this)">\u270e</button>
+1621:                                             <form th:action="@{'/tenant/app/teachers/archive?tenantId=' + ${est.id}}" method="post"
+1622:                                                   onsubmit="return confirm('Changer l''\xe9tat archiv\xe9 de cet enseignant ?');">
+1623:                                                 <input type="hidden" name="teacherId" th:value="${t.id}">
+1624:                                                 <input type="hidden" name="archived" th:value="${!t.archived}">
+1625:                                                 <button type="submit" class="icon-btn" title="Archiver">\U0001f4e6</button>
+1626:                                             </form>
+1627:                                             <form th:action="@{'/tenant/app/teachers/delete?tenantId=' + ${est.id}}" method="post"
+1628:                                                   onsubmit="return confirm('Supprimer d\xe9finitivement cet enseignant ?');">
+1629:                                                 <input type="hidden" name="teacherId" th:value="${t.id}">
+1630:                                                 <button type="submit" class="icon-btn" title="Supprimer">\U0001f5d1\ufe0f</button>
+1631:                                             </form>
+1632:                                         </div>
+1633:                                     </td>
+1634:                                 </tr>
+1635:                                 <tr th:if="${teacherUsers == null or teacherUsers.isEmpty()}">
+1636:                                     <td colspan="8" class="muted">Aucun enseignant enregistr\xe9.</td>
+1637:                                 </tr>
+1638:                                 </tbody>
+1639:                             </table>
+1640:                         </div>
+1641:                     </div>
+1642:                     <div th:case="'PEDAGOGICAL_PROJECTS'">
+1643:                         <div class="table-wrap">
+1644:                             <table>
+1645:                                 <thead>
+1646:                                 <tr>
+1647:                                     <th>Titre</th>
+1648:                                     <th>Ann\xe9e</th>
+1649:                                     <th>Responsable</th>
+1650:                                     <th>Budget</th>
+1654:                                 </thead>
+1655:                                 <tbody>
+1656:                                 <tr th:each="p : ${projects}"
+1657:                                     th:attr="data-id=${p.id},
+1658:                                              data-title=${p.title},
+1659:                                              data-year=${p.academicYear},
+1660:                                              data-responsible=${p.responsible},
+1661:                                              data-status=${p.status},
+1662:                                              data-budget=${p.budget},
+1663:                                              data-description=${p.description},
+1664:                                              data-archived=${p.archived}">
+1665:                                     <td th:text="${p.title}">Projet</td>
+1666:                                     <td th:text="${p.academicYear != null ? p.academicYear : '\u2014'}">Ann\xe9e</td>
+1667:                                     <td th:text="${p.responsible != null ? p.responsible : '\u2014'}">Resp</td>
+1668:                                     <td th:text="${p.budget != null ? p.budget : '\u2014'}">0</td>
+1669:                                     <td>
+1670:                                         <span class="badge ok" th:if="${!p.archived}">Actif</span>
+1671:                                         <span class="badge warn" th:if="${p.archived}">Archiv\xe9</span>
+1672:                                     </td>
+1673:                                     <td>
+1674:                                         <div class="action-icons">
+1675:                                             <button type="button" class="icon-btn" title="Voir"
+1676:                                                     th:attr="data-id=${p.id},
+1677:                                                              data-title=${p.title},
+1678:                                                              data-year=${p.academicYear},
+1679:                                                              data-responsible=${p.responsible},
+1680:                                                              data-status=${p.status},
+1681:                                                              data-budget=${p.budget},
+1682:                                                              data-description=${p.description},
+1683:                                                              data-archived=${p.archived}"
+1684:                                                     onclick="openProjectModal('view', this)">&#128065;</button>
+1685:                                             <button type="button" class="icon-btn" title="Modifier"
+1686:                                                     th:attr="data-id=${p.id},
+1687:                                                              data-title=${p.title},
+1688:                                                              data-year=${p.academicYear},
+1689:                                                              data-responsible=${p.responsible},
+1690:                                                              data-status=${p.status},
+1691:                                                              data-budget=${p.budget},
+1692:                                                              data-description=${p.description},
+1693:                                                              data-archived=${p.archived}"
+1694:                                                     onclick="openProjectModal('edit', this)">&#9998;</button>
+1695:                                             <form method="post" th:action="@{'/tenant/app/projects/archive?tenantId=' + ${est.id}}" style="display:inline;">
+1696:                                                 <input type="hidden" name="projectId" th:value="${p.id}">
+1697:                                                 <input type="hidden" name="archived" th:value="${!p.archived}">
+1698:                                                 <button type="submit" class="icon-btn" th:title="${p.archived ? 'Restaurer' : 'Archiver'}"
+1699:                                                         th:text="${p.archived ? '\u21ba' : '\u23f8'}">\u23f8</button>
+1700:                                             </form>
+1701:                                             <form method="post" th:action="@{'/tenant/app/projects/delete?tenantId=' + ${est.id}}" style="display:inline;">
+1702:                                                 <input type="hidden" name="projectId" th:value="${p.id}">
+1703:                                                 <button type="submit" class="icon-btn danger" title="Supprimer"
+1704:                                                         onclick="return confirm('Supprimer ce projet ?');">&#128465;</button>
+1705:                                             </form>
+1706:                                         </div>
+1707:                                     </td>
+1708:                                 </tr>
+1709:                                 <tr th:if="${projects == null or projects.isEmpty()}">
+1710:                                     <td colspan="6" class="muted">Aucun projet enregistr\xe9.</td>
+1711:                                 </tr>
+1712:                                 </tbody>
+1713:                             </table>
+1714:                         </div>
+1715:                     </div>
+1716:                     <div th:case="'TIMETABLE'">
+1717:                         <div class="module-grid">
+1718:                             <div class="info"><span>Emplois du temps</span><strong>0</strong></div>
+1719:                             <div class="info"><span>Salles</span><strong>0</strong></div>
+1720:                         </div>
+1721:                     </div>
+1722:                     <div th:case="'COMMUNICATION'">
+1723:                         <div class="module-grid">
+1791:                                 <tr th:each="i : ${insertions}"
+1792:                                     th:attr="data-id=${i.id},
+1793:                                              data-type=${i.type},
+1794:                                              data-partner=${i.partnerName},
+1795:                                              data-title=${i.title},
+1796:                                              data-level=${i.levelOrClass},
+1797:                                              data-start=${i.startDate},
+1798:                                              data-end=${i.endDate},
+1799:                                              data-responsible=${i.responsible},
+1800:                                              data-contact=${i.contactName},
+1801:                                              data-email=${i.contactEmail},
+1802:                                              data-phone=${i.contactPhone},
+1803:                                              data-description=${i.description},
+1804:                                              data-archived=${i.archived}">
+1805:                                     <td th:text="${i.type}">Type</td>
+1806:                                     <td th:text="${i.partnerName}">Partenaire</td>
+1807:                                     <td th:text="${i.title != null ? i.title : '\u2014'}">Intitul\xe9</td>
+1808:                                     <td th:text="${i.levelOrClass != null ? i.levelOrClass : '\u2014'}">Niveau</td>
+1809:                                     <td th:text="${i.startDate != null ? #temporals.format(i.startDate, 'dd/MM/yyyy') : '\u2014'} + ' - ' + ${i.endDate != null ? #temporals.format(i.endDate, 'dd/MM/yyyy') : '\u2014'}">P\xe9riode</td>
+1810:                                     <td>
+1811:                                         <div class="action-icons">
+1812:                                             <button type="button" class="icon-btn" title="Voir"
+1813:                                                     th:attr="data-id=${i.id},
+1814:                                                              data-type=${i.type},
+1815:                                                              data-partner=${i.partnerName},
+1816:                                                              data-title=${i.title},
+1817:                                                              data-level=${i.levelOrClass},
+1818:                                                              data-start=${i.startDate},
+1819:                                                              data-end=${i.endDate},
+1820:                                                              data-responsible=${i.responsible},
+1821:                                                              data-contact=${i.contactName},
+1822:                                                              data-email=${i.contactEmail},
+1823:                                                              data-phone=${i.contactPhone},
+1824:                                                              data-description=${i.description},
+1825:                                                              data-archived=${i.archived}"
+1826:                                                     onclick="openInsertionModal('view', this)">&#128065;</button>
+1827:                                             <button type="button" class="icon-btn" title="Modifier"
+1828:                                                     th:attr="data-id=${i.id},
+1829:                                                              data-type=${i.type},
+1830:                                                              data-partner=${i.partnerName},
+1831:                                                              data-title=${i.title},
+1832:                                                              data-level=${i.levelOrClass},
+1833:                                                              data-start=${i.startDate},
+1834:                                                              data-end=${i.endDate},
+1835:                                                              data-responsible=${i.responsible},
+1836:                                                              data-contact=${i.contactName},
+1837:                                                              data-email=${i.contactEmail},
+1838:                                                              data-phone=${i.contactPhone},
+1839:                                                              data-description=${i.description},
+1840:                                                              data-archived=${i.archived}"
+1841:                                                     onclick="openInsertionModal('edit', this)">&#9998;</button>
+1842:                                             <form method="post" th:action="@{'/tenant/app/insertion/archive?tenantId=' + ${est.id}}" style="display:inline;">
+1843:                                                 <input type="hidden" name="insertionId" th:value="${i.id}">
+1844:                                                 <input type="hidden" name="archived" th:value="${!i.archived}">
+1845:                                                 <button type="submit" class="icon-btn" th:title="${i.archived ? 'Restaurer' : 'Archiver'}"
+1846:                                                         th:text="${i.archived ? '\u21ba' : '\u23f8'}">\u23f8</button>
+1847:                                             </form>
+1848:                                             <form method="post" th:action="@{'/tenant/app/insertion/delete?tenantId=' + ${est.id}}" style="display:inline;">
+1849:                                                 <input type="hidden" name="insertionId" th:value="${i.id}">
+1850:                                                 <button type="submit" class="icon-btn danger" title="Supprimer"
+1851:                                                         onclick="return confirm('Supprimer cette insertion ?');">&#128465;</button>
+1852:                                             </form>
+1853:                                         </div>
+1854:                                     </td>
+1855:                                 </tr>
+1856:                                 <tr th:if="${insertions == null or insertions.isEmpty()}">
+1857:                                     <td colspan="6" class="muted">Aucune insertion enregistr\xe9e.</td>
+1858:                                 </tr>
+1859:                                 </tbody>
+1860:                             </table>
+1861:                         </div>
+1862:                     </div>
+1863:                     <div th:case="'CAREER_PATHS'">
+1864:                         <div class="module-grid">
+1865:                             <div class="info"><span>Parcours</span><strong th:text="${careerPathsCount}">0</strong></div>
+1866:                             <div class="info"><span>Niveaux</span><strong th:text="${levels != null ? levels.size() : 0}">0</strong></div>
+1867:                         </div>
+1868:                         <div class="class-cards" style="margin-top:10px;">
+1869:                             <div class="class-card" th:each="p : ${careerPaths}">
+1870:                                 <div>
+1871:                                     <h5 th:text="${p.name}">Parcours</h5>
+1872:                                     <div class="muted" th:text="${p.level != null ? p.level.name : 'Sans niveau'}">Niveau</div>
+1873:                                 </div>
+1874:                                 <div class="class-meta">
+1875:                                     <div>Matieres <span th:text="${p.subjects != null ? p.subjects.size() : 0}">0</span></div>
+1876:                                     <div>Projets <span th:text="${p.projects != null ? p.projects.size() : 0}">0</span></div>
+1877:                                     <div>Stages <span th:text="${p.insertions != null ? p.insertions.size() : 0}">0</span></div>
+1878:                                     <div>Apprenants <span th:text="${p.students != null ? p.students.size() : 0}">0</span></div>
+1879:                                     <div>Statut <span th:text="${p.archived ? 'Archive' : 'Actif'}">Actif</span></div>
+1880:                                 </div>
+1881:                                 <div class="class-actions">
+1882:                                     <button type="button" class="icon-btn"
+1883:                                             title="Voir"
+1884:                                             th:attr="data-id=${p.id},
+1885:                                                      data-name=${p.name},
+1886:                                                      data-description=${p.description},
+1887:                                                      data-level=${p.level != null ? p.level.id : ''},
+1888:                                                      data-subjects=${p.subjects != null ? #strings.listJoin(p.subjects.![id], ',') : ''},
+1889:                                                      data-projects=${p.projects != null ? #strings.listJoin(p.projects.![id], ',') : ''},
+1890:                                                      data-insertions=${p.insertions != null ? #strings.listJoin(p.insertions.![id], ',') : ''},
+1891:                                                      data-students=${p.students != null ? #strings.listJoin(p.students.![id], ',') : ''},
+1892:                                                      data-archived=${p.archived}"
+1893:                                             onclick="openCareerPathModal('view', this)">&#128065;</button>
+1894:                                     <button type="button" class="icon-btn"
+1895:                                             title="Modifier"
+1896:                                             th:attr="data-id=${p.id},
+1897:                                                      data-name=${p.name},
+1898:                                                      data-description=${p.description},
+1899:                                                      data-level=${p.level != null ? p.level.id : ''},
+1900:                                                      data-subjects=${p.subjects != null ? #strings.listJoin(p.subjects.![id], ',') : ''},
+1901:                                                      data-projects=${p.projects != null ? #strings.listJoin(p.projects.![id], ',') : ''},
+1902:                                                      data-insertions=${p.insertions != null ? #strings.listJoin(p.insertions.![id], ',') : ''},
+1903:                                                      data-students=${p.students != null ? #strings.listJoin(p.students.![id], ',') : ''},
+1904:                                                      data-archived=${p.archived}"
+1905:                                             onclick="openCareerPathModal('edit', this)">&#9998;</button>
+1906:                                     <form th:action="@{'/tenant/app/career-paths/archive?tenantId=' + ${est.id}}"
+1907:                                           method="post" onsubmit="return confirm('Changer le statut de ce parcours ?');">
+1908:                                         <input type="hidden" name="pathId" th:value="${p.id}">
+1909:                                         <input type="hidden" name="archived" th:value="${!p.archived}">
+1910:                                         <button type="submit" class="icon-btn" th:title="${p.archived ? 'Restaurer' : 'Archiver'}">&#128451;</button>
+1911:                                     </form>
+1912:                                     <form th:action="@{'/tenant/app/career-paths/delete?tenantId=' + ${est.id}}"
+1913:                                           method="post" onsubmit="return confirm('Supprimer d\xe9finitivement ce parcours ?');">
+1914:                                         <input type="hidden" name="pathId" th:value="${p.id}">
+1915:                                         <button type="submit" class="icon-btn danger" title="Supprimer">&#128465;</button>
+1916:                                     </form>
+1917:                                 </div>
+1918:                             </div>
+1919:                             <div class="muted" th:if="${careerPaths == null or careerPaths.isEmpty()}">
+1920:                                 Aucun parcours enregistr\xe9.
+1921:                             </div>
+1922:                         </div>
+1923:                     </div>
+1924:                     <div th:case="*">
+1925:                         <p class="muted">Module pr\xeat \xe0 \xeatre configur\xe9.</p>
+1926:                     </div>
+1927:                 </div>
+1928:                 <p class="muted" th:if="${item.status.name() != 'ACTIVE'}">Module inactif. Fonctionnalit\xe9 en cours de d\xe9ploiement.</p>
+1929:             </section>
+1930:         </main>
+1931:     </div>
+1932: 
+1933:     <footer class="page-footer">
+1934:         <div>\xa9 EdiTik - OSM Open Suku Manager</div>
+1935:         <div class="legal">Mentions l\xe9gales - Tous droits r\xe9serv\xe9s.</div>
+1936:     </footer>
+1937: 
+1938:     <div id="subjectModal" class="modal-overlay">
+1939:         <div class="modal">
+1940:             <h3 id="subjectModalTitle">Cr\xe9er une mati\xe8re</h3>
+1941:             <small id="subjectModalSubtitle">Renseignez l'intitul\xe9 et le volume horaire.</small>
+1942:             <form id="subjectForm" method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/subjects?tenantId=' + ${est.id}}">
+1943:                 <input type="hidden" id="subjectId" name="subjectId">
+1944:                 <div class="form-grid">
+1945:                     <div class="field">
+1946:                         <label for="subjectTitle">Intitul\xe9</label>
+1947:                         <input id="subjectTitle" name="title" type="text" required placeholder="ex: Math\xe9matiques">
+1948:                     </div>
+1949:                     <div class="field">
+1950:                         <label for="subjectHoursTd">Heures TD</label>
+1951:                         <input id="subjectHoursTd" name="hoursTd" type="number" min="0" step="1" value="0">
+1952:                     </div>
+1953:                     <div class="field">
+1954:                         <label for="subjectHoursTp">Heures TP</label>
+1955:                         <input id="subjectHoursTp" name="hoursTp" type="number" min="0" step="1" value="0">
+1956:                     </div>
+1957:                     <div class="field">
+1958:                         <label for="subjectHoursCm">Heures CM</label>
+1959:                         <input id="subjectHoursCm" name="hoursCm" type="number" min="0" step="1" value="0">
+1960:                     </div>
+1961:                     <div class="field">
+1977:                             <select id="subjectLevelSelect" data-input-name="levelIds" data-auto-select="true"
+1978:                                     data-list="subjectLevelList" data-inputs="subjectLevelInputs"
+1979:                                     data-empty="subjectLevelEmpty">
+1980:                                 <option value="">-- Ajouter un niveau --</option>
+1981:                                 <option th:each="l : ${levels}" th:value="${l.id}" th:text="${l.name}">Niveau</option>
+1982:                             </select>
+1983:                         </div>
+1984:                         <small id="subjectLevelEmpty" class="muted">Aucun niveau s\xe9lectionn\xe9.</small>
+1985:                         <div id="subjectLevelInputs"></div>
+1986:                         <span class="muted" th:if="${levels == null or levels.isEmpty()}">Aucun niveau disponible.</span>
+1987:                     </div>
+1988:                 </div>
+1989:                 <div class="modal-actions">
+1990:                     <button type="button" class="btn ghost" onclick="closeSubjectModal()">Annuler</button>
+1991:                     <button type="submit" class="btn primary" id="subjectSubmit">Enregistrer</button>
+1992:                 </div>
+1993:             </form>
+1994:         </div>
+1995:     </div>
+1996: 
+1997:     <div id="projectModal" class="modal-overlay">
+1998:         <div class="modal">
+1999:             <h3 id="projectModalTitle">Cr\xe9er un projet p\xe9dagogique</h3>
+2000:             <small id="projectModalSubtitle">Renseignez les informations principales du projet.</small>
+2001:             <form id="projectForm" method="post" th:action="@{'/tenant/app/projects?tenantId=' + ${est.id}}">
+2002:                 <input type="hidden" id="projectId" name="projectId">
+2003:                 <div class="form-grid">
+2004:                     <div class="field">
+2005:                         <label for="projectTitle">Titre</label>
+2006:                         <input id="projectTitle" name="title" type="text" required placeholder="ex: Laboratoire mobile">
+2007:                     </div>
+2008:                     <div class="field">
+2009:                         <label for="projectYear">Ann\xe9e scolaire</label>
+2010:                         <select id="projectYear" name="academicYear" required>
+2011:                             <option value="">-- Choisir --</option>
+2012:                             <option th:each="y : ${academicYears}" th:value="${y.academicYear}" th:text="${y.academicYear}">Ann\xe9e</option>
+2013:                         </select>
+2014:                     </div>
+2015:                     <div class="field">
+2016:                         <label for="projectResponsible">Responsable</label>
+2017:                         <select id="projectResponsible" name="responsible" required>
+2023:                         <label for="projectStatus">Statut</label>
+2024:                         <input id="projectStatus" name="status" type="text" placeholder="ex: Planifi\xe9">
+2025:                     </div>
+2026:                     <div class="field">
+2027:                         <label for="projectBudget">Budget</label>
+2028:                         <input id="projectBudget" name="budget" type="number" min="0" step="0.01" placeholder="ex: 2500">
+2029:                     </div>
+2030:                     <div class="field full">
+2031:                         <label for="projectDescription">Description</label>
+2032:                         <textarea id="projectDescription" name="description" rows="3" placeholder="R\xe9sum\xe9 du projet"></textarea>
+2033:                     </div>
+2034:                 </div>
+2035:                 <div class="modal-actions">
+2036:                     <button type="button" class="btn ghost" onclick="closeProjectModal()">Annuler</button>
+2037:                     <button type="submit" class="btn primary" id="projectSubmit">Enregistrer</button>
+2038:                 </div>
+2039:             </form>
+2040:         </div>
+2041:     </div>
+2042: 
+2043:     <div id="projectImportModal" class="modal-overlay">
+2044:         <div class="modal">
+2045:             <h3>Importer des projets</h3>
+2046:             <small>CSV ou saisie multiple : titre, ann\xe9e, responsable, statut, budget, description.</small>
+2047:             <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/projects/import?tenantId=' + ${est.id}}">
+2048:                 <div class="form-grid">
+2049:                     <div class="field full">
+2050:                         <label for="projectsFile">Fichier CSV</label>
+2051:                         <input id="projectsFile" name="projectsFile" type="file" accept=".csv,text/csv">
+2052:                     </div>
+2053:                     <div class="field full">
+2054:                         <label for="projectsInput">Saisie multiple</label>
+2055:                         <textarea id="projectsInput" name="projectsInput" rows="4" placeholder="Titre,Annee,Responsable,Statut,Budget,Description"></textarea>
+2056:                     </div>
+2057:                 </div>
+2058:                 <div class="modal-actions">
+2059:                     <button type="button" class="btn ghost" onclick="closeProjectImportModal()">Annuler</button>
+2060:                     <button type="submit" class="btn primary">Importer</button>
+2061:                 </div>
+2062:             </form>
+2063:         </div>
+2064:     </div>
+2065: 
+2066:     <div id="insertionModal" class="modal-overlay">
+2067:         <div class="modal">
+2068:             <h3 id="insertionModalTitle">Cr\xe9er une insertion professionnelle</h3>
+2069:             <small id="insertionModalSubtitle">Renseignez les informations principales.</small>
+2070:             <form id="insertionForm" method="post" th:action="@{'/tenant/app/insertion?tenantId=' + ${est.id}}">
+2071:                 <input type="hidden" id="insertionId" name="insertionId">
+2072:                 <div class="form-grid">
+2073:                     <div class="field">
+2074:                         <label for="insertionType">Type</label>
+2075:                         <select id="insertionType" name="type" required>
+2076:                             <option value="">Choisir</option>
+2077:                             <option value="Stage">Stage</option>
+2078:                             <option value="Alternance">Alternance</option>
+2079:                             <option value="Emploi">Emploi</option>
+2080:                         </select>
+2081:                     </div>
+2082:                     <div class="field">
+2083:                         <label for="insertionPartner">Partenaire</label>
+2084:                         <input id="insertionPartner" name="partnerName" type="text" required placeholder="Nom du partenaire">
+2085:                     </div>
+2086:                     <div class="field">
+2114:                         <label for="insertionEmail">Email</label>
+2115:                         <input id="insertionEmail" name="contactEmail" type="email" placeholder="contact@mail.com">
+2116:                     </div>
+2117:                     <div class="field">
+2118:                         <label for="insertionPhone">T\xe9l\xe9phone</label>
+2119:                         <input id="insertionPhone" name="contactPhone" type="text" placeholder="+228 ...">
+2120:                     </div>
+2121:                     <div class="field full">
+2122:                         <label for="insertionDescription">Description</label>
+2123:                         <textarea id="insertionDescription" name="description" rows="3" placeholder="D\xe9tails"></textarea>
+2124:                     </div>
+2125:                 </div>
+2126:                 <div class="modal-actions">
+2127:                     <button type="button" class="btn ghost" onclick="closeInsertionModal()">Annuler</button>
+2128:                     <button type="submit" class="btn primary" id="insertionSubmit">Enregistrer</button>
+2129:                 </div>
+2130:             </form>
+2131:         </div>
+2132:     </div>
+2133: 
+2134:     <div id="insertionImportModal" class="modal-overlay">
+2135:         <div class="modal">
+2136:             <h3>Importer des insertions</h3>
+2137:             <small>CSV ou saisie multiple : type, partenaire, intitul\xe9, niveau/classe, date d\xe9but, date fin, responsable, contact, email, t\xe9l\xe9phone, description.</small>
+2138:             <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/insertion/import?tenantId=' + ${est.id}}">
+2139:                 <div class="form-grid">
+2140:                     <div class="field full">
+2141:                         <label for="insertionFile">Fichier CSV</label>
+2142:                         <input id="insertionFile" name="insertionFile" type="file" accept=".csv,text/csv">
+2143:                     </div>
+2144:                     <div class="field full">
+2145:                         <label for="insertionInput">Saisie multiple</label>
+2146:                         <textarea id="insertionInput" name="insertionInput" rows="4" placeholder="Type,Partenaire,Intitule,Niveau/Classe,DateDebut,DateFin,Responsable,Contact,Email,Telephone,Description"></textarea>
+2147:                     </div>
+2148:                 </div>
+2149:                 <div class="modal-actions">
+2150:                     <button type="button" class="btn ghost" onclick="closeInsertionImportModal()">Annuler</button>
+2151:                     <button type="submit" class="btn primary">Importer</button>
+2152:                 </div>
+2153:             </form>
+2154:         </div>
+2155:     </div>
+2156: 
+2157:     <div id="careerPathModal" class="modal-overlay">
+2158:         <div class="modal">
+2159:             <h3 id="careerPathModalTitle">Cr\xe9er un parcours</h3>
+2160:             <small id="careerPathModalSubtitle">Associez un niveau, des mati\xe8res, des projets et des stages.</small>
+2161:             <form id="careerPathForm" method="post" th:action="@{'/tenant/app/career-paths?tenantId=' + ${est.id}}">
+2162:                 <input type="hidden" id="careerPathId" name="pathId">
+2163:                 <div class="form-grid">
+2164:                     <div class="field">
+2165:                         <label for="careerPathName">Nom du parcours</label>
+2166:                         <input id="careerPathName" name="name" type="text" required placeholder="ex: D\xe9v Web">
+2167:                     </div>
+2168:                     <div class="field">
+2169:                         <label for="careerPathLevel">Niveau</label>
+2170:                         <select id="careerPathLevel" name="levelId" required>
+2171:                             <option value="">S\xe9lectionner</option>
+2172:                             <option th:each="l : ${levels}" th:value="${l.id}" th:text="${l.name}">Niveau</option>
+2173:                         </select>
+2174:                     </div>
+2175:                     <div class="field full">
+2176:                         <label for="careerPathDescription">Description</label>
+2177:                         <textarea id="careerPathDescription" name="description" rows="3" placeholder="Objectifs du parcours"></textarea>
+2214:                                     data-list="careerPathInsertionList" data-inputs="careerPathInsertionInputs"
+2215:                                     data-empty="careerPathInsertionEmpty">
+2216:                                 <option value="">-- Ajouter un stage/alternance --</option>
+2217:                                 <option th:each="i : ${insertions}" th:value="${i.id}" th:text="${i.partnerName}">Insertion</option>
+2218:                             </select>
+2219:                         </div>
+2220:                         <small id="careerPathInsertionEmpty" class="muted">Aucune insertion s\xe9lectionn\xe9e.</small>
+2221:                         <div id="careerPathInsertionInputs"></div>
+2222:                         <span class="muted" th:if="${insertions == null or insertions.isEmpty()}">Aucune insertion disponible.</span>
+2223:                     </div>
+2224:                 </div>
+2225:                 <div class="modal-actions">
+2226:                     <button type="button" class="btn ghost" onclick="closeCareerPathModal()">Annuler</button>
+2227:                     <button type="submit" class="btn primary" id="careerPathSubmit">Enregistrer</button>
+2228:                 </div>
+2229:             </form>
+2230:         </div>
+2231:     </div>
+2232: 
+2233:     <script>
+2234:         const subjectModal = document.getElementById('subjectModal');
+2235:         const subjectForm = document.getElementById('subjectForm');
+2236:         const subjectId = document.getElementById('subjectId');
+2237:         const subjectTitle = document.getElementById('subjectTitle');
+2238:         const subjectHoursTd = document.getElementById('subjectHoursTd');
+2239:         const subjectHoursTp = document.getElementById('subjectHoursTp');
+2240:         const subjectHoursCm = document.getElementById('subjectHoursCm');
+2241:         const subjectCoefficient = document.getElementById('subjectCoefficient');
+2242:         const subjectProgramFile = document.getElementById('subjectProgramFile');
+2243:         const subjectProgramPreview = document.getElementById('subjectProgramPreview');
+2244:         const subjectProgramLink = document.getElementById('subjectProgramLink');
+2245:         const subjectSubmit = document.getElementById('subjectSubmit');
+2246:         const subjectLevelList = document.getElementById('subjectLevelList');
+2247:         const subjectLevelSelect = document.getElementById('subjectLevelSelect');
+2248:         const subjectLevelInputs = document.getElementById('subjectLevelInputs');
+2249:         const subjectLevelEmpty = document.getElementById('subjectLevelEmpty');
+2250:         const subjectLevelAdd = document.getElementById('subjectLevelAdd');
+2251:         const projectModal = document.getElementById('projectModal');
+2252:         const projectForm = document.getElementById('projectForm');
+2253:         const projectId = document.getElementById('projectId');
+2254:         const projectTitle = document.getElementById('projectTitle');
+2286:         const careerPathLevel = document.getElementById('careerPathLevel');
+2287:         const careerPathDescription = document.getElementById('careerPathDescription');
+2288:         const careerPathSubmit = document.getElementById('careerPathSubmit');
+2289:         const careerPathModalTitle = document.getElementById('careerPathModalTitle');
+2290:         const careerPathModalSubtitle = document.getElementById('careerPathModalSubtitle');
+2291:         const careerPathSubjectList = document.getElementById('careerPathSubjectList');
+2292:         const careerPathSubjectSelect = document.getElementById('careerPathSubjectSelect');
+2293:         const careerPathSubjectInputs = document.getElementById('careerPathSubjectInputs');
+2294:         const careerPathSubjectEmpty = document.getElementById('careerPathSubjectEmpty');
+2295:         const careerPathSubjectAdd = document.getElementById('careerPathSubjectAdd');
+2296:         const careerPathProjectList = document.getElementById('careerPathProjectList');
+2297:         const careerPathProjectSelect = document.getElementById('careerPathProjectSelect');
+2298:         const careerPathProjectInputs = document.getElementById('careerPathProjectInputs');
+2299:         const careerPathProjectEmpty = document.getElementById('careerPathProjectEmpty');
+2300:         const careerPathProjectAdd = document.getElementById('careerPathProjectAdd');
+2301:         const careerPathInsertionList = document.getElementById('careerPathInsertionList');
+2302:         const careerPathInsertionSelect = document.getElementById('careerPathInsertionSelect');
+2303:         const careerPathInsertionInputs = document.getElementById('careerPathInsertionInputs');
+2304:         const careerPathInsertionEmpty = document.getElementById('careerPathInsertionEmpty');
+2305:         const careerPathInsertionAdd = document.getElementById('careerPathInsertionAdd');
+2306:         const subjectModalTitle = document.getElementById('subjectModalTitle');
+2307:         const subjectModalSubtitle = document.getElementById('subjectModalSubtitle');
+2308: 
+2309:         function resetSubjectForm() {
+2310:             subjectForm.reset();
+2311:             subjectId.value = '';
+2312:             subjectTitle.readOnly = false;
+2313:             subjectHoursTd.readOnly = false;
+2314:             subjectHoursTp.readOnly = false;
+2315:             subjectHoursCm.readOnly = false;
+2316:             if (subjectCoefficient) {
+2317:                 subjectCoefficient.readOnly = false;
+2318:                 subjectCoefficient.value = '1';
+2319:             }
+2320:             if (subjectProgramFile) subjectProgramFile.disabled = false;
+2321:             if (subjectProgramPreview) subjectProgramPreview.style.display = 'none';
+2322:             if (subjectProgramLink) {
+2323:                 subjectProgramLink.removeAttribute('href');
+2324:                 subjectProgramLink.textContent = 'Voir';
+2325:             }
+2326:             subjectSubmit.style.display = '';
+2327:             if (subjectLevelList) subjectLevelList.innerHTML = '';
+2328:             if (subjectLevelInputs) subjectLevelInputs.innerHTML = '';
+2329:             if (subjectLevelEmpty) subjectLevelEmpty.style.display = '';
+2330:             if (subjectLevelSelect) {
+2331:                 subjectLevelSelect.value = '';
+2332:                 subjectLevelSelect.disabled = false;
+2333:             }
+2334:             if (subjectLevelAdd) subjectLevelAdd.disabled = false;
+2335:             subjectModalTitle.textContent = 'Cr\xe9er une mati\xe8re';
+2336:             subjectModalSubtitle.textContent = "Renseignez l'intitul\xe9 et le volume horaire.";
+2337:         }
+2338: 
+2339:         function applySubjectLevels(raw, readOnly) {
+2340:             const selected = raw
+2341:                 ? raw.split(',').map((value) => value.trim()).filter(Boolean)
+2342:                 : [];
+2343:             renderSelectedSubjects(
+2344:                 subjectLevelList,
+2345:                 subjectLevelInputs,
+2346:                 subjectLevelEmpty,
+2347:                 selected,
+2348:                 subjectLevelSelect,
+2349:                 !!readOnly,
+2350:                 'levelIds'
+2351:             );
+2352:             if (subjectLevelAdd) subjectLevelAdd.disabled = !!readOnly;
+2353:         }
+2354: 
+2355:         function openSubjectModal(mode, btn) {
+2356:             resetSubjectForm();
+2357:             if ((mode === 'edit' || mode === 'view') && btn) {
+2358:                 subjectId.value = btn.getAttribute('data-id') || '';
+2359:                 subjectTitle.value = btn.getAttribute('data-title') || '';
+2360:                 subjectHoursTd.value = btn.getAttribute('data-td') || '0';
+2361:                 subjectHoursTp.value = btn.getAttribute('data-tp') || '0';
+2362:                 subjectHoursCm.value = btn.getAttribute('data-cm') || '0';
+2363:                 if (subjectCoefficient) {
+2364:                     subjectCoefficient.value = btn.getAttribute('data-coefficient') || '1';
+2365:                 }
+2366:                 if (subjectProgramPreview && subjectProgramLink) {
+2367:                     const programName = btn.getAttribute('data-program-name') || '';
+2368:                     const programUrl = btn.getAttribute('data-program-url') || '';
+2369:                     if (programName && programUrl) {
+2370:                         subjectProgramLink.textContent = programName;
+2371:                         subjectProgramLink.href = programUrl;
+2372:                         subjectProgramPreview.style.display = 'block';
+2373:                     } else {
+2374:                         subjectProgramPreview.style.display = 'none';
+2375:                         subjectProgramLink.removeAttribute('href');
+2376:                         subjectProgramLink.textContent = 'Voir';
+2377:                     }
+2378:                 }
+2379:                 applySubjectLevels(
+2380:                     btn.getAttribute('data-levels') || (btn.closest('tr') ? btn.closest('tr').getAttribute('data-levels') : ''),
+2381:                     mode === 'view'
+2382:                 );
+2383:                 if (mode === 'edit') {
+2384:                     subjectModalTitle.textContent = 'Modifier une mati\xe8re';
+2385:                 }
+2386:                 if (mode === 'view') {
+2387:                     subjectModalTitle.textContent = 'Voir la mati\xe8re';
+2388:                     subjectModalSubtitle.textContent = 'Lecture seule.';
+2389:                     subjectTitle.readOnly = true;
+2390:                     subjectHoursTd.readOnly = true;
+2391:                     subjectHoursTp.readOnly = true;
+2392:                     subjectHoursCm.readOnly = true;
+2393:                     if (subjectCoefficient) subjectCoefficient.readOnly = true;
+2394:                     if (subjectProgramFile) subjectProgramFile.disabled = true;
+2395:                     subjectSubmit.style.display = 'none';
+2396:                 }
+2397:             }
+2398:             subjectModal.style.display = 'flex';
+2399:         }
+2400: 
+2401:         function closeSubjectModal() {
+2402:             subjectModal.style.display = 'none';
+2403:         }
+2404: 
+2405:         function resetProjectForm() {
+2406:             if (!projectForm) return;
+2407:             projectForm.onsubmit = null;
+2408:             if (projectId) projectId.value = '';
+2409:             if (projectTitle) {
+2410:                 projectTitle.value = '';
+2411:                 projectTitle.readOnly = false;
+2412:             }
+2413:             if (projectYear) {
+2414:                 projectYear.value = '';
+2415:                 projectYear.readOnly = false;
+2416:             }
+2417:             if (projectResponsible) {
+2418:                 projectResponsible.value = '';
+2419:                 projectResponsible.readOnly = false;
+2420:             }
+2421:             if (projectStatus) {
+2422:                 projectStatus.value = '';
+2617:             if (careerPathInsertionList) careerPathInsertionList.innerHTML = '';
+2618:             if (careerPathInsertionInputs) careerPathInsertionInputs.innerHTML = '';
+2619:             if (careerPathInsertionEmpty) careerPathInsertionEmpty.style.display = '';
+2620:             if (careerPathInsertionSelect) {
+2621:                 careerPathInsertionSelect.value = '';
+2622:                 careerPathInsertionSelect.disabled = false;
+2623:             }
+2624:             if (careerPathInsertionAdd) careerPathInsertionAdd.disabled = false;
+2625:             if (careerPathModalTitle) careerPathModalTitle.textContent = 'Cr\xe9er un parcours';
+2626:             if (careerPathModalSubtitle) careerPathModalSubtitle.textContent = 'Associez un niveau, des mati\xe8res, des projets et des stages.';
+2627:         }
+2628: 
+2629:         function openCareerPathModal(mode = 'create', btn) {
+2630:             if (!careerPathModal) return;
+2631:             resetCareerPathForm();
+2632:             if ((mode === 'edit' || mode === 'view') && btn) {
+2633:                 if (careerPathId) careerPathId.value = btn.getAttribute('data-id') || '';
+2634:                 if (careerPathName) careerPathName.value = btn.getAttribute('data-name') || '';
+2635:                 if (careerPathLevel) careerPathLevel.value = btn.getAttribute('data-level') || '';
+2636:                 if (careerPathDescription) careerPathDescription.value = btn.getAttribute('data-description') || '';
+2637:                 renderSelectedSubjects(
+2638:                     careerPathSubjectList,
+2639:                     careerPathSubjectInputs,
+2640:                     careerPathSubjectEmpty,
+2641:                     (btn.getAttribute('data-subjects') || '').split(',').map((v) => v.trim()).filter(Boolean),
+2642:                     careerPathSubjectSelect,
+2643:                     mode === 'view',
+2644:                     'subjectIds'
+2645:                 );
+2646:                 renderSelectedSubjects(
+2647:                     careerPathProjectList,
+2648:                     careerPathProjectInputs,
+2649:                     careerPathProjectEmpty,
+2650:                     (btn.getAttribute('data-projects') || '').split(',').map((v) => v.trim()).filter(Boolean),
+2651:                     careerPathProjectSelect,
+2652:                     mode === 'view',
+2653:                     'projectIds'
+2654:                 );
+2655:                 renderSelectedSubjects(
+2656:                     careerPathInsertionList,
+2657:                     careerPathInsertionInputs,
+2658:                     careerPathInsertionEmpty,
+2659:                     (btn.getAttribute('data-insertions') || '').split(',').map((v) => v.trim()).filter(Boolean),
+2660:                     careerPathInsertionSelect,
+2661:                     mode === 'view',
+2662:                     'insertionIds'
+2663:                 );
+2664:                 if (careerPathSubjectAdd) careerPathSubjectAdd.disabled = mode === 'view';
+2665:                 if (careerPathProjectAdd) careerPathProjectAdd.disabled = mode === 'view';
+2666:                 if (careerPathInsertionAdd) careerPathInsertionAdd.disabled = mode === 'view';
+2667:             }
+2668:             if (mode === 'edit') {
+2669:                 if (careerPathModalTitle) careerPathModalTitle.textContent = 'Modifier un parcours';
+2670:             }
+2671:             if (mode === 'view') {
+2672:                 if (careerPathModalTitle) careerPathModalTitle.textContent = 'Informations parcours';
+2673:                 if (careerPathModalSubtitle) careerPathModalSubtitle.textContent = 'Consultation des informations.';
+2674:                 if (careerPathSubmit) careerPathSubmit.style.display = 'none';
+2675:                 if (careerPathName) careerPathName.readOnly = true;
+2676:                 if (careerPathLevel) careerPathLevel.disabled = true;
+2677:                 if (careerPathDescription) careerPathDescription.readOnly = true;
+2678:                 careerPathSubjectChecks.forEach((checkbox) => {
+2679:                     checkbox.disabled = true;
+2680:                 });
+2681:                 careerPathProjectChecks.forEach((checkbox) => {
+2682:                     checkbox.disabled = true;
+2683:                 });
+2684:                 careerPathInsertionChecks.forEach((checkbox) => {
+2685:                     checkbox.disabled = true;
+2686:                 });
+2687:             }
+2688:             careerPathModal.style.display = 'flex';
+2689:         }
+2690: 
+2691:         function closeCareerPathModal() {
+2692:             if (careerPathModal) careerPathModal.style.display = 'none';
+2693:         }
+2694: 
+2695:         window.openSubjectModal = openSubjectModal;
+2696:         window.closeSubjectModal = closeSubjectModal;
+2697:         window.openProjectModal = openProjectModal;
+2698:         window.closeProjectModal = closeProjectModal;
+2699:         window.openProjectImportModal = openProjectImportModal;
+2700:         window.closeProjectImportModal = closeProjectImportModal;
+2701:         window.openInsertionModal = openInsertionModal;
+2702:         window.closeInsertionModal = closeInsertionModal;
+2703:         window.openInsertionImportModal = openInsertionImportModal;
+2704:         window.closeInsertionImportModal = closeInsertionImportModal;
+2705:         window.openCareerPathModal = openCareerPathModal;
+2706:         window.closeCareerPathModal = closeCareerPathModal;
+2707:     </script>
+2708: 
+2709:     <div id="userModal" class="modal-overlay">
+2710:         <div class="modal">
+2711:             <h3 id="userModalTitle">Cr\xe9er un utilisateur</h3>
+2712:             <small id="userModalSubtitle">L'administrateur cr\xe9e le personnel administratif et les comptes internes.</small>
+2713:             <form id="userForm" method="post" th:action="@{'/tenant/dashboard/users?tenantId=' + ${est.id}}">
+2714:                 <input type="hidden" name="tenantId" th:value="${est.id}">
+2715:                 <input type="hidden" id="userId" name="userId">
+2716:                 <div class="form-grid">
+2717:                     <div class="field">
+2718:                         <label for="userLastName">Nom</label>
+2719:                         <input id="userLastName" name="lastName" type="text" required placeholder="ex: Dupont">
+2720:                     </div>
+2721:                     <div class="field">
+2722:                         <label for="userFirstName">Prenoms</label>
+2723:                         <input id="userFirstName" name="firstName" type="text" required placeholder="ex: Marie">
+2724:                     </div>
+2725:                     <div class="field">
+2726:                         <label for="userUsername">Identifiant</label>
+2727:                         <input id="userUsername" name="username" type="text" required placeholder="ex: agent01">
+2728:                     </div>
+2729:                     <div class="field">
+2754:                     <div class="field full">
+2755:                         <label for="userObservation">Observation</label>
+2756:                         <textarea id="userObservation" name="observation" rows="3" placeholder="Notes, service ou remarques..."></textarea>
+2757:                     </div>
+2758:                     <div class="field full">
+2759:                         <label for="userPhotoFile">Photo (import)</label>
+2760:                         <input id="userPhotoUrl" name="photoUrl" type="hidden">
+2761:                         <input id="userPhotoFile" type="file" accept="image/*">
+2762:                         <small class="muted">Photo carr\xe9e recommand\xe9e, 300x300 px, max 300 KB (JPG/PNG).</small>
+2763:                     </div>
+2764:                 </div>
+2765:                 <div class="modal-actions">
+2766:                     <button type="button" class="btn ghost" onclick="closeUserModal()">Annuler</button>
+2767:                     <button type="button" class="btn ghost" onclick="openBadgePreview()">Aper\xe7u badge</button>
+2768:                     <button type="submit" class="btn primary" id="userSubmit">Cr\xe9er</button>
+2769:                 </div>
+2770:             </form>
+2771:         </div>
+2772:     </div>
+2773: 
+2774:     <div id="studentModal" class="modal-overlay">
+2775:         <div class="modal">
+2776:             <h3 id="studentModalTitle">Cr\xe9er un apprenant</h3>
+2777:             <small id="studentModalSubtitle">Ajoutez un apprenant et affectez-le \xe0 une classe.</small>
+2778:             <form id="studentForm" method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/students?tenantId=' + ${est.id}}">
+2779:                 <input type="hidden" id="studentId" name="studentId">
+2780:                 <div class="form-grid">
+2781:                     <div class="field">
+2782:                         <label for="studentLastName">Nom</label>
+2783:                         <input id="studentLastName" name="lastName" type="text" required placeholder="ex: Mensah">
+2784:                     </div>
+2785:                     <div class="field">
+2786:                         <label for="studentFirstName">Prenoms</label>
+2787:                         <input id="studentFirstName" name="firstName" type="text" required placeholder="ex: Awa">
+2788:                     </div>
+2789:                     <div class="field">
+2790:                         <label for="studentEmail">Email</label>
+2791:                         <input id="studentEmail" name="email" type="email" required placeholder="ex: eleve@etablissement.com">
+2792:                     </div>
+2793:                     <div class="field">
+2794:                         <label for="studentPhoneFixed">T\xe9l\xe9phone fixe</label>
+2835:                     <div class="field full">
+2836:                         <label for="studentDocuments">Documents administratifs</label>
+2837:                         <input id="studentDocuments" name="adminDocuments" type="file" multiple accept="image/*,application/pdf">
+2838:                         <small class="muted">PDF ou images. Plusieurs fichiers possibles.</small>
+2839:                         <div id="studentDocumentsList" class="selected-list"></div>
+2840:                         <small id="studentDocumentsEmpty" class="muted">Aucun document ajout\xe9.</small>
+2841:                     </div>
+2842:                     <div class="field full">
+2843:                         <label for="studentObservation">Observation</label>
+2844:                         <textarea id="studentObservation" name="observation" rows="3" placeholder="Notes, suivi, informations utiles..."></textarea>
+2845:                     </div>
+2846:                 </div>
+2847:                 <div class="modal-actions">
+2848:                     <button type="button" class="btn ghost" onclick="closeStudentModal()">Annuler</button>
+2849:                     <button type="submit" class="btn primary" id="studentSubmit">Cr\xe9er</button>
+2850:                 </div>
+2851:             </form>
+2852:         </div>
+2853:     </div>
+2854: 
+2855:     <div id="studentImportModal" class="modal-overlay">
+2856:         <div class="modal">
+2857:             <h3>Importer des apprenants</h3>
+2858:             <small>CSV ou saisie multiple : prenom, nom, email, t\xe9l\xe9phone, classe.</small>
+2859:             <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/students/import?tenantId=' + ${est.id}}">
+2860:                 <div class="form-grid">
+2861:                     <div class="field full">
+2862:                         <label for="studentsFile">Fichier CSV</label>
+2863:                         <input id="studentsFile" name="studentsFile" type="file" accept=".csv,text/csv">
+2864:                     </div>
+2865:                     <div class="field full">
+2866:                         <label for="studentsInput">Saisie multiple</label>
+2867:                         <textarea id="studentsInput" name="studentsInput" rows="4" placeholder="Prenom,Nom,Email,Telephone,Classe"></textarea>
+2868:                     </div>
+2869:                 </div>
+2870:                 <div class="modal-actions">
+2871:                     <button type="button" class="btn ghost" onclick="closeStudentImportModal()">Annuler</button>
+2872:                     <button type="submit" class="btn primary">Importer</button>
+2873:                 </div>
+2874:             </form>
+2875:         </div>
+2876:     </div>
+2877: 
+2878:     <div id="teacherModal" class="modal-overlay">
+2879:         <div class="modal">
+2880:             <h3 id="teacherModalTitle">Cr\xe9er un enseignant</h3>
+2881:             <small id="teacherModalSubtitle">Ajoutez un enseignant et affectez-le \xe0 une classe.</small>
+2882:             <form id="teacherForm" method="post" th:action="@{'/tenant/app/teachers?tenantId=' + ${est.id}}">
+2883:                 <input type="hidden" id="teacherId" name="teacherId">
+2884:                 <div class="form-grid">
+2885:                     <div class="field">
+2886:                         <label for="teacherLastName">Nom</label>
+2887:                         <input id="teacherLastName" name="lastName" type="text" required placeholder="ex: Mensah">
+2888:                     </div>
+2889:                     <div class="field">
+2890:                         <label for="teacherFirstName">Prenoms</label>
+2891:                         <input id="teacherFirstName" name="firstName" type="text" required placeholder="ex: Awa">
+2892:                     </div>
+2893:                     <div class="field">
+2894:                         <label for="teacherEmail">Email</label>
+2895:                         <input id="teacherEmail" name="email" type="email" required placeholder="ex: enseignant@etablissement.com">
+2896:                     </div>
+2897:                     <div class="field">
+2898:                         <label for="teacherType">Type</label>
+2926:                                 <option value="">-- Ajouter une mati\xe8re --</option>
+2927:                                 <option th:each="s : ${subjects}" th:value="${s.id}" th:text="${s.title}">Mati\xe8re</option>
+2928:                             </select>
+2929:                         </div>
+2930:                         <small class="muted" id="teacherSubjectEmpty">Aucune mati\xe8re s\xe9lectionn\xe9e.</small>
+2931:                         <div id="teacherSubjectInputs"></div>
+2932:                     </div>
+2933:                     <div class="field full">
+2934:                         <label for="teacherObservation">Observation</label>
+2935:                         <textarea id="teacherObservation" name="observation" rows="3" placeholder="Notes, mati\xe8re, informations utiles..."></textarea>
+2936:                     </div>
+2937:                 </div>
+2938:                 <div class="modal-actions">
+2939:                     <button type="button" class="btn ghost" onclick="closeTeacherModal()">Annuler</button>
+2940:                     <button type="submit" class="btn primary" id="teacherSubmit">Cr\xe9er</button>
+2941:                 </div>
+2942:             </form>
+2943:         </div>
+2944:     </div>
+2945: 
+2946:     <div id="teacherImportModal" class="modal-overlay">
+2947:         <div class="modal">
+2948:             <h3>Importer des enseignants</h3>
+2949:             <small>CSV ou saisie multiple : prenom, nom, email, t\xe9l\xe9phone, type, classe.</small>
+2950:             <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/teachers/import?tenantId=' + ${est.id}}">
+2951:                 <div class="form-grid">
+2952:                     <div class="field full">
+2953:                         <label for="teachersFile">Fichier CSV</label>
+2954:                         <input id="teachersFile" name="teachersFile" type="file" accept=".csv,text/csv">
+2955:                     </div>
+2956:                     <div class="field full">
+2957:                         <label for="teachersInput">Saisie multiple</label>
+2958:                         <textarea id="teachersInput" name="teachersInput" rows="4" placeholder="Prenom,Nom,Email,Telephone,Type,Classe"></textarea>
+2959:                     </div>
+2960:                 </div>
+2961:                 <div class="modal-actions">
+2962:                     <button type="button" class="btn ghost" onclick="closeTeacherImportModal()">Annuler</button>
+2963:                     <button type="submit" class="btn primary">Importer</button>
+2964:                 </div>
+2965:             </form>
+2966:         </div>
+2967:     </div>
+2968: 
+2969:     <div id="classModal" class="modal-overlay">
+2970:         <div class="modal">
+2971:             <h3 id="classModalTitle">Ajouter une classe</h3>
+2972:             <small>Renseignez les informations principales de la classe.</small>
+2973:             <form id="classForm" method="post" th:action="@{'/tenant/app/classes?tenantId=' + ${est.id}}">
+2974:                 <input type="hidden" id="classId" name="classId">
+2975:                 <div class="form-grid">
+2976:                     <div class="field">
+2977:                         <label for="className">Nom de la classe</label>
+2978:                         <input id="className" name="name" type="text" required placeholder="ex: 6e A">
+2979:                     </div>
+2980:                     <div class="field">
+2981:                         <label for="classLevel">Niveau</label>
+2982:                         <select id="classLevel" name="levelId">
+2983:                             <option value="">-- Aucun --</option>
+2984:                             <option th:each="lvl : ${levels}" th:value="${lvl.id}" th:text="${lvl.name}">Niveau</option>
+2985:                         </select>
+2986:                     </div>
+2987:                     <div class="field">
+2988:                         <label for="classYear">Ann\xe9e scolaire</label>
+2989:                         <select id="classYear" name="academicYearId" required>
+3022:                             <option th:each="n : ${staffCandidates}" th:value="${n}" th:text="${n}"></option>
+3023:                             <option th:each="n : ${teacherCandidates}" th:value="${n}" th:text="${n}"></option>
+3024:                         </select>
+3025:                     </div>
+3026:                     <div class="field">
+3027:                         <label for="classDelegateStudent">D\xe9l\xe9gu\xe9 apprenants</label>
+3028:                         <select id="classDelegateStudent" name="delegateStudent">
+3029:                             <option value="">-- Choisir --</option>
+3030:                             <option th:each="n : ${studentCandidates}" th:value="${n}" th:text="${n}"></option>
+3031:                         </select>
+3032:                     </div>
+3033:                 </div>
+3034:                 <div class="modal-actions">
+3035:                     <button type="button" class="btn ghost" onclick="closeClassModal()">Annuler</button>
+3036:                     <button type="submit" class="btn primary" id="classSubmit">Enregistrer</button>
+3037:                 </div>
+3038:             </form>
+3039:         </div>
+3040:     </div>
+3041: 
+3042:     <div id="levelModal" class="modal-overlay">
+3043:         <div class="modal">
+3044:             <h3>Importer des niveaux</h3>
+3045:             <small>CSV ou saisie multiple (ligne, virgule ou point-virgule).</small>
+3046:             <form method="post" enctype="multipart/form-data" th:action="@{'/tenant/app/levels/import?tenantId=' + ${est.id}}">
+3047:                 <div class="form-grid">
+3048:                     <div class="field full">
+3049:                         <label for="levelsInput">Liste des niveaux</label>
+3050:                         <textarea id="levelsInput" name="levelsInput" rows="5"
+3051:                                   placeholder="ex: 6e&#10;5e&#10;4e"></textarea>
+3052:                         <small class="muted">Les doublons seront ignor\xe9s.</small>
+3053:                     </div>
+3054:                     <div class="field full">
+3055:                         <label for="levelsFile">Importer un CSV</label>
+3056:                         <input id="levelsFile" name="levelsFile" type="file" accept=".csv,text/csv">
+3057:                     </div>
+3058:                 </div>
+3059:                 <div class="modal-actions">
+3060:                     <button type="button" class="btn ghost" onclick="closeLevelModal()">Annuler</button>
+3061:                     <button type="submit" class="btn primary">Importer</button>
+3062:                 </div>
+3063:             </form>
+3064:         </div>
+3065:     </div>
+3066: 
+3067:     <div id="levelEditModal" class="modal-overlay">
+3068:         <div class="modal">
+3069:             <h3>Modifier un niveau</h3>
+3070:             <small>Mettre \xe0 jour le nom du niveau.</small>
+3071:             <form id="levelEditForm" method="post" th:action="@{'/tenant/app/levels/update?tenantId=' + ${est.id}}">
+3072:                 <input type="hidden" id="levelEditId" name="levelId">
+3073:                 <div class="form-grid">
+3074:                     <div class="field full">
+3075:                         <label for="levelEditName">Nom du niveau</label>
+3076:                         <input id="levelEditName" name="name" type="text" required placeholder="Ex: Licence 1">
+3077:                     </div>
+3078:                 </div>
+3079:                 <div class="modal-actions">
+3080:                     <button type="button" class="btn ghost" onclick="closeLevelEditModal()">Annuler</button>
+3081:                     <button type="submit" class="btn primary">Enregistrer</button>
+3082:                 </div>
+3083:             </form>
+3084:         </div>
+3085:     </div>
+3086: 
+3087:     <div id="roomModal" class="modal-overlay">
+3088:         <div class="modal">
+3089:             <h3 id="roomModalTitle">Ajouter une salle</h3>
+3090:             <small>D\xe9finissez la salle et sa capacit\xe9.</small>
+3091:             <form id="roomForm" method="post" th:action="@{'/tenant/app/rooms?tenantId=' + ${est.id}}">
+3092:                 <input type="hidden" id="roomId" name="roomId">
+3093:                 <div class="form-grid">
+3094:                     <div class="field">
+3095:                         <label for="roomName">Nom de la salle</label>
+3096:                         <input id="roomName" name="name" type="text" required placeholder="ex: Salle B12">
+3097:                     </div>
+3098:                     <div class="field">
+3099:                         <label for="roomCapacity">Capacit\xe9</label>
+3100:                         <input id="roomCapacity" name="capacity" type="number" min="0" placeholder="ex: 45">
+3101:                     </div>
+3102:                 </div>
+3103:                 <div class="modal-actions">
+3104:                     <button type="button" class="btn ghost" onclick="closeRoomModal()">Annuler</button>
+3105:                     <button type="submit" class="btn primary" id="roomSubmit">Enregistrer</button>
+3106:                 </div>
+3107:             </form>
+3128:             border-radius: 10px;
+3129:             overflow: hidden;
+3130:             background: var(--surface2);
+3131:             border: 1px solid var(--border);
+3132:             display: flex;
+3133:             align-items: center;
+3134:             justify-content: center;
+3135:             font-size: 1.4rem;
+3136:             color: var(--muted);
+3137:         }
+3138:         .badge-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+3139:         .badge-meta { display:flex; flex-direction:column; gap:4px; padding-bottom: 18px; }
+3140:         .badge-brand { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+3141:         .badge-est-name { font-size: 0.9rem; font-weight: 600; }
+3142:         .badge-est-info { font-size: 0.72rem; color: var(--muted); line-height: 1.1; }
+3143:         .badge-user { margin-top: 4px; display:flex; flex-direction:column; gap:2px; }
+3144:         .badge-name { font-size: 1.0rem; font-weight: 600; }
+3145:         .badge-role, .badge-id { font-size: 0.82rem; color: var(--muted); }
+3146:         .badge-footer { position:absolute; right:12px; bottom:8px; font-size: 0.65rem; color: var(--muted); font-weight: 600; }
+3147:     </style>
+3148:     <div id="badgeModal" class="modal-overlay">
+3149:         <div class="modal badge-modal">
+3150:             <div class="badge-header">
+3151:                 <div>
+3152:                     <h3 style="margin:0;">Aper\xe7u du badge</h3>
+3153:                     <small class="muted">Format pr\xeat pour impression.</small>
+3154:                 </div>
+3155:                 <div class="badge-actions">
+3156:                     <button type="button" class="btn ghost" onclick="printBadge()">Imprimer</button>
+3157:                     <button type="button" class="btn ghost" onclick="closeBadgePreview()">Fermer</button>
+3158:                 </div>
+3159:             </div>
+3160:             <div class="badge-preview">
+3161:                 <div class="badge-card" id="badgeCard">
+3162:                     <div class="badge-photo">
+3163:                         <img id="badgePhoto" alt="photo badge">
+3164:                         <span id="badgeInitial">U</span>
+3165:                     </div>
+3166:                     <div class="badge-meta">
+3167:                         <div class="badge-brand">OSM</div>
+3168:                         <div class="badge-est-name" id="badgeEstName" th:text="${est.name}">Etablissement</div>
+3471:             renderStudentDocuments();
+3472:             if (studentTitle) studentTitle.textContent = 'Cr\xe9er un apprenant';
+3473:             if (studentSubtitle) studentSubtitle.textContent = 'Ajoutez un apprenant et affectez-le \xe0 une classe.';
+3474:             if (studentSubmit) {
+3475:                 studentSubmit.textContent = 'Cr\xe9er';
+3476:                 studentSubmit.style.display = '';
+3477:             }
+3478:         }
+3479: 
+3480:         function buildSubjectMap(selectEl) {
+3481:             const map = new Map();
+3482:             if (!selectEl) return map;
+3483:             Array.from(selectEl.options).forEach((opt) => {
+3484:                 if (opt.value) {
+3485:                     map.set(opt.value, (opt.textContent || '').trim());
+3486:                 }
+3487:             });
+3488:             return map;
+3489:         }
+3490: 
+3491:         function renderSelectedSubjects(listEl, inputsEl, emptyEl, selectedIds, selectEl, readOnly, inputName) {
+3492:             if (!listEl || !inputsEl) return;
+3493:             listEl.innerHTML = '';
+3494:             inputsEl.innerHTML = '';
+3495:             const cleaned = (selectedIds || []).map((id) => String(id)).filter(Boolean);
+3496:             const uniqueIds = Array.from(new Set(cleaned));
+3497:             const resolvedName = inputName || (selectEl && selectEl.dataset ? selectEl.dataset.inputName : null) || 'subjectIds';
+3498:             if (selectEl) selectEl.disabled = !!readOnly;
+3499:             if (!uniqueIds.length) {
+3500:                 if (emptyEl) emptyEl.style.display = '';
+3501:                 return;
+3502:             }
+3503:             if (emptyEl) emptyEl.style.display = 'none';
+3504:             const map = buildSubjectMap(selectEl);
+3505:             uniqueIds.forEach((id) => {
+3506:                 const label = map.get(id) || `#${id}`;
+3507:                 const item = document.createElement('div');
+3508:                 item.className = 'selected-item';
+3509:                 item.dataset.id = id;
+3510:                 const text = document.createElement('span');
+3511:                 text.textContent = label;
+3527:                             if (emptyEl) emptyEl.style.display = '';
+3528:                         }
+3529:                     });
+3530:                     item.appendChild(removeBtn);
+3531:                 }
+3532:                 listEl.appendChild(item);
+3533:             });
+3534:         }
+3535: 
+3536:         function addSubjectFromSelect(selectEl, listEl, inputsEl, emptyEl, inputName) {
+3537:             if (!selectEl || !selectEl.value) return;
+3538:             const id = selectEl.value;
+3539:             const resolvedName = inputName || (selectEl && selectEl.dataset ? selectEl.dataset.inputName : null) || 'subjectIds';
+3540:             if (inputsEl && inputsEl.querySelector(`input[name="${resolvedName}"][value="${id}"]`)) {
+3541:                 selectEl.value = '';
+3542:                 return;
+3543:             }
+3544:             const existing = inputsEl
+3545:                 ? Array.from(inputsEl.querySelectorAll(`input[name="${resolvedName}"]`)).map((input) => input.value)
+3546:                 : [];
+3547:             renderSelectedSubjects(listEl, inputsEl, emptyEl, [
+3548:                 ...existing,
+3549:                 id
+3550:             ], selectEl, false, resolvedName);
+3551:             selectEl.value = '';
+3552:         }
+3553: 
+3554:         function initAutoSelects() {
+3555:             const autoSelects = Array.from(document.querySelectorAll('select[data-auto-select="true"]'));
+3556:             autoSelects.forEach((selectEl) => {
+3557:                 if (selectEl.dataset.autoSelectBound === 'true') return;
+3558:                 const listEl = document.getElementById(selectEl.dataset.list || '');
+3559:                 const inputsEl = document.getElementById(selectEl.dataset.inputs || '');
+3560:                 const emptyEl = document.getElementById(selectEl.dataset.empty || '');
+3561:                 const inputName = selectEl.dataset.inputName || null;
+3562:                 selectEl.addEventListener('change', () => {
+3563:                     addSubjectFromSelect(selectEl, listEl, inputsEl, emptyEl, inputName);
+3564:                 });
+3565:                 selectEl.dataset.autoSelectBound = 'true';
+3566:             });
+3567:         }
+3636:             addSubjectFromSelect(careerPathProjectSelect, careerPathProjectList, careerPathProjectInputs, careerPathProjectEmpty, 'projectIds');
+3637:         }
+3638: 
+3639:         function addCareerPathInsertion() {
+3640:             addSubjectFromSelect(careerPathInsertionSelect, careerPathInsertionList, careerPathInsertionInputs, careerPathInsertionEmpty, 'insertionIds');
+3641:         }
+3642: 
+3643:         function openStudentModal(mode = 'create', btn) {
+3644:             if (!studentModal) return;
+3645:             resetStudentForm();
+3646:             if ((mode === 'edit' || mode === 'view') && btn?.dataset) {
+3647:                 if (studentIdInput) studentIdInput.value = btn.dataset.id || '';
+3648:                 if (studentFirstName) studentFirstName.value = btn.dataset.firstName || '';
+3649:                 if (studentLastName) studentLastName.value = btn.dataset.lastName || '';
+3650:                 if (studentEmail) studentEmail.value = btn.dataset.email || '';
+3651:                 if (studentPhoneFixed) studentPhoneFixed.value = btn.dataset.phoneFixed || '';
+3652:                 if (studentPhoneMobile) studentPhoneMobile.value = btn.dataset.phoneMobile || '';
+3653:                 if (studentClass) studentClass.value = btn.dataset.classId || '';
+3654:                 if (studentCareerPath) studentCareerPath.value = btn.dataset.careerPathId || '';
+3655:                 if (studentObservation) studentObservation.value = btn.dataset.observation || '';
+3656:                 renderSelectedSubjects(
+3657:                     studentSubjectList,
+3658:                     studentSubjectInputs,
+3659:                     studentSubjectEmpty,
+3660:                     (btn.dataset.subjects || '').split(',').map((v) => v.trim()).filter(Boolean),
+3661:                     studentSubjectSelect,
+3662:                     mode === 'view'
+3663:                 );
+3664:                 loadStudentDocuments(btn.dataset.id || '');
+3665:             }
+3666:             if (mode === 'edit') {
+3667:                 if (studentTitle) studentTitle.textContent = "Modifier l'apprenant";
+3668:                 if (studentSubmit) studentSubmit.textContent = 'Mettre \xe0 jour';
+3669:                 studentForm.action = `/tenant/app/students/update?tenantId=${tenantId}`;
+3670:             }
+3671:             if (mode === 'view') {
+3672:                 if (studentTitle) studentTitle.textContent = 'Informations apprenant';
+3673:                 if (studentSubtitle) studentSubtitle.textContent = 'Consultation des informations.';
+3674:                 studentForm.action = '#';
+3675:                 studentForm.onsubmit = () => false;
+3676:                 if (studentSubmit) studentSubmit.style.display = 'none';
+3760:             if (teacherSubtitle) teacherSubtitle.textContent = 'Ajoutez un enseignant et affectez-le \xe0 une classe.';
+3761:             if (teacherSubmit) {
+3762:                 teacherSubmit.textContent = 'Cr\xe9er';
+3763:                 teacherSubmit.style.display = '';
+3764:             }
+3765:         }
+3766: 
+3767:         function openTeacherModal(mode = 'create', btn) {
+3768:             if (!teacherModal) return;
+3769:             resetTeacherForm();
+3770:             if ((mode === 'edit' || mode === 'view') && btn?.dataset) {
+3771:                 if (teacherIdInput) teacherIdInput.value = btn.dataset.id || '';
+3772:                 if (teacherFirstName) teacherFirstName.value = btn.dataset.firstName || '';
+3773:                 if (teacherLastName) teacherLastName.value = btn.dataset.lastName || '';
+3774:                 if (teacherEmail) teacherEmail.value = btn.dataset.email || '';
+3775:                 if (teacherPhoneFixed) teacherPhoneFixed.value = btn.dataset.phoneFixed || '';
+3776:                 if (teacherPhoneMobile) teacherPhoneMobile.value = btn.dataset.phoneMobile || '';
+3777:                 if (teacherType) teacherType.value = btn.dataset.type || 'TITULAIRE';
+3778:                 if (teacherClass) teacherClass.value = btn.dataset.classId || '';
+3779:                 if (teacherObservation) teacherObservation.value = btn.dataset.observation || '';
+3780:                 renderSelectedSubjects(
+3781:                     teacherSubjectList,
+3782:                     teacherSubjectInputs,
+3783:                     teacherSubjectEmpty,
+3784:                     (btn.dataset.subjects || '').split(',').map((v) => v.trim()).filter(Boolean),
+3785:                     teacherSubjectSelect,
+3786:                     mode === 'view'
+3787:                 );
+3788:             }
+3789:             if (mode === 'edit') {
+3790:                 if (teacherTitle) teacherTitle.textContent = "Modifier l'enseignant";
+3791:                 if (teacherSubmit) teacherSubmit.textContent = 'Mettre \xe0 jour';
+3792:                 teacherForm.action = `/tenant/app/teachers/update?tenantId=${tenantId}`;
+3793:             }
+3794:             if (mode === 'view') {
+3795:                 if (teacherTitle) teacherTitle.textContent = 'Informations enseignant';
+3796:                 if (teacherSubtitle) teacherSubtitle.textContent = 'Consultation des informations.';
+3797:                 teacherForm.action = '#';
+3798:                 teacherForm.onsubmit = () => false;
+3799:                 if (teacherSubmit) teacherSubmit.style.display = 'none';
+3800:                 if (teacherFirstName) teacherFirstName.readOnly = true;
+4075:             <div class="badge-est-name">${estName}</div>
+4076:             ${estAddress ? `<div class="badge-est-info">${estAddress}</div>` : ''}
+4077:             ${estLocation ? `<div class="badge-est-info">${estLocation}</div>` : ''}
+4078:             ${estDirector ? `<div class="badge-est-info">${estDirector}</div>` : ''}
+4079:             ${estPhone ? `<div class="badge-est-info">${estPhone}</div>` : ''}
+4080:             <div class="badge-user">
+4081:                 <div class="badge-name">${name}</div>
+4082:                 <div class="badge-role">${role}</div>
+4083:                 <div class="badge-id">${username}</div>
+4084:             </div>
+4085:             <div class="badge-footer">EdiTik</div>
+4086:         </div>
+4087:     </div>
+4088:     <style>
+4089:         :root {
+4090:             --btn-bg: var(--surface2);
+4091:             --btn-text: var(--primary);
+4092:             --btn-hover-bg: var(--surface2);
+4093:             --btn-hover-text: var(--primary);
+4094:         }
+4095:         button, .btn, a.btn, input[type="submit"], input[type="button"], .nav-link, .icon-btn, .pager button {
+4096:             background: var(--btn-bg) !important;
+4097:             border-color: var(--btn-bg) !important;
+4098:             color: var(--btn-text) !important;
+4099:         }
+4100:         button:focus, button:active, .btn:focus, .btn:active, a.btn:focus, a.btn:active {
+4101:             background: var(--btn-hover-bg) !important;
+4102:             border-color: var(--btn-bg) !important;
+4103:             color: var(--btn-hover-text) !important;
+4104:         }
+4105:         input, select, textarea {
+4106:             background: #f3f4f6 !important;
+4107:             color: #1f2937 !important;
+4108:             border-color: var(--border) !important;
+4109:         }
+4110:         input::placeholder, textarea::placeholder {
+4111:             color: #64748b !important;
+4112:         }
+4113:         table th, table td {
+4114:             color: #1f2937 !important;
+4115:         }
+4116:         table th {
+4117:             background: var(--surface2) !important;
+4118:         }
+4119:         table tr:nth-child(even) td {
+4120:             background: #f8fafc !important;
+4121:         }
+4122:         body, button, input, select, textarea {
+4123:             font-family: "Segoe UI", sans-serif !important;
+4124:         }
+4125:         a:hover {
+4126:             color: inherit !important;
+4127:             text-decoration: none !important;
+4128:         }
+4129:         button, .btn, a.btn, .nav-link, .icon-btn, .pager button, input[type="submit"], input[type="button"] {
+4130:             background: var(--btn-bg) !important;
+4131:             border-color: var(--primary) !important;
+4132:             color: var(--btn-text) !important;
+4133:             box-shadow: none !important;
+4134:             transform: none !important;
+4135:             transition: none !important;
+4136:         }
+4137:         .btn.primary {
+4138:             background: var(--btn-bg) !important;
+4139:             border-color: var(--primary) !important;
+4140:             color: var(--btn-text) !important;
+4141:         }
+4142:         /* soft-outline buttons */
+4143:         .btn, button, a.btn, .nav-btn, .nav-link, .icon-btn,
+4144:         input[type="button"], input[type="submit"], input[type="reset"] {
+4145:             background: #ffffff !important;
+4146:             border: 12px solid var(--primary, #1e88e5) !important;
+4147:             border-radius: 999px !important;
+4148:             color: var(--primary, #1e88e5) !important;
+4149:             box-shadow: none !important;
+4150:             transform: none !important;
+4151:             filter: none !important;
+4152:             text-decoration: none;
+4153:         }
+4154:     </style>
+4155: </body>
+4156: </html>`;
+4157:             const win = window.open('', 'badgePrint', 'width=520,height=640');
+4158:             if (!win) return;
+4159:             win.document.write(html);
+4160:             win.document.close();
+4161:             win.focus();
+4162:             win.print();
+4163:             win.close();

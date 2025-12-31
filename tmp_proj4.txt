@@ -1,0 +1,45 @@
+/tenant/app/projects/import")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String importProjects(
+            @RequestParam(required = false) MultipartFile projectsFile,
+            @RequestParam(required = false) String projectsInput,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        int created = 0;
+        int skipped = 0;
+        try {
+            Set<String> lines = new LinkedHashSet<>();
+            if (projectsFile != null && !projectsFile.isEmpty()) {
+                String content = new String(projectsFile.getBytes(), StandardCharsets.UTF_8);
+                lines.addAll(List.of(content.split("\\r?\\n")));
+            }
+            if (projectsInput != null && !projectsInput.isBlank()) {
+                lines.addAll(List.of(projectsInput.split("\\r?\\n")));
+            }
+            for (String line : lines) {
+                if (line == null) continue;
+                String trimmed = line.trim();
+                if (trimmed.isBlank()) continue;
+                String lower = trimmed.toLowerCase();
+                if (lower.contains("titre") && lower.contains("annee")) {
+                    continue;
+                }
+                String[] parts = trimmed.split("[,;\\t]");
+                if (parts.length < 1) {
+                    skipped++;
+                    continue;
+                }
+                String title = parts[0].trim();
+                if (title.isBlank()) {
+                    skipped++;
+                    continue;
+                }
+                if (pedagogicalProjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, title).isPresent()) {
+                    skipped++;
+                    continue;
+                }
+                PedagogicalProject project = new PedagogicalProject();
+                project

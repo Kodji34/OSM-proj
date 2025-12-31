@@ -1,0 +1,17 @@
+n th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name}">Classe</option>
+                        </select>
+                    </div>
+                    <div class="field full">
+                        <label for="teacherObservation">Observation</label>
+                        <textarea id="teacherObservation" name="observation" rows="3" placeholder="Notes, matière, informations utiles..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" onclick="closeTeacherModal()">Annuler</button>
+                    <button type="submit" class="btn primary" id="teacherSubmit">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="teach

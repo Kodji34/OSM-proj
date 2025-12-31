@@ -1,0 +1,14 @@
+       </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" onclick="closeStudentImportModal()">Annuler</button>
+                    <button type="submit" class="btn primary">Importer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="teacherModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="teacherModalTitle">Créer un enseignant</h3>
+            <s

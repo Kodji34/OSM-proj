@@ -1,0 +1,11 @@
+                       title="Modifier"
+                                                    th:attr="data-id=${t.id},
+                                                             data-first-name=${t.firstName},
+                                                             data-last-name=${t.lastName},
+                                                             data-email=${t.email},
+                                                             data-phone-fixed=${t.phoneFixed},
+                                                             data-phone-mobile=${t.phoneMobile},
+                                                             data-type=${t.teacherType},
+                                                             data-class-id=${t.schoolClass != null ? t.schoolClass.id : ''},
+                                                             data-class-name=${t.schoolClass != null ? t.schoolClass.name : ''},
+                                                             data-observation=$

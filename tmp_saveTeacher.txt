@@ -1,0 +1,90 @@
+            if (observation != null && !observation.isBlank()) {
+                student.setObservation(observation.trim());
+            }
+            student.getRoles().add(studentRole);
+            userRepository.save(student);
+            redirectAttributes.addFlashAttribute("success", "Apprenant créé. Mot de passe temporaire: " + tempPassword);
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur apprenant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+    }
+
+    @PostMapping("/tenant/app/teachers")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String createTeacher(
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String teacherType,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) String observation,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom et prenoms sont requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+            }
+            if (email == null || email.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Email est requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+            }
+            String username = email.trim().toLowerCase();
+            if (userRepository.findByUsername(username).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Cet email est déjà utilisé.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+            }
+            SchoolClass schoolClass = null;
+            if (schoolClassId != null) {
+                schoolClass = schoolClassRepository.findById(schoolClassId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+                if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                    throw new IllegalStateException("Classe hors de ce locataire.");
+                }
+            }
+            Role teacherRole = roleRepository.findByName("ENSEIGNANT")
+                    .orElseGet(() -> roleRepository.save(new Role("ENSEIGNANT")));
+            String tempPassword = buildTempTeacherPassword();
+            User teacher = new User();
+            teacher.setUsername(username);
+            teacher.setPassword(passwordEncoder.encode(tempPassword));
+            teacher.setFirstName(firstName.trim());
+            teacher.setLastName(lastName.trim());
+            teacher.setEmail(email.trim());
+            teacher.setTeacherType(teacherType != null && !teacherType.isBlank() ? teacherType.trim().toUpperCase() : "TITULAIRE");
+            teacher.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            teacher.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            teacher.setSchoolClass(schoolClass);
+            teacher.setEnabled(true);
+            teacher.setEstablishmentId(tenantId);
+            teacher.setArchived(false);
+            if (observation != null && !observation.isBlank()) {
+                teacher.setObservation(observation.trim());
+            }
+            teacher.getRoles().add(teacherRole);
+            userRepository.save(teacher);
+            redirectAttributes.addFlashAttribute("success", "Enseignant créé. Mot de passe temporaire: " + tempPassword);
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/teachers/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String updateTeacher(
+            @RequestParam Long teacherId,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String teacherType,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) String observation,

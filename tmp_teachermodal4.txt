@@ -1,0 +1,17 @@
+                <div class="field">
+                        <label for="teacherPhoneFixed">Téléphone fixe</label>
+                        <input id="teacherPhoneFixed" name="phoneFixed" type="text" placeholder="ex: 22 33 44 55">
+                    </div>
+                    <div class="field">
+                        <label for="teacherPhoneMobile">Téléphone mobile</label>
+                        <input id="teacherPhoneMobile" name="phoneMobile" type="text" placeholder="ex: 90 00 00 00">
+                    </div>
+                    <div class="field">
+                        <label for="teacherClass">Classe</label>
+                        <select id="teacherClass" name="schoolClassId">
+                            <option value="">-- Choisir --</option>
+                            <option th:each="c : ${classes}" th:value="${c.id}" th:text="${c.name}">Classe</option>
+                        </select>
+                    </div>
+                    <div class="field full">
+            

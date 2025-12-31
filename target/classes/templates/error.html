@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:style="${'--primary:' + appThemePrimary + ';--primary-700:' + appThemePrimary + ';--accent:' + appThemePrimary + ';'}">
+<head>
+    <meta charset="UTF-8">
+    <title>Erreur</title>
+    <style>
+        body {
+            margin:0;
+            font-family: "Segoe UI", sans-serif;
+            background: #0b1020;
+            color: #eef2ff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+        }
+        h1 { margin: 0 0 10px 0; font-size: 1.4rem; }
+        p { margin: 6px 0; color: rgba(231,237,255,0.8); }
+        code { display:block; padding:8px; border-radius:8px; background: rgba(255,255,255,0.08); color:#f8fafc; }
+        a { color: #a5b4fc; text-decoration: underline; }
+        .small { font-size: 0.9rem; }
+        /* Global text/link enforcement */
+        :root {
+            --primary: #1e88e5;
+            --primary-hover: #1f2937;
+            --secondary: #F3F4F6;
+            --text: #1F2937;
+            --muted: #6B7280;
+            --bg: #F5F7FB;
+            --surface: #FFFFFF;
+            --success: #2BB673;
+            --warning: #F6C945;
+            --danger: #1e88e5;
+        }
+        body { color: var(--text); }
+        body, body * { color: var(--text) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:visited { color: var(--primary) !important; }
+        a:hover { color: var(--primary) !important; text-decoration: underline; }
+        input, select, textarea, option { color: var(--text) !important; }
+        input::placeholder, textarea::placeholder { color: var(--text) !important; opacity: 0.7; }
+        .muted, .hint, .help, .note, .caption, .meta, .meta-line, .subtle { color: var(--muted) !important; opacity: 0.7; }
+        .btn, .btn * { color: inherit !important; }
+        /* Primary button style for all buttons */
+        .btn,
+        button,
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        button.btn,
+        a.btn,
+        .nav-btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-success,
+        .btn-danger,
+        .btn-warning,
+        .btn-neutral {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+            box-shadow: none !important;
+            text-decoration: none;
+        }
+        /* Palette enforcement: Azure + Slate + Light Gray */
+        :root {
+            --primary: #1E88E5;
+            --primary-hover: #1669B2;
+            --secondary: #F3F4F6;
+            --bg: #F5F7FB;
+            --surface: #FFFFFF;
+            --surface2: #F3F4F6;
+            --border: rgba(31, 41, 55, 0.18);
+            --ink: #1F2937;
+            --muted: rgba(107, 114, 128, 0.75);
+            --accent: #FF6F61;
+            --accent-ink: #1F2937;
+            --accent-soft: rgba(255, 111, 97, 0.12);
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #16a34a;
+        }
+
+        body { background: var(--bg) !important; color: var(--ink) !important; }
+        h1, h2, h3, h4, h5, h6 { color: var(--primary) !important; }
+        a { color: var(--primary) !important; }
+        a:hover { color: var(--primary-hover) !important; }
+        p, span, li, label, small, td, th { color: var(--ink) !important; }
+        .muted, .text-muted, .meta-line { color: var(--muted) !important; }
+        table, th, td { color: var(--ink) !important; }
+        input, select, textarea, option {
+            color: var(--ink) !important;
+            background-color: var(--secondary) !important;
+            border-color: var(--border) !important;
+        }
+        input::placeholder, textarea::placeholder { color: var(--muted) !important; }
+        .btn, .btn-primary, .btn-secondary, .btn-neutral, .btn.primary, .btn.secondary,
+        button, input[type="button"], input[type="submit"], input[type="reset"], .nav-btn {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--secondary) !important;
+        }
+        .btn *, button * { color: inherit !important; }
+        .status-active,
+        .status-badge.status-active { color: var(--success) !important; }
+        .status-inactive,
+        .status-badge.status-inactive { color: var(--danger) !important; }
+    </style>
+    <link rel="stylesheet" href="/theme.css">
+    <link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+<div class="card">
+    <h1>Une erreur est survenue</h1>
+    <p>Le serveur a rencontré une erreur (500). Merci de réessayer ou de contacter l'administrateur.</p>
+    <p class="small">Si vous êtes admin, consultez les logs pour le détail de l'exception.</p>
+    <p><a href="/" style="color:#a5b4fc;">Retour à l'accueil</a></p>
+</div>
+    <style>
+        :root {
+            --btn-bg: var(--primary);
+            --btn-text: #ffffff;
+            --btn-hover-bg: var(--surface2);
+            --btn-hover-text: var(--primary);
+        }
+        button, .btn, a.btn, input[type="submit"], input[type="button"] {
+            background: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
+        }
+        button:focus, button:active, .btn:focus, .btn:active, a.btn:focus, a.btn:active {
+            background: var(--btn-hover-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: var(--btn-hover-text) !important;
+        }
+        body, button, input, select, textarea {
+            font-family: "Segoe UI", sans-serif !important;
+        }
+        a:hover {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        /* soft-outline buttons */
+        .btn, button, a.btn, .nav-btn, .nav-link, .icon-btn,
+        input[type="button"], input[type="submit"], input[type="reset"] {
+            background: #ffffff !important;
+            border: 1.5px solid var(--primary, #1e88e5) !important;
+            color: var(--primary, #1e88e5) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            text-decoration: none;
+        }
+    </style>
+</body>
+</html>

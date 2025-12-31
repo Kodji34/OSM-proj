@@ -1,0 +1,12 @@
+116078
+acherImportModal()">Annuler</button>
+                    <button type="submit" class="btn primary">Importer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="classModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="classModalTitle">Ajouter une classe</h3>
+            <small>Renseignez les informations principales de la classe.</sm

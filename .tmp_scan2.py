@@ -1,0 +1,1 @@
+import pathlib;lines=pathlib.Path(r'C:\Users\hp\.vscode\appOSMJava\src\main\resources\templates\tenant-app.html').read_text(encoding='utf-8').splitlines();[print(str(i)+':'+l) for i,l in enumerate(lines,1) if 'module-subjects' in l]

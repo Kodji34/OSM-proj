@@ -1,0 +1,30 @@
+   th:text="${item.status.name() == 'ACTIVE' ? 'Désactiver' : 'Activer'}"
+                                    style="padding:8px 12px;"
+                                    th:onclick="'return confirm(''Confirmer l'''+ (item.status.name() == 'ACTIVE' ? 'arrêt' : 'activation') + ' du module ?'');'">
+                                Activer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div th:switch="${item.module.code}">
+                    <div th:case="'INSERTION_PRO'">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Partenaire</th>
+                                    <th>Intitulé</th>
+                                    <th>Niveau/Classe</th>
+                                    <th>Période</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="i : ${insertions}"
+                                    th:attr="data-id=${i.id},
+                                             data-type=${i.type},
+                                             data-partner=${i.partnerName},
+                                             data-title=${i.title},
+                                             data-level=${i.levelOrClass},
+                  

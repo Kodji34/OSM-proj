@@ -1,0 +1,100 @@
+            @RequestParam(required = false) MultipartFile levelsFile,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            Set<String> names = new LinkedHashSet<>();
+            if (levelsFile != null && !levelsFile.isEmpty()) {
+                String content = new String(levelsFile.getBytes(), StandardCharsets.UTF_8);
+                addLevelTokens(content, names);
+            }
+            addLevelTokens(levelsInput, names);
+            if (names.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Aucun niveau fourni.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+            }
+            int created = 0;
+            int skipped = 0;
+            for (String name : names) {
+                if (levelRepository.findByEstablishmentAndNameIgnoreCase(current, name).isPresent()) {
+                    skipped++;
+                    continue;
+                }
+                levelRepository.save(new Level(name, current));
+                created++;
+            }
+            if (created > 0) {
+                redirectAttributes.addFlashAttribute("success", "Niveaux importes : " + created);
+            } else {
+                redirectAttributes.addFlashAttribute("info", "Aucun niveau ajoute. Doublons ignores : " + skipped);
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import niveaux : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/classes")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String saveClass(
+            @RequestParam(required = false) Long classId,
+            @RequestParam String name,
+            @RequestParam(required = false) Long levelId,
+            @RequestParam(required = false) Long academicYearId,
+            @RequestParam(required = false) Long roomId,
+            @RequestParam(required = false) String responsibleStaff,
+            @RequestParam(required = false) String responsibleTeacher,
+            @RequestParam(required = false) String delegateStudent,
+            @RequestParam(required = false, defaultValue = "false") boolean acceptRoomConflict,
+            @RequestParam(required = false, defaultValue = "false") boolean acceptCapacityOverflow,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            String trimmedName = name != null ? name.trim() : "";
+            if (trimmedName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Le nom de la classe est requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+            }
+            SchoolClass schoolClass = classId != null
+                    ? schoolClassRepository.findById(classId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."))
+                    : new SchoolClass();
+            if (schoolClass.getEstablishment() != null && !tenantId.equals(schoolClass.getEstablishment().getId())) {
+                throw new IllegalStateException("Classe hors de ce locataire.");
+            }
+            AcademicYear year = null;
+            if (academicYearId != null) {
+                year = academicYearRepository.findById(academicYearId)
+                        .orElseThrow(() -> new IllegalArgumentException("Annee introuvable."));
+                if (!tenantId.equals(year.getEstablishment().getId())) {
+                    throw new IllegalStateException("Annee hors de ce locataire.");
+                }
+            }
+            final AcademicYear selectedYear = year;
+            Level level = null;
+            if (levelId != null) {
+                level = levelRepository.findById(levelId)
+                        .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable."));
+                if (!tenantId.equals(level.getEstablishment().getId())) {
+                    throw new IllegalStateException("Niveau hors de ce locataire.");
+                }
+            }
+            Room room = null;
+            if (roomId != null) {
+                room = roomRepository.findById(roomId)
+                        .orElseThrow(() -> new IllegalArgumentException("Salle introuvable."));
+                if (!tenantId.equals(room.getEstablishment().getId())) {
+                    throw new IllegalStateException("Salle hors de ce locataire.");
+                }
+            }
+            long currentEffectif = 0;
+            if (schoolClass.getId() != null) {
+                currentEffectif = userRepository.countByEstablishmentIdAndRoles_NameInAndSchoolClass_Id(
+                        tenantId, List.of("APPRENANT"), schoolClass.getId());

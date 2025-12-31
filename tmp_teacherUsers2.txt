@@ -1,0 +1,32 @@
+
+                                <thead>
+                                <tr>
+                                    <th>Photo</th><th>Nom</th><th>Prenoms</th><th>Email</th><th>Type</th><th>Classe</th><th>Statut</th><th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="t : ${teacherUsers}">
+                                    <td>
+                                        <div class="avatar" th:if="${t.photoUrl}">
+                                            <img th:src="${t.photoUrl}" alt="photo">
+                                        </div>
+                                        <div class="avatar" th:unless="${t.photoUrl}">
+                                            <span th:text="${t.firstName != null && !t.firstName.isBlank() ? #strings.substring(t.firstName,0,1).toUpperCase() : 'E'}">E</span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${t.lastName != null && !t.lastName.isBlank() ? t.lastName : '—'}">—</td>
+                                    <td th:text="${t.firstName != null && !t.firstName.isBlank() ? t.firstName : '—'}">—</td>
+                                    <td th:text="${t.email != null && !t.email.isBlank() ? t.email : '—'}">—</td>
+                                    <td th:text="${t.teacherType != null && !t.teacherType.isBlank() ? t.teacherType : 'TITULAIRE'}">TITULAIRE</td>
+                                    <td th:text="${t.schoolClass != null ? t.schoolClass.name : '—'}">—</td>
+                                    <td>
+                                        <span class="badge ok" th:if="${t.enabled}">Actif</span>
+                                        <span class="badge warn" th:unless="${t.enabled}">Inactif</span>
+                                        <span class="badge warn" th:if="${t.archived}" style="margin-left:6px;">Archivé</span>
+                                    </td>
+                                    <td>
+                                        <div class="action-icons">
+                                            <button type="button" class="icon-btn"
+                                                    title="Voir"
+                                                    th:attr="data-id=${t.id},
+          

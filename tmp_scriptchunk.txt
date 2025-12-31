@@ -1,0 +1,167 @@
+tudents?tenantId=${tenantId}`;
+            studentForm.onsubmit = null;
+            if (studentIdInput) studentIdInput.value = '';
+            if (studentFirstName) {
+                studentFirstName.value = '';
+                studentFirstName.readOnly = false;
+            }
+            if (studentLastName) {
+                studentLastName.value = '';
+                studentLastName.readOnly = false;
+            }
+            if (studentEmail) {
+                studentEmail.value = '';
+                studentEmail.readOnly = false;
+                studentEmail.required = true;
+            }
+            if (studentPhoneFixed) {
+                studentPhoneFixed.value = '';
+                studentPhoneFixed.readOnly = false;
+            }
+            if (studentPhoneMobile) {
+                studentPhoneMobile.value = '';
+                studentPhoneMobile.readOnly = false;
+            }
+            if (studentClass) {
+                studentClass.value = '';
+                studentClass.disabled = false;
+            }
+            if (studentObservation) {
+                studentObservation.value = '';
+                studentObservation.readOnly = false;
+            }
+            if (studentTitle) studentTitle.textContent = 'Créer un apprenant';
+            if (studentSubtitle) studentSubtitle.textContent = 'Ajoutez un apprenant et affectez-le à une classe.';
+            if (studentSubmit) {
+                studentSubmit.textContent = 'Créer';
+                studentSubmit.style.display = '';
+            }
+        }
+
+        function openStudentModal(mode = 'create', btn) {
+            if (!studentModal) return;
+            resetStudentForm();
+            if ((mode === 'edit' || mode === 'view') && btn?.dataset) {
+                if (studentIdInput) studentIdInput.value = btn.dataset.id || '';
+                if (studentFirstName) studentFirstName.value = btn.dataset.firstName || '';
+                if (studentLastName) studentLastName.value = btn.dataset.lastName || '';
+                if (studentEmail) studentEmail.value = btn.dataset.email || '';
+                if (studentPhoneFixed) studentPhoneFixed.value = btn.dataset.phoneFixed || '';
+                if (studentPhoneMobile) studentPhoneMobile.value = btn.dataset.phoneMobile || '';
+                if (studentClass) studentClass.value = btn.dataset.classId || '';
+                if (studentObservation) studentObservation.value = btn.dataset.observation || '';
+            }
+            if (mode === 'edit') {
+                if (studentTitle) studentTitle.textContent = "Modifier l'apprenant";
+                if (studentSubmit) studentSubmit.textContent = 'Mettre à jour';
+                studentForm.action = `/tenant/app/students/update?tenantId=${tenantId}`;
+            }
+            if (mode === 'view') {
+                if (studentTitle) studentTitle.textContent = 'Informations apprenant';
+                if (studentSubtitle) studentSubtitle.textContent = 'Consultation des informations.';
+                studentForm.action = '#';
+                studentForm.onsubmit = () => false;
+                if (studentSubmit) studentSubmit.style.display = 'none';
+                if (studentFirstName) studentFirstName.readOnly = true;
+                if (studentLastName) studentLastName.readOnly = true;
+                if (studentEmail) {
+                    studentEmail.readOnly = true;
+                    studentEmail.required = false;
+                }
+                if (studentPhoneFixed) studentPhoneFixed.readOnly = true;
+                if (studentPhoneMobile) studentPhoneMobile.readOnly = true;
+                if (studentClass) studentClass.disabled = true;
+                if (studentObservation) studentObservation.readOnly = true;
+            }
+            studentModal.style.display = 'flex';
+        }
+
+        function closeStudentModal() {
+            if (studentModal) studentModal.style.display = 'none';
+        }
+
+        function openStudentImportModal() {
+            if (studentImportModal) studentImportModal.style.display = 'flex';
+        }
+
+        function closeStudentImportModal() {
+            if (studentImportModal) studentImportModal.style.display = 'none';
+        }
+
+        window.openStudentModal = openStudentModal;
+        window.closeStudentModal = closeStudentModal;
+        window.openStudentImportModal = openStudentImportModal;
+        window.closeStudentImportModal = closeStudentImportModal;
+
+        function resetTeacherForm() {
+            if (!teacherForm) return;
+            teacherForm.action = `/tenant/app/teachers?tenantId=${tenantId}`;
+            teacherForm.onsubmit = null;
+            if (teacherIdInput) teacherIdInput.value = '';
+            if (teacherFirstName) {
+                teacherFirstName.value = '';
+                teacherFirstName.readOnly = false;
+            }
+            if (teacherLastName) {
+                teacherLastName.value = '';
+                teacherLastName.readOnly = false;
+            }
+            if (teacherEmail) {
+                teacherEmail.value = '';
+                teacherEmail.readOnly = false;
+                teacherEmail.required = true;
+            }
+            if (teacherType) {
+                teacherType.value = 'TITULAIRE';
+                teacherType.disabled = false;
+            }
+            if (teacherPhoneFixed) {
+                teacherPhoneFixed.value = '';
+                teacherPhoneFixed.readOnly = false;
+            }
+            if (teacherPhoneMobile) {
+                teacherPhoneMobile.value = '';
+                teacherPhoneMobile.readOnly = false;
+            }
+            if (teacherClass) {
+                teacherClass.value = '';
+                teacherClass.disabled = false;
+            }
+            if (teacherObservation) {
+                teacherObservation.value = '';
+                teacherObservation.readOnly = false;
+            }
+            if (teacherTitle) teacherTitle.textContent = 'Créer un enseignant';
+            if (teacherSubtitle) teacherSubtitle.textContent = 'Ajoutez un enseignant et affectez-le à une classe.';
+            if (teacherSubmit) {
+                teacherSubmit.textContent = 'Créer';
+                teacherSubmit.style.display = '';
+            }
+        }
+
+        function openTeacherModal(mode = 'create', btn) {
+            if (!teacherModal) return;
+            resetTeacherForm();
+            if ((mode === 'edit' || mode === 'view') && btn?.dataset) {
+                if (teacherIdInput) teacherIdInput.value = btn.dataset.id || '';
+                if (teacherFirstName) teacherFirstName.value = btn.dataset.firstName || '';
+                if (teacherLastName) teacherLastName.value = btn.dataset.lastName || '';
+                if (teacherEmail) teacherEmail.value = btn.dataset.email || '';
+                if (teacherPhoneFixed) teacherPhoneFixed.value = btn.dataset.phoneFixed || '';
+                if (teacherPhoneMobile) teacherPhoneMobile.value = btn.dataset.phoneMobile || '';
+                if (teacherType) teacherType.value = btn.dataset.type || 'TITULAIRE';
+                if (teacherClass) teacherClass.value = btn.dataset.classId || '';
+                if (teacherObservation) teacherObservation.value = btn.dataset.observation || '';
+            }
+            if (mode === 'edit') {
+                if (teacherTitle) teacherTitle.textContent = "Modifier l'enseignant";
+                if (teacherSubmit) teacherSubmit.textContent = 'Mettre à jour';
+                teacherForm.action = `/tenant/app/teachers/update?tenantId=${tenantId}`;
+            }
+            if (mode === 'view') {
+                if (teacherTitle) teacherTitle.textContent = 'Informations enseignant';
+                if (teacherSubtitle) teacherSubtitle.textContent = 'Consultation des informations.';
+                teacherForm.action = '#';
+                teacherForm.onsubmit = () => false;
+                if (teacherSubmit) teacherSubmit.style.display = 'none';
+                if (teacherFirs

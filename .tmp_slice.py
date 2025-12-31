@@ -1,0 +1,1 @@
+import pathlib;lines=pathlib.Path(r'C:\Users\hp\.vscode\appOSMJava\src\main\java\com\example\school\controller\TenantSiteController.java').read_text(encoding='utf-8').splitlines();start=1800;end=1885;[print(str(i)+':'+lines[i-1]) for i in range(start,end+1)]

@@ -1,0 +1,2908 @@
+package com.example.school.controller;
+
+import com.example.school.dto.ModuleItem;
+import com.example.school.entity.Employee;
+import com.example.school.entity.Establishment;
+import com.example.school.entity.ModuleCategory;
+import com.example.school.entity.ModuleDefinition;
+import com.example.school.entity.ModuleStatus;
+import com.example.school.entity.SupportTicket;
+import com.example.school.entity.SupportTicketMessage;
+import com.example.school.entity.Role;
+import com.example.school.entity.SubscriptionPlan;
+import com.example.school.entity.User;
+import com.example.school.entity.ModuleSubscription;
+import com.example.school.entity.AcademicYear;
+import com.example.school.entity.PeriodType;
+import com.example.school.entity.Level;
+import com.example.school.entity.Room;
+import com.example.school.entity.SchoolClass;
+import com.example.school.entity.Subject;
+import com.example.school.entity.StudentDocument;
+import com.example.school.entity.CareerPath;
+import com.example.school.entity.PedagogicalProject;
+import com.example.school.entity.ProfessionalInsertion;
+import com.example.school.repository.EstablishmentRepository;
+import com.example.school.repository.EmployeeRepository;
+import com.example.school.repository.ModuleDefinitionRepository;
+import com.example.school.repository.ModuleSubscriptionRepository;
+import com.example.school.repository.RoleRepository;
+import com.example.school.repository.SubjectRepository;
+import com.example.school.repository.StudentDocumentRepository;
+import com.example.school.repository.SupportTicketMessageRepository;
+import com.example.school.repository.SupportTicketRepository;
+import com.example.school.repository.UserRepository;
+import com.example.school.repository.AcademicYearRepository;
+import com.example.school.repository.LevelRepository;
+import com.example.school.repository.SchoolClassRepository;
+import com.example.school.repository.RoomRepository;
+import com.example.school.service.EmailService;
+import com.example.school.repository.PedagogicalProjectRepository;
+import com.example.school.repository.ProfessionalInsertionRepository;
+import com.example.school.repository.CareerPathRepository;
+import com.example.school.tenant.TenantContext;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Base64;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Controller
+public class TenantSiteController {
+
+    private final EstablishmentRepository establishmentRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ModuleDefinitionRepository moduleDefinitionRepository;
+    private final ModuleSubscriptionRepository moduleSubscriptionRepository;
+    private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
+    private final SupportTicketRepository supportTicketRepository;
+    private final SupportTicketMessageRepository supportTicketMessageRepository;
+    private final AcademicYearRepository academicYearRepository;
+    private final LevelRepository levelRepository;
+    private final SchoolClassRepository schoolClassRepository;
+    private final RoomRepository roomRepository;
+    private final SubjectRepository subjectRepository;
+    private final StudentDocumentRepository studentDocumentRepository;
+    private final PedagogicalProjectRepository pedagogicalProjectRepository;
+    private final ProfessionalInsertionRepository professionalInsertionRepository;
+    private final CareerPathRepository careerPathRepository;
+
+    public TenantSiteController(EstablishmentRepository establishmentRepository,
+                                UserRepository userRepository,
+                                RoleRepository roleRepository,
+                                PasswordEncoder passwordEncoder,
+                                ModuleDefinitionRepository moduleDefinitionRepository,
+                                ModuleSubscriptionRepository moduleSubscriptionRepository,
+                                EmployeeRepository employeeRepository,
+                                EmailService emailService,
+                                SupportTicketRepository supportTicketRepository,
+                                SupportTicketMessageRepository supportTicketMessageRepository,
+                                AcademicYearRepository academicYearRepository,
+                                LevelRepository levelRepository,
+                                SchoolClassRepository schoolClassRepository,
+                                RoomRepository roomRepository,
+                                SubjectRepository subjectRepository,
+                                StudentDocumentRepository studentDocumentRepository,
+                                PedagogicalProjectRepository pedagogicalProjectRepository,
+                                ProfessionalInsertionRepository professionalInsertionRepository,
+                                CareerPathRepository careerPathRepository) {
+        this.establishmentRepository = establishmentRepository;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.moduleDefinitionRepository = moduleDefinitionRepository;
+        this.moduleSubscriptionRepository = moduleSubscriptionRepository;
+        this.employeeRepository = employeeRepository;
+        this.emailService = emailService;
+        this.supportTicketRepository = supportTicketRepository;
+        this.supportTicketMessageRepository = supportTicketMessageRepository;
+        this.academicYearRepository = academicYearRepository;
+        this.levelRepository = levelRepository;
+        this.schoolClassRepository = schoolClassRepository;
+        this.roomRepository = roomRepository;
+        this.subjectRepository = subjectRepository;
+        this.studentDocumentRepository = studentDocumentRepository;
+        this.pedagogicalProjectRepository = pedagogicalProjectRepository;
+        this.professionalInsertionRepository = professionalInsertionRepository;
+        this.careerPathRepository = careerPathRepository;
+    }
+
+    @GetMapping("/tenant/dashboard")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String tenantDashboard(Model model) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) {
+            return "error-tenant";
+        }
+        Establishment current = est.get();
+        model.addAttribute("est", current);
+        List<User> tenantUsers = userRepository.findTopByEstablishmentIdOrderByIdDesc(current.getId())
+                .map(List::of)
+                .orElseGet(List::of);
+        model.addAttribute("tenantUsers", tenantUsers);
+        model.addAttribute("roles", tenantAssignableRoles());
+
+        List<ModuleDefinition> baseModules = moduleDefinitionRepository.findByCategory(ModuleCategory.BASE);
+        List<ModuleDefinition> premiumModules = moduleDefinitionRepository.findByCategory(ModuleCategory.PREMIUM);
+        Map<Long, ModuleSubscription> subsByModule = moduleSubscriptionRepository
+                .findByEstablishmentId(current.getId())
+                .stream()
+                .collect(Collectors.toMap(s -> s.getModule().getId(), s -> s, (a, b) -> a));
+        List<ModuleItem> premiumItems = premiumModules.stream()
+                .map(m -> {
+                    ModuleSubscription sub = subsByModule.get(m.getId());
+                    ModuleStatus status = sub != null ? sub.getStatus() : ModuleStatus.INACTIVE;
+                    return new ModuleItem(m, status);
+                })
+                .toList();
+
+        Map<Long, ModuleStatus> moduleStatusById = subsByModule.values().stream()
+                .collect(Collectors.toMap(s -> s.getModule().getId(), ModuleSubscription::getStatus, (a, b) -> a));
+
+        model.addAttribute("baseModules", baseModules);
+        model.addAttribute("premiumModules", premiumItems);
+        model.addAttribute("moduleStatusById", moduleStatusById);
+
+        List<SupportTicket> tenantTickets = supportTicketRepository.findByEstablishment_IdOrderByUpdatedAtDesc(current.getId());
+        model.addAttribute("tenantTickets", tenantTickets);
+        if (!tenantTickets.isEmpty()) {
+            List<Long> ids = tenantTickets.stream().map(SupportTicket::getId).toList();
+            Map<Long, List<SupportTicketMessage>> messagesByTicketId = supportTicketMessageRepository
+                    .findByTicket_IdInOrderByCreatedAtAsc(ids)
+                    .stream()
+                    .collect(Collectors.groupingBy(m -> m.getTicket().getId()));
+            model.addAttribute("tenantTicketMessagesById", messagesByTicketId);
+        } else {
+            model.addAttribute("tenantTicketMessagesById", Map.of());
+        }
+        return "tenant-dashboard";
+    }
+
+    @GetMapping("/tenant/public")
+    public String tenantPublic(Model model) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) {
+            return "error-tenant";
+        }
+        model.addAttribute("est", est.get());
+        return "tenant-public";
+    }
+
+    @GetMapping("/tenant/login")
+    public String tenantLogin(Model model) {
+        Optional<Establishment> est = loadCurrentTenant();
+        est.ifPresent(e -> model.addAttribute("est", e));
+        return "tenant-login";
+    }
+
+    @GetMapping("/tenant/app")
+    @PreAuthorize("hasAnyRole('ADMIN','USER','SUPER_ADMIN','DIRECTEUR','SECRETAIRE','COMPTABLE','DIRECTEUR_RH','ENSEIGNANT','APPRENANT')")
+    public String tenantApp(Model model) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) {
+            return "error-tenant";
+        }
+        Establishment current = est.get();
+        model.addAttribute("est", current);
+
+        List<User> tenantUsers = userRepository.findByEstablishmentId(current.getId());
+        long recentLogins = tenantUsers.stream()
+                .filter(u -> u.getLastLoginAt() != null && u.getLastLoginAt().isAfter(java.time.LocalDateTime.now().minusHours(24)))
+                .count();
+        model.addAttribute("tenantUsers", tenantUsers);
+        model.addAttribute("recentLogins", recentLogins);
+        model.addAttribute("employees", employeeRepository.findByEstablishmentId(current.getId()));
+        model.addAttribute("roles", tenantAssignableRoles());
+        model.addAttribute("academicYears", academicYearRepository.findByEstablishmentIdOrderByStartDateDesc(current.getId()));
+        List<Level> levels = levelRepository.findByEstablishmentIdOrderByNameAsc(current.getId());
+        List<SchoolClass> classes = schoolClassRepository.findByEstablishmentIdOrderByNameAsc(current.getId());
+        List<Room> rooms = roomRepository.findByEstablishmentIdOrderByNameAsc(current.getId());
+        List<Subject> subjects = subjectRepository.findByEstablishmentIdOrderByTitleAsc(current.getId());
+        List<PedagogicalProject> projects = pedagogicalProjectRepository.findByEstablishmentIdOrderByIdDesc(current.getId());
+        List<ProfessionalInsertion> insertions = professionalInsertionRepository.findByEstablishmentIdOrderByStartDateDesc(current.getId());
+        model.addAttribute("levels", levels);
+        model.addAttribute("classes", classes);
+        model.addAttribute("rooms", rooms);
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("levelsCount", levels.size());
+        model.addAttribute("classesCount", classes.size());
+        model.addAttribute("roomsCount", rooms.size());
+        model.addAttribute("subjectsCount", subjects.size());
+        model.addAttribute("projects", projects);
+        model.addAttribute("insertions", insertions);
+        model.addAttribute("projectsCount", projects.size());
+        model.addAttribute("insertionsCount", insertions.size());
+        List<CareerPath> careerPaths = careerPathRepository.findByEstablishmentIdOrderByNameAsc(current.getId());
+        model.addAttribute("careerPaths", careerPaths);
+        model.addAttribute("careerPathsCount", careerPaths.size());
+        List<User> studentUsers = userRepository.findByEstablishmentIdAndRoles_NameIn(current.getId(), List.of("APPRENANT"))
+                .stream()
+                .sorted((a, b) -> {
+                    String lastA = a.getLastName() != null ? a.getLastName() : "";
+                    String lastB = b.getLastName() != null ? b.getLastName() : "";
+                    int lastCompare = lastA.compareToIgnoreCase(lastB);
+                    if (lastCompare != 0) return lastCompare;
+                    String firstA = a.getFirstName() != null ? a.getFirstName() : "";
+                    String firstB = b.getFirstName() != null ? b.getFirstName() : "";
+                    return firstA.compareToIgnoreCase(firstB);
+                })
+                .toList();
+        model.addAttribute("studentUsers", studentUsers);
+        model.addAttribute("studentsCount", studentUsers.size());
+        List<User> teacherUsers = userRepository.findByEstablishmentIdAndRoles_NameIn(current.getId(), List.of("ENSEIGNANT"))
+                .stream()
+                .sorted((a, b) -> {
+                    String lastA = a.getLastName() != null ? a.getLastName() : "";
+                    String lastB = b.getLastName() != null ? b.getLastName() : "";
+                    int lastCompare = lastA.compareToIgnoreCase(lastB);
+                    if (lastCompare != 0) return lastCompare;
+                    String firstA = a.getFirstName() != null ? a.getFirstName() : "";
+                    String firstB = b.getFirstName() != null ? b.getFirstName() : "";
+                    return firstA.compareToIgnoreCase(firstB);
+                })
+                .toList();
+        long titulairesCount = teacherUsers.stream()
+                .filter(u -> u.getTeacherType() != null && "TITULAIRE".equalsIgnoreCase(u.getTeacherType()))
+                .count();
+        long vacatairesCount = teacherUsers.stream()
+                .filter(u -> u.getTeacherType() != null && "VACATAIRE".equalsIgnoreCase(u.getTeacherType()))
+                .count();
+        model.addAttribute("teacherUsers", teacherUsers);
+        model.addAttribute("teachersCount", teacherUsers.size());
+        model.addAttribute("teachersTitulaireCount", titulairesCount);
+        model.addAttribute("teachersVacataireCount", vacatairesCount);
+        List<String> learnerRoles = List.of("APPRENANT");
+        Map<Long, Long> classEffectifs = new java.util.HashMap<>();
+        for (SchoolClass schoolClass : classes) {
+            Long classId = schoolClass.getId();
+            long count = 0;
+            if (classId != null) {
+                count = userRepository.countByEstablishmentIdAndRoles_NameInAndSchoolClass_Id(current.getId(), learnerRoles, classId);
+            }
+            classEffectifs.put(classId, count);
+        }
+        model.addAttribute("classEffectifs", classEffectifs);
+        model.addAttribute("staffCandidates", buildCandidates(tenantUsers, Set.of(
+                "ADMIN", "DIRECTEUR", "SECRETAIRE", "COMPTABLE", "DIRECTEUR_RH", "ENSEIGNANT"
+        )));
+        model.addAttribute("teacherCandidates", buildCandidates(tenantUsers, Set.of("ENSEIGNANT")));
+        model.addAttribute("studentCandidates", buildCandidates(tenantUsers, Set.of("APPRENANT")));
+
+        List<ModuleDefinition> baseModules = moduleDefinitionRepository.findByCategory(ModuleCategory.BASE)
+                .stream()
+                .filter(m -> !"PROFILE".equalsIgnoreCase(m.getCode())) // profil supprimé côté app client
+                .toList();
+        List<ModuleDefinition> premiumModules = moduleDefinitionRepository.findByCategory(ModuleCategory.PREMIUM);
+        Map<Long, ModuleSubscription> subsByModule = moduleSubscriptionRepository
+                .findByEstablishmentId(current.getId())
+                .stream()
+                .collect(Collectors.toMap(s -> s.getModule().getId(), s -> s, (a, b) -> a));
+        List<ModuleItem> premiumItems = premiumModules.stream()
+                .map(m -> {
+                    ModuleSubscription sub = subsByModule.get(m.getId());
+                    ModuleStatus status = sub != null ? sub.getStatus() : ModuleStatus.INACTIVE;
+                    return new ModuleItem(m, status);
+                })
+                .toList();
+
+        model.addAttribute("baseModules", baseModules);
+        model.addAttribute("premiumModules", premiumItems);
+        return "tenant-app";
+    }
+
+    @PostMapping("/tenant/app/academic-year")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String createAcademicYear(
+            @RequestParam String academicYear,
+            @RequestParam String periodType,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam String term1Start,
+            @RequestParam String term1End,
+            @RequestParam String term2Start,
+            @RequestParam String term2End,
+            @RequestParam(required = false) String term3Start,
+            @RequestParam(required = false) String term3End,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            String yearLabel = academicYear != null ? academicYear.trim() : "";
+            if (yearLabel.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "L'annee scolaire est requise.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-academic_year";
+            }
+            if (academicYearRepository.findByAcademicYearAndEstablishmentId(yearLabel, tenantId).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Cette annee scolaire existe deja.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-academic_year";
+            }
+
+            AcademicYear year = new AcademicYear();
+            year.setEstablishment(est.get());
+            applyAcademicYearData(yearLabel, periodType, startDate, endDate,
+                    term1Start, term1End, term2Start, term2End, term3Start, term3End, year);
+            academicYearRepository.save(year);
+            redirectAttributes.addFlashAttribute("success", "Annee scolaire enregistree.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur annee scolaire : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-academic_year";
+    }
+
+    @PostMapping("/tenant/app/academic-year/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String updateAcademicYear(
+            @RequestParam Long yearId,
+            @RequestParam String academicYear,
+            @RequestParam String periodType,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam String term1Start,
+            @RequestParam String term1End,
+            @RequestParam String term2Start,
+            @RequestParam String term2End,
+            @RequestParam(required = false) String term3Start,
+            @RequestParam(required = false) String term3End,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            AcademicYear year = academicYearRepository.findById(yearId)
+                    .orElseThrow(() -> new IllegalArgumentException("Annee introuvable."));
+            if (!tenantId.equals(year.getEstablishment().getId())) {
+                throw new IllegalStateException("Annee hors de ce locataire.");
+            }
+            String yearLabel = academicYear != null ? academicYear.trim() : "";
+            if (yearLabel.isBlank()) {
+                throw new IllegalArgumentException("L'annee scolaire est requise.");
+            }
+            academicYearRepository.findByAcademicYearAndEstablishmentId(yearLabel, tenantId)
+                    .filter(existing -> !existing.getId().equals(yearId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Cette annee scolaire existe deja.");
+                    });
+
+            applyAcademicYearData(yearLabel, periodType, startDate, endDate,
+                    term1Start, term1End, term2Start, term2End, term3Start, term3End, year);
+            academicYearRepository.save(year);
+            redirectAttributes.addFlashAttribute("success", "Annee scolaire mise a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur annee scolaire : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-academic_year";
+    }
+
+    @PostMapping("/tenant/app/academic-year/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String archiveAcademicYear(
+            @RequestParam Long yearId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            AcademicYear year = academicYearRepository.findById(yearId)
+                    .orElseThrow(() -> new IllegalArgumentException("Annee introuvable."));
+            if (!tenantId.equals(year.getEstablishment().getId())) {
+                throw new IllegalStateException("Annee hors de ce locataire.");
+            }
+            year.setArchived(archived);
+            academicYearRepository.save(year);
+            redirectAttributes.addFlashAttribute("success", archived ? "Annee archivee." : "Annee restauree.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur annee scolaire : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-academic_year";
+    }
+
+    @PostMapping("/tenant/app/levels/import")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String importLevels(
+            @RequestParam(required = false) String levelsInput,
+            @RequestParam(required = false) MultipartFile levelsFile,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            Set<String> names = new LinkedHashSet<>();
+            if (levelsFile != null && !levelsFile.isEmpty()) {
+                String content = new String(levelsFile.getBytes(), StandardCharsets.UTF_8);
+                addLevelTokens(content, names);
+            }
+            addLevelTokens(levelsInput, names);
+            if (names.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Aucun niveau fourni.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+            }
+            int created = 0;
+            int skipped = 0;
+            for (String name : names) {
+                if (levelRepository.findByEstablishmentAndNameIgnoreCase(current, name).isPresent()) {
+                    skipped++;
+                    continue;
+                }
+                levelRepository.save(new Level(name, current));
+                created++;
+            }
+            if (created > 0) {
+                redirectAttributes.addFlashAttribute("success", "Niveaux importes : " + created);
+            } else {
+                redirectAttributes.addFlashAttribute("info", "Aucun niveau ajoute. Doublons ignores : " + skipped);
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import niveaux : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/classes")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String saveClass(
+            @RequestParam(required = false) Long classId,
+            @RequestParam String name,
+            @RequestParam(required = false) Long levelId,
+            @RequestParam(required = false) Long academicYearId,
+            @RequestParam(required = false) Long roomId,
+            @RequestParam(required = false) String responsibleStaff,
+            @RequestParam(required = false) String responsibleTeacher,
+            @RequestParam(required = false) String delegateStudent,
+            @RequestParam(required = false, defaultValue = "false") boolean acceptRoomConflict,
+            @RequestParam(required = false, defaultValue = "false") boolean acceptCapacityOverflow,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            String trimmedName = name != null ? name.trim() : "";
+            if (trimmedName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Le nom de la classe est requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+            }
+            SchoolClass schoolClass = classId != null
+                    ? schoolClassRepository.findById(classId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."))
+                    : new SchoolClass();
+            if (schoolClass.getEstablishment() != null && !tenantId.equals(schoolClass.getEstablishment().getId())) {
+                throw new IllegalStateException("Classe hors de ce locataire.");
+            }
+            final AcademicYear year;
+            if (academicYearId != null) {
+                year = academicYearRepository.findById(academicYearId)
+                        .orElseThrow(() -> new IllegalArgumentException("Annee introuvable."));
+                if (!tenantId.equals(year.getEstablishment().getId())) {
+                    throw new IllegalStateException("Annee hors de ce locataire.");
+                }
+            } else {
+                year = null;
+            }
+            Level level = null;
+            if (levelId != null) {
+                level = levelRepository.findById(levelId)
+                        .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable."));
+                if (!tenantId.equals(level.getEstablishment().getId())) {
+                    throw new IllegalStateException("Niveau hors de ce locataire.");
+                }
+            }
+            Room room = null;
+            if (roomId != null) {
+                room = roomRepository.findById(roomId)
+                        .orElseThrow(() -> new IllegalArgumentException("Salle introuvable."));
+                if (!tenantId.equals(room.getEstablishment().getId())) {
+                    throw new IllegalStateException("Salle hors de ce locataire.");
+                }
+            }
+            long currentEffectif = 0;
+            if (schoolClass.getId() != null) {
+                currentEffectif = userRepository.countByEstablishmentIdAndRoles_NameInAndSchoolClass_Id(
+                        tenantId, List.of("APPRENANT"), schoolClass.getId());
+            }
+            if (room != null) {
+                List<SchoolClass> sameRoom = schoolClassRepository.findByEstablishmentIdAndRoomId(tenantId, room.getId());
+                boolean hasConflict = sameRoom.stream()
+                        .filter(existing -> !existing.getId().equals(schoolClass.getId()))
+                        .anyMatch(existing -> {
+                            if (year == null) {
+                                return true;
+                            }
+                            return existing.getAcademicYear() != null &&
+                                    year.getId().equals(existing.getAcademicYear().getId());
+                        });
+                if (hasConflict && !acceptRoomConflict) {
+                    redirectAttributes.addFlashAttribute("error", "Conflit de salle detecte. Confirmez pour continuer.");
+                    return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+                }
+                Integer roomCapacity = room.getCapacity();
+                if (roomCapacity != null && currentEffectif > roomCapacity && !acceptCapacityOverflow) {
+                    redirectAttributes.addFlashAttribute("error", "Capacite depassee. Confirmez pour continuer.");
+                    return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+                }
+            }
+            List<SchoolClass> existing = academicYearId != null
+                    ? schoolClassRepository.findByEstablishmentIdAndAcademicYearIdOrderByNameAsc(tenantId, academicYearId)
+                    : schoolClassRepository.findByEstablishmentIdOrderByNameAsc(tenantId);
+            boolean duplicate = existing.stream().anyMatch(c ->
+                    !c.getId().equals(classId) &&
+                    c.getName() != null &&
+                    c.getName().equalsIgnoreCase(trimmedName) &&
+                    ((academicYearId == null && c.getAcademicYear() == null) ||
+                            (academicYearId != null && c.getAcademicYear() != null &&
+                                    academicYearId.equals(c.getAcademicYear().getId())))
+            );
+            if (duplicate) {
+                redirectAttributes.addFlashAttribute("error", "Cette classe existe deja pour cette annee.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+            }
+
+            if (schoolClass.getId() == null) {
+                schoolClass.setEstablishment(current);
+            }
+            schoolClass.setName(trimmedName);
+            schoolClass.setLevel(level);
+            schoolClass.setAcademicYear(year);
+            schoolClass.setRoom(room);
+            schoolClass.setCapacity((int) currentEffectif);
+            schoolClass.setResponsibleStaff(responsibleStaff != null ? responsibleStaff.trim() : null);
+            schoolClass.setResponsibleTeacher(responsibleTeacher != null ? responsibleTeacher.trim() : null);
+            schoolClass.setDelegateStudent(delegateStudent != null ? delegateStudent.trim() : null);
+            schoolClassRepository.save(schoolClass);
+            redirectAttributes.addFlashAttribute("success", classId == null ? "Classe creee." : "Classe mise a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur classe : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/classes/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String archiveClass(
+            @RequestParam Long classId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            SchoolClass schoolClass = schoolClassRepository.findById(classId)
+                    .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+            if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                throw new IllegalStateException("Classe hors de ce locataire.");
+            }
+            schoolClass.setArchived(archived);
+            schoolClassRepository.save(schoolClass);
+            redirectAttributes.addFlashAttribute("success", archived ? "Classe archivee." : "Classe restauree.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur classe : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/classes/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String deleteClass(
+            @RequestParam Long classId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            SchoolClass schoolClass = schoolClassRepository.findById(classId)
+                    .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+            if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                throw new IllegalStateException("Classe hors de ce locataire.");
+            }
+            schoolClassRepository.delete(schoolClass);
+            redirectAttributes.addFlashAttribute("success", "Classe supprimee.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur classe : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/rooms")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String saveRoom(
+            @RequestParam(required = false) Long roomId,
+            @RequestParam String name,
+            @RequestParam(required = false) Integer capacity,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            String trimmedName = name != null ? name.trim() : "";
+            if (trimmedName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Le nom de la salle est requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+            }
+            Room room = roomId != null
+                    ? roomRepository.findById(roomId)
+                        .orElseThrow(() -> new IllegalArgumentException("Salle introuvable."))
+                    : new Room();
+            if (room.getEstablishment() != null && !tenantId.equals(room.getEstablishment().getId())) {
+                throw new IllegalStateException("Salle hors de ce locataire.");
+            }
+            roomRepository.findByEstablishmentAndNameIgnoreCase(current, trimmedName)
+                    .filter(existing -> !existing.getId().equals(roomId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Cette salle existe deja.");
+                    });
+            if (room.getId() == null) {
+                room.setEstablishment(current);
+            }
+            room.setName(trimmedName);
+            room.setCapacity(capacity);
+            roomRepository.save(room);
+            redirectAttributes.addFlashAttribute("success", roomId == null ? "Salle creee." : "Salle mise a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur salle : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/rooms/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String archiveRoom(
+            @RequestParam Long roomId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            Room room = roomRepository.findById(roomId)
+                    .orElseThrow(() -> new IllegalArgumentException("Salle introuvable."));
+            if (!tenantId.equals(room.getEstablishment().getId())) {
+                throw new IllegalStateException("Salle hors de ce locataire.");
+            }
+            room.setArchived(archived);
+            roomRepository.save(room);
+            redirectAttributes.addFlashAttribute("success", archived ? "Salle archivee." : "Salle restauree.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur salle : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    @PostMapping("/tenant/app/rooms/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String deleteRoom(
+            @RequestParam Long roomId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            Room room = roomRepository.findById(roomId)
+                    .orElseThrow(() -> new IllegalArgumentException("Salle introuvable."));
+            if (!tenantId.equals(room.getEstablishment().getId())) {
+                throw new IllegalStateException("Salle hors de ce locataire.");
+            }
+            roomRepository.delete(room);
+            redirectAttributes.addFlashAttribute("success", "Salle supprimee.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur salle : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-classes";
+    }
+
+    private void addLevelTokens(String source, Set<String> names) {
+        if (source == null || source.isBlank()) {
+            return;
+        }
+        String[] raw = source.split("[,;\\r\\n]+");
+        for (String token : raw) {
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty()) {
+                names.add(trimmed);
+            }
+        }
+    }
+
+    private List<String> buildCandidates(List<User> users, Set<String> roleNames) {
+        return users.stream()
+                .filter(u -> u.getRoles() != null && u.getRoles().stream()
+                        .anyMatch(r -> roleNames.contains(r.getName())))
+                .map(this::formatUserName)
+                .distinct()
+                .toList();
+    }
+
+    private String formatUserName(User user) {
+        String last = user.getLastName() != null ? user.getLastName().trim() : "";
+        String first = user.getFirstName() != null ? user.getFirstName().trim() : "";
+        String combined = (last + " " + first).trim();
+        if (!combined.isEmpty()) {
+            return combined;
+        }
+        return user.getUsername();
+    }
+
+
+    @PostMapping("/tenant/app/public-page")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String updatePublicPage(
+            @RequestParam(required = false) String publicTitle,
+            @RequestParam(required = false) String publicSubtitle,
+            @RequestParam(required = false) String publicAbout,
+            @RequestParam(required = false) String publicHighlightImage,
+            @RequestParam(required = false) String publicNews,
+            @RequestParam(required = false) String publicAlerts,
+            @RequestParam(required = false) String publicStaffIntro,
+            @RequestParam(required = false) String publicElearningUrl,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        try {
+            Establishment e = est.get();
+            e.setPublicTitle(publicTitle);
+            e.setPublicSubtitle(publicSubtitle);
+            e.setPublicAbout(publicAbout);
+            e.setPublicHighlightImage(publicHighlightImage);
+            e.setPublicNews(publicNews);
+            e.setPublicAlerts(publicAlerts);
+            e.setPublicStaffIntro(publicStaffIntro);
+            e.setPublicElearningUrl(publicElearningUrl);
+            establishmentRepository.save(e);
+            redirectAttributes.addFlashAttribute("success", "Page publique mise à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur page publique : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId();
+    }
+
+    @PostMapping("/tenant/dashboard")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String updateTenant(
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String directorCivility,
+            @RequestParam(required = false) String directorName,
+            @RequestParam(required = false) String directorPhone,
+            @RequestParam(required = false) String directorEmail,
+            @RequestParam(required = false) String logoUrl,
+            @RequestParam(required = false) String themePrimary,
+            @RequestParam(required = false) String themeSecondary,
+            @RequestParam(required = false) String publicTitle,
+            @RequestParam(required = false) String publicSubtitle,
+            @RequestParam(required = false) String publicAbout,
+            @RequestParam(required = false) String publicHighlightImage,
+            @RequestParam(required = false) String publicNews,
+            @RequestParam(required = false) String publicAlerts,
+            @RequestParam(required = false) String publicStaffIntro,
+            @RequestParam(required = false) String publicElearningUrl,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) {
+            return "error-tenant";
+        }
+        try {
+            Establishment e = est.get();
+            if (address != null) e.setAddress(address);
+            if (country != null) e.setCountry(country);
+            if (city != null) e.setCity(city);
+            if (directorCivility != null) e.setDirectorCivility(directorCivility);
+            if (directorName != null) e.setDirectorName(directorName);
+            if (directorPhone != null) e.setDirectorPhone(directorPhone);
+            if (directorEmail != null) e.setDirectorEmail(directorEmail);
+            if (logoUrl != null) e.setLogoUrl(logoUrl);
+            if (themePrimary != null && !themePrimary.isBlank()) e.setThemePrimary(themePrimary.trim());
+            if (themeSecondary != null && !themeSecondary.isBlank()) e.setThemeSecondary(themeSecondary.trim());
+            if (publicTitle != null) e.setPublicTitle(publicTitle);
+            if (publicSubtitle != null) e.setPublicSubtitle(publicSubtitle);
+            if (publicAbout != null) e.setPublicAbout(publicAbout);
+            if (publicHighlightImage != null) e.setPublicHighlightImage(publicHighlightImage);
+            if (publicNews != null) e.setPublicNews(publicNews);
+            if (publicAlerts != null) e.setPublicAlerts(publicAlerts);
+            if (publicStaffIntro != null) e.setPublicStaffIntro(publicStaffIntro);
+            if (publicElearningUrl != null) e.setPublicElearningUrl(publicElearningUrl);
+            establishmentRepository.save(e);
+            redirectAttributes.addFlashAttribute("success", "Informations mises à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la mise à jour : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/logo")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String updateLogo(
+            @RequestParam("logoFile") MultipartFile logoFile,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        String redirect = "redirect:/tenant/app?tenantId=" + current.getId() + "#module-users";
+
+        try {
+            if (logoFile == null || logoFile.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Veuillez choisir une image.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            long maxBytes = 300L * 1024L;
+            if (logoFile.getSize() > maxBytes) {
+                redirectAttributes.addFlashAttribute("error", "Image trop volumineuse (max 300 KB).");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            String contentType = logoFile.getContentType();
+            if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
+                redirectAttributes.addFlashAttribute("error", "Format invalide. Choisissez une image PNG/JPG/WebP.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+
+            BufferedImage original = ImageIO.read(logoFile.getInputStream());
+            if (original == null) {
+                redirectAttributes.addFlashAttribute("error", "Impossible de lire l'image.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+
+            int width = original.getWidth();
+            int height = original.getHeight();
+
+            int maxDim = 256;
+            BufferedImage scaled = original;
+            if (Math.max(width, height) > maxDim) {
+                double scale = (double) maxDim / (double) Math.max(width, height);
+                int newW = Math.max(1, (int) Math.round(width * scale));
+                int newH = Math.max(1, (int) Math.round(height * scale));
+                BufferedImage out = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = out.createGraphics();
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.drawImage(original, 0, 0, newW, newH, null);
+                g.dispose();
+                scaled = out;
+                width = newW;
+                height = newH;
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(scaled, "png", baos);
+            byte[] pngBytes = baos.toByteArray();
+
+            Establishment e = est.get();
+            e.setLogoUrl("data:image/png;base64," + Base64.getEncoder().encodeToString(pngBytes));
+            establishmentRepository.save(e);
+
+            long kb = Math.max(1, pngBytes.length / 1024L);
+            redirectAttributes.addFlashAttribute("success", "Logo importe (" + width + "x" + height + ", " + kb + " KB).");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import logo : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/smtp")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String updateSmtpSettings(
+            @RequestParam String smtpHost,
+            @RequestParam Integer smtpPort,
+            @RequestParam String smtpUsername,
+            @RequestParam(required = false) String smtpPassword,
+            @RequestParam(required = false) String smtpFrom,
+            @RequestParam(defaultValue = "false") boolean smtpAuth,
+            @RequestParam(defaultValue = "false") boolean smtpStarttls,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Establishment e = est.get();
+            String host = smtpHost != null ? smtpHost.trim() : "";
+            String username = smtpUsername != null ? smtpUsername.trim() : "";
+            String from = smtpFrom != null ? smtpFrom.trim() : "";
+            String password = smtpPassword != null ? smtpPassword.trim() : "";
+
+            if (host.isBlank() || username.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Hôte SMTP et identifiant sont requis.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (smtpPort == null || smtpPort <= 0) {
+                redirectAttributes.addFlashAttribute("error", "Port SMTP invalide.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (password.isBlank() && (e.getSmtpPassword() == null || e.getSmtpPassword().isBlank())) {
+                redirectAttributes.addFlashAttribute("error", "Mot de passe SMTP requis.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+
+            e.setSmtpHost(host);
+            e.setSmtpPort(smtpPort);
+            e.setSmtpUsername(username);
+            if (!password.isBlank()) {
+                e.setSmtpPassword(password);
+            }
+            e.setSmtpFrom(from.isBlank() ? null : from);
+            e.setSmtpAuth(smtpAuth);
+            e.setSmtpStarttls(smtpStarttls);
+            e.setSmtpEnabled(true);
+            establishmentRepository.save(e);
+            redirectAttributes.addFlashAttribute("success", "Paramètres SMTP enregistrés.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur SMTP : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/dashboard/smtp/test")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String testSmtpSettings(
+            @RequestParam(required = false) String testEmail,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        Establishment e = est.get();
+        if (!emailService.isTenantConfigured(e)) {
+            redirectAttributes.addFlashAttribute("error", "Configurez le SMTP avant d'envoyer un test.");
+            return "redirect:/tenant/dashboard";
+        }
+        String target = testEmail != null && !testEmail.isBlank()
+                ? testEmail.trim()
+                : e.getSmtpUsername();
+        String subject = "OSM - Test SMTP";
+        String body = "Test d'envoi SMTP pour " + e.getName() + ".";
+        boolean sent = emailService.sendForTenant(e, target, subject, body);
+        redirectAttributes.addFlashAttribute(
+                sent ? "success" : "error",
+                sent ? "Email de test envoyé." : "Echec de l'envoi du test SMTP."
+        );
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/users")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String createUser(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam String role,
+            @RequestParam(required = false) String observation,
+            @RequestParam(required = false) String photoUrl,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            if (!emailService.isTenantConfigured(est.get())) {
+                redirectAttributes.addFlashAttribute("error", "Configurez le SMTP de l'établissement avant de créer des utilisateurs.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            if (username.isBlank() || password.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom d'utilisateur et mot de passe sont requis.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom et prenoms sont requis.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (email == null || email.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Email est requis.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (userRepository.findByUsername(username).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Ce nom d'utilisateur existe déjà.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (!allowedRoles.contains(role)) {
+                redirectAttributes.addFlashAttribute("error", "Rôle non autorisé pour votre profil.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            Role r = roleRepository.findByName(role)
+                    .orElseThrow(() -> new IllegalArgumentException("Rôle invalide: " + role));
+            User u = new User();
+            u.setUsername(username);
+            u.setPassword(passwordEncoder.encode(password));
+            u.setFirstName(firstName.trim());
+            u.setLastName(lastName.trim());
+            u.setEmail(email.trim());
+            u.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            u.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            u.setEnabled(true);
+            u.setEstablishmentId(est.get().getId());
+            u.getRoles().add(r);
+            if (observation != null && !observation.isBlank()) {
+                u.setObservation(observation.trim());
+            }
+            if (photoUrl != null && !photoUrl.isBlank()) {
+                u.setPhotoUrl(photoUrl.trim());
+            }
+            u.setArchived(false);
+            userRepository.save(u);
+
+            boolean emailSent = false;
+            boolean emailAttempted = false;
+            String targetEmail = email != null ? email.trim() : "";
+            if (looksLikeEmail(targetEmail)) {
+                emailAttempted = true;
+                String loginUrl = tenantBaseUrl(est.get()) + "/tenant/login";
+                String subject = "OSM - Compte créé";
+                String body = buildAccountEmailBody(est.get(), username, password, loginUrl);
+                emailSent = emailService.sendForTenant(est.get(), targetEmail, subject, body);
+            }
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    emailSent ? "Utilisateur créé et email envoyé." :
+                            (emailAttempted ? "Utilisateur créé mais email non envoyé (verifier SMTP)." : "Utilisateur créé.")
+            );
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur création utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/dashboard/users/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String updateUser(
+            @RequestParam Long userId,
+            @RequestParam String role,
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) String observation,
+            @RequestParam(required = false) String photoUrl,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            boolean superAdmin = isSuperAdmin();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+            if (!est.get().getId().equals(user.getEstablishmentId())) {
+                throw new IllegalStateException("Utilisateur hors de ce locataire.");
+            }
+            if (!canManageUser(user, allowedRoles, superAdmin)) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier cet utilisateur.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (!allowedRoles.contains(role)) {
+                redirectAttributes.addFlashAttribute("error", "Rôle non autorisé pour votre profil.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            Role r = roleRepository.findByName(role)
+                    .orElseThrow(() -> new IllegalArgumentException("Rôle invalide: " + role));
+            user.getRoles().clear();
+            user.getRoles().add(r);
+            if (password != null && !password.isBlank()) {
+                user.setPassword(passwordEncoder.encode(password));
+            }
+            user.setFirstName(firstName != null && !firstName.isBlank() ? firstName.trim() : null);
+            user.setLastName(lastName != null && !lastName.isBlank() ? lastName.trim() : null);
+            user.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            user.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            user.setObservation(observation != null ? observation.trim() : null);
+            user.setPhotoUrl(photoUrl != null && !photoUrl.isBlank() ? photoUrl.trim() : null);
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("success", "Utilisateur mis à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur mise à jour utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/dashboard/users/reset")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String resetPassword(
+            @RequestParam Long userId,
+            @RequestParam String newPassword,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            boolean superAdmin = isSuperAdmin();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+            if (!est.get().getId().equals(user.getEstablishmentId())) {
+                throw new IllegalStateException("Utilisateur hors de ce locataire.");
+            }
+            if (!canManageUser(user, allowedRoles, superAdmin)) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas reinitialiser ce compte.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("success", "Mot de passe réinitialisé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur de réinitialisation : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/dashboard/users/toggle")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String toggleUser(
+            @RequestParam Long userId,
+            @RequestParam boolean enabled,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            boolean superAdmin = isSuperAdmin();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+            if (!est.get().getId().equals(user.getEstablishmentId())) {
+                throw new IllegalStateException("Utilisateur hors de ce locataire.");
+            }
+            if (!canManageUser(user, allowedRoles, superAdmin)) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier cet utilisateur.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getName() != null && auth.getName().equalsIgnoreCase(user.getUsername())) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas désactiver votre propre compte.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            if (enabled && user.isArchived()) {
+                user.setArchived(false);
+            }
+            user.setEnabled(enabled);
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("success", enabled ? "Utilisateur activé." : "Utilisateur désactivé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur mise à jour utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/dashboard/users/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String archiveUser(
+            @RequestParam Long userId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            boolean superAdmin = isSuperAdmin();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+            if (!est.get().getId().equals(user.getEstablishmentId())) {
+                throw new IllegalStateException("Utilisateur hors de ce locataire.");
+            }
+            if (!canManageUser(user, allowedRoles, superAdmin)) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas archiver cet utilisateur.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            user.setArchived(archived);
+            if (archived) {
+                user.setEnabled(false);
+            }
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("success", archived ? "Utilisateur archivé." : "Utilisateur restauré.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur archivage utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/dashboard/users/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH','SECRETAIRE','COMPTABLE')")
+    public String deleteUser(
+            @RequestParam Long userId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            Set<String> allowedRoles = allowedRoleNamesForCurrentUser();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+            if (!est.get().getId().equals(user.getEstablishmentId())) {
+                throw new IllegalStateException("Utilisateur hors de ce locataire.");
+            }
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean superAdmin = auth != null && auth.getAuthorities() != null
+                    && auth.getAuthorities().stream().anyMatch(a -> "ROLE_SUPER_ADMIN".equals(a.getAuthority()));
+            if (!canManageUser(user, allowedRoles, superAdmin)) {
+                redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas supprimer cet utilisateur.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            boolean targetIsAdmin = user.getRoles().stream().anyMatch(r -> "ADMIN".equals(r.getName()));
+            if (targetIsAdmin && !superAdmin) {
+                redirectAttributes.addFlashAttribute("error", "Seul le super administrateur peut supprimer un admin client.");
+                return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+            }
+            userRepository.delete(user);
+            redirectAttributes.addFlashAttribute("success", "Utilisateur supprimé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur suppression utilisateur : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId() + "#module-users";
+    }
+
+    @PostMapping("/tenant/app/students")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','SECRETAIRE','COMPTABLE')")
+    public String createStudent(
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) List<Long> subjectIds,
+            @RequestParam(required = false) MultipartFile photoFile,
+            @RequestParam(required = false) MultipartFile[] adminDocuments,
+            @RequestParam(required = false) String observation,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom et prenoms sont requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+            }
+            if (email == null || email.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Email est requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+            }
+            String username = email.trim().toLowerCase();
+            if (userRepository.findByUsername(username).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Cet email est déjà utilisé.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+            }
+            SchoolClass schoolClass = null;
+            if (schoolClassId != null) {
+                schoolClass = schoolClassRepository.findById(schoolClassId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+                if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                    throw new IllegalStateException("Classe hors de ce locataire.");
+                }
+            }
+            Role studentRole = roleRepository.findByName("APPRENANT")
+                    .orElseGet(() -> roleRepository.save(new Role("APPRENANT")));
+            String tempPassword = buildTempStudentPassword();
+            User student = new User();
+            student.setUsername(username);
+            student.setPassword(passwordEncoder.encode(tempPassword));
+            student.setFirstName(firstName.trim());
+            student.setLastName(lastName.trim());
+            student.setEmail(email.trim());
+            student.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            student.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            student.setSchoolClass(schoolClass);
+            student.setEnabled(true);
+            student.setEstablishmentId(tenantId);
+            student.setArchived(false);
+            if (observation != null && !observation.isBlank()) {
+                student.setObservation(observation.trim());
+            }
+            student.setSubjects(resolveSubjects(subjectIds, tenantId));
+            String photoUrl = buildPhotoDataUrl(photoFile);
+            if (photoUrl != null) {
+                student.setPhotoUrl(photoUrl);
+            }
+            student.getRoles().add(studentRole);
+            userRepository.save(student);
+            saveStudentDocuments(student, adminDocuments);
+            redirectAttributes.addFlashAttribute("success", "Apprenant créé. Mot de passe temporaire: " + tempPassword);
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur apprenant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+    }
+
+    @PostMapping("/tenant/app/teachers")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String createTeacher(
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String teacherType,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) List<Long> subjectIds,
+            @RequestParam(required = false) String newSubjects,
+            @RequestParam(required = false) String observation,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Nom et prenoms sont requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+            }
+            if (email == null || email.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Email est requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+            }
+            String username = email.trim().toLowerCase();
+            if (userRepository.findByUsername(username).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Cet email est déjà utilisé.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+            }
+            SchoolClass schoolClass = null;
+            if (schoolClassId != null) {
+                schoolClass = schoolClassRepository.findById(schoolClassId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+                if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                    throw new IllegalStateException("Classe hors de ce locataire.");
+                }
+            }
+            Set<Subject> subjects = new java.util.HashSet<>();
+            if (subjectIds != null) {
+                for (Long subjectId : subjectIds) {
+                    if (subjectId == null) continue;
+                    Subject subject = subjectRepository.findById(subjectId)
+                            .orElseThrow(() -> new IllegalArgumentException("Matiere introuvable."));
+                    if (!tenantId.equals(subject.getEstablishment().getId())) {
+                        throw new IllegalStateException("Matiere hors de ce locataire.");
+                    }
+                    subjects.add(subject);
+                }
+            }
+            if (newSubjects != null && !newSubjects.isBlank()) {
+                String[] tokens = newSubjects.split("[,;\\r\\n]");
+                for (String token : tokens) {
+                    String name = token != null ? token.trim() : "";
+                    if (name.isBlank()) continue;
+                    Subject subject = subjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, name)
+                            .orElseGet(() -> subjectRepository.save(new Subject(name, current)));
+                    subjects.add(subject);
+                }
+            }
+            Role teacherRole = roleRepository.findByName("ENSEIGNANT")
+                    .orElseGet(() -> roleRepository.save(new Role("ENSEIGNANT")));
+            String tempPassword = buildTempTeacherPassword();
+            User teacher = new User();
+            teacher.setUsername(username);
+            teacher.setPassword(passwordEncoder.encode(tempPassword));
+            teacher.setFirstName(firstName.trim());
+            teacher.setLastName(lastName.trim());
+            teacher.setEmail(email.trim());
+            teacher.setTeacherType(teacherType != null && !teacherType.isBlank() ? teacherType.trim().toUpperCase() : "TITULAIRE");
+            teacher.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            teacher.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            teacher.setSchoolClass(schoolClass);
+            teacher.setEnabled(true);
+            teacher.setEstablishmentId(tenantId);
+            teacher.setArchived(false);
+            teacher.setSubjects(subjects);
+            if (observation != null && !observation.isBlank()) {
+                teacher.setObservation(observation.trim());
+            }
+            teacher.getRoles().add(teacherRole);
+            userRepository.save(teacher);
+            redirectAttributes.addFlashAttribute("success", "Enseignant créé. Mot de passe temporaire: " + tempPassword);
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/teachers/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String updateTeacher(
+            @RequestParam Long teacherId,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String teacherType,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) List<Long> subjectIds,
+            @RequestParam(required = false) String newSubjects,
+            @RequestParam(required = false) String observation,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        try {
+            User teacher = userRepository.findById(teacherId)
+                    .orElseThrow(() -> new IllegalArgumentException("Enseignant introuvable."));
+            if (!tenantId.equals(teacher.getEstablishmentId())) {
+                throw new IllegalStateException("Enseignant hors de ce locataire.");
+            }
+            boolean isTeacher = teacher.getRoles().stream().anyMatch(r -> "ENSEIGNANT".equals(r.getName()));
+            if (!isTeacher) {
+                throw new IllegalStateException("Cet utilisateur n'est pas un enseignant.");
+            }
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                throw new IllegalArgumentException("Nom et prenoms sont requis.");
+            }
+            if (email == null || email.isBlank()) {
+                throw new IllegalArgumentException("Email est requis.");
+            }
+            String username = email.trim().toLowerCase();
+            userRepository.findByUsername(username)
+                    .filter(existing -> !existing.getId().equals(teacherId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Cet email est déjà utilisé.");
+                    });
+            SchoolClass schoolClass = null;
+            if (schoolClassId != null) {
+                schoolClass = schoolClassRepository.findById(schoolClassId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+                if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                    throw new IllegalStateException("Classe hors de ce locataire.");
+                }
+            }
+            Set<Subject> subjects = new java.util.HashSet<>();
+            if (subjectIds != null) {
+                for (Long subjectId : subjectIds) {
+                    if (subjectId == null) continue;
+                    Subject subject = subjectRepository.findById(subjectId)
+                            .orElseThrow(() -> new IllegalArgumentException("Matiere introuvable."));
+                    if (!tenantId.equals(subject.getEstablishment().getId())) {
+                        throw new IllegalStateException("Matiere hors de ce locataire.");
+                    }
+                    subjects.add(subject);
+                }
+            }
+            if (newSubjects != null && !newSubjects.isBlank()) {
+                String[] tokens = newSubjects.split("[,;\\r\\n]");
+                for (String token : tokens) {
+                    String name = token != null ? token.trim() : "";
+                    if (name.isBlank()) continue;
+                    Subject subject = subjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, name)
+                            .orElseGet(() -> subjectRepository.save(new Subject(name, current)));
+                    subjects.add(subject);
+                }
+            }
+            teacher.setFirstName(firstName.trim());
+            teacher.setLastName(lastName.trim());
+            teacher.setEmail(email.trim());
+            teacher.setUsername(username);
+            teacher.setTeacherType(teacherType != null && !teacherType.isBlank() ? teacherType.trim().toUpperCase() : "TITULAIRE");
+            teacher.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            teacher.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            teacher.setSchoolClass(schoolClass);
+            teacher.setSubjects(subjects);
+            teacher.setObservation(observation != null && !observation.isBlank() ? observation.trim() : null);
+            userRepository.save(teacher);
+            redirectAttributes.addFlashAttribute("success", "Enseignant mis a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/teachers/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String archiveTeacher(
+            @RequestParam Long teacherId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User teacher = userRepository.findById(teacherId)
+                    .orElseThrow(() -> new IllegalArgumentException("Enseignant introuvable."));
+            if (!tenantId.equals(teacher.getEstablishmentId())) {
+                throw new IllegalStateException("Enseignant hors de ce locataire.");
+            }
+            teacher.setArchived(archived);
+            if (archived) {
+                teacher.setEnabled(false);
+            }
+            userRepository.save(teacher);
+            redirectAttributes.addFlashAttribute("success", archived ? "Enseignant archivé." : "Enseignant restauré.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/teachers/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String deleteTeacher(
+            @RequestParam Long teacherId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User teacher = userRepository.findById(teacherId)
+                    .orElseThrow(() -> new IllegalArgumentException("Enseignant introuvable."));
+            if (!tenantId.equals(teacher.getEstablishmentId())) {
+                throw new IllegalStateException("Enseignant hors de ce locataire.");
+            }
+            userRepository.delete(teacher);
+            redirectAttributes.addFlashAttribute("success", "Enseignant supprimé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur enseignant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/teachers/import")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR_RH')")
+    public String importTeachers(
+            @RequestParam(required = false) MultipartFile teachersFile,
+            @RequestParam(required = false) String teachersInput,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        int created = 0;
+        int skipped = 0;
+        int missingEmail = 0;
+        try {
+            Role teacherRole = roleRepository.findByName("ENSEIGNANT")
+                    .orElseGet(() -> roleRepository.save(new Role("ENSEIGNANT")));
+            Set<String> lines = new LinkedHashSet<>();
+            if (teachersFile != null && !teachersFile.isEmpty()) {
+                String content = new String(teachersFile.getBytes(), StandardCharsets.UTF_8);
+                lines.addAll(List.of(content.split("\\r?\\n")));
+            }
+            if (teachersInput != null && !teachersInput.isBlank()) {
+                lines.addAll(List.of(teachersInput.split("\\r?\\n")));
+            }
+            for (String line : lines) {
+                if (line == null) continue;
+                String trimmed = line.trim();
+                if (trimmed.isBlank()) continue;
+                String lower = trimmed.toLowerCase();
+                if (lower.contains("email") && lower.contains("prenom")) {
+                    continue;
+                }
+                String[] parts = trimmed.split("[,;\\t]");
+                if (parts.length < 3) {
+                    skipped++;
+                    continue;
+                }
+                String firstName = parts[0].trim();
+                String lastName = parts[1].trim();
+                String email = parts[2].trim();
+                String phone = parts.length > 3 ? parts[3].trim() : "";
+                String type = parts.length > 4 ? parts[4].trim() : "";
+                String className = parts.length > 5 ? parts[5].trim() : "";
+                if (email.isBlank()) {
+                    missingEmail++;
+                    continue;
+                }
+                String username = email.toLowerCase();
+                if (userRepository.findByUsername(username).isPresent()) {
+                    skipped++;
+                    continue;
+                }
+                SchoolClass schoolClass = null;
+                if (!className.isBlank()) {
+                    schoolClass = schoolClassRepository.findByEstablishmentIdAndNameIgnoreCase(tenantId, className)
+                            .orElse(null);
+                }
+                String normalizedType = type != null && !type.isBlank()
+                        ? type.trim().toUpperCase()
+                        : "TITULAIRE";
+                if (!"TITULAIRE".equals(normalizedType) && !"VACATAIRE".equals(normalizedType)) {
+                    normalizedType = "TITULAIRE";
+                }
+                String tempPassword = buildTempTeacherPassword();
+                User teacher = new User();
+                teacher.setUsername(username);
+                teacher.setPassword(passwordEncoder.encode(tempPassword));
+                teacher.setFirstName(firstName);
+                teacher.setLastName(lastName);
+                teacher.setEmail(email);
+                teacher.setPhoneMobile(phone.isBlank() ? null : phone);
+                teacher.setTeacherType(normalizedType);
+                teacher.setSchoolClass(schoolClass);
+                teacher.setEnabled(true);
+                teacher.setEstablishmentId(tenantId);
+                teacher.setArchived(false);
+                teacher.getRoles().add(teacherRole);
+                userRepository.save(teacher);
+                created++;
+            }
+            redirectAttributes.addFlashAttribute("success",
+                    "Import terminé. Créés: " + created + ", ignorés: " + skipped + ", emails manquants: " + missingEmail + ".");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import enseignants : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-teachers";
+    }
+
+    @PostMapping("/tenant/app/subjects")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String createSubject(
+            @RequestParam(required = false) Long subjectId,
+            @RequestParam String title,
+            @RequestParam(required = false) Integer hoursTd,
+            @RequestParam(required = false) Integer hoursTp,
+            @RequestParam(required = false) Integer hoursCm,
+            @RequestParam(required = false) List<Long> levelIds,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            String trimmedTitle = title != null ? title.trim() : "";
+            if (trimmedTitle.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Intitulé requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-subjects";
+            }
+            subjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, trimmedTitle)
+                    .filter(existing -> subjectId == null || !existing.getId().equals(subjectId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Cette matière existe déjà.");
+                    });
+            Subject subject = subjectId != null
+                    ? subjectRepository.findById(subjectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Matière introuvable."))
+                    : new Subject();
+            if (subject.getEstablishment() != null && !tenantId.equals(subject.getEstablishment().getId())) {
+                throw new IllegalStateException("Matière hors de ce locataire.");
+            }
+            if (subject.getId() == null) {
+                subject.setEstablishment(est.get());
+            }
+            subject.setTitle(trimmedTitle);
+            subject.setHoursTd(hoursTd != null ? Math.max(hoursTd, 0) : 0);
+            subject.setHoursTp(hoursTp != null ? Math.max(hoursTp, 0) : 0);
+            subject.setHoursCm(hoursCm != null ? Math.max(hoursCm, 0) : 0);
+            Set<Level> levels = new LinkedHashSet<>();
+            if (levelIds != null) {
+                for (Long levelId : levelIds) {
+                    if (levelId == null) continue;
+                    Level level = levelRepository.findById(levelId)
+                            .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable."));
+                    if (!tenantId.equals(level.getEstablishment().getId())) {
+                        throw new IllegalStateException("Niveau hors de cet établissement.");
+                    }
+                    levels.add(level);
+                }
+            }
+            subject.setLevels(levels);
+            subjectRepository.save(subject);
+            redirectAttributes.addFlashAttribute("success", subjectId == null ? "Matière créée." : "Matière mise à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur matière : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-subjects";
+    }
+
+    @PostMapping("/tenant/app/subjects/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String archiveSubject(
+            @RequestParam Long subjectId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            Subject subject = subjectRepository.findById(subjectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Matière introuvable."));
+            if (!tenantId.equals(subject.getEstablishment().getId())) {
+                throw new IllegalStateException("Matière hors de ce locataire.");
+            }
+            subject.setArchived(archived);
+            subjectRepository.save(subject);
+            redirectAttributes.addFlashAttribute("success", archived ? "Matière archivée." : "Matière restaurée.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur matière : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-subjects";
+    }
+
+    @PostMapping("/tenant/app/subjects/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String deleteSubject(
+            @RequestParam Long subjectId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            Subject subject = subjectRepository.findById(subjectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Matière introuvable."));
+            if (!tenantId.equals(subject.getEstablishment().getId())) {
+                throw new IllegalStateException("Matière hors de ce locataire.");
+            }
+            subjectRepository.delete(subject);
+            redirectAttributes.addFlashAttribute("success", "Matière supprimée.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur matière : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-subjects";
+    }
+
+    @PostMapping("/tenant/app/projects")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String saveProject(
+            @RequestParam(required = false) Long projectId,
+            @RequestParam String title,
+            @RequestParam(required = false) String academicYear,
+            @RequestParam(required = false) String responsible,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String budget,
+            @RequestParam(required = false) String description,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            String trimmedTitle = title != null ? title.trim() : "";
+            if (trimmedTitle.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Titre requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+            }
+            pedagogicalProjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, trimmedTitle)
+                    .filter(existing -> projectId == null || !existing.getId().equals(projectId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Ce projet existe déjà.");
+                    });
+
+            PedagogicalProject project = projectId != null
+                    ? pedagogicalProjectRepository.findById(projectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Projet introuvable."))
+                    : new PedagogicalProject();
+
+            if (project.getEstablishment() != null && !tenantId.equals(project.getEstablishment().getId())) {
+                throw new IllegalStateException("Projet hors de ce locataire.");
+            }
+            if (project.getId() == null) {
+                project.setEstablishment(est.get());
+            }
+            project.setTitle(trimmedTitle);
+            project.setAcademicYear(academicYear != null ? academicYear.trim() : null);
+            project.setResponsible(responsible != null ? responsible.trim() : null);
+            project.setStatus(status != null ? status.trim() : null);
+            if (budget != null && !budget.isBlank()) {
+                project.setBudget(new java.math.BigDecimal(budget.trim().replace(",", ".")));
+            } else {
+                project.setBudget(null);
+            }
+            project.setDescription(description != null ? description.trim() : null);
+            pedagogicalProjectRepository.save(project);
+            redirectAttributes.addFlashAttribute("success", projectId == null ? "Projet créé." : "Projet mis à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur projet : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+    }
+
+    @PostMapping("/tenant/app/projects/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String archiveProject(
+            @RequestParam Long projectId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            PedagogicalProject project = pedagogicalProjectRepository.findById(projectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Projet introuvable."));
+            if (!tenantId.equals(project.getEstablishment().getId())) {
+                throw new IllegalStateException("Projet hors de ce locataire.");
+            }
+            project.setArchived(archived);
+            pedagogicalProjectRepository.save(project);
+            redirectAttributes.addFlashAttribute("success", archived ? "Projet archivé." : "Projet restauré.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur projet : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+    }
+
+    @PostMapping("/tenant/app/projects/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String deleteProject(
+            @RequestParam Long projectId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            PedagogicalProject project = pedagogicalProjectRepository.findById(projectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Projet introuvable."));
+            if (!tenantId.equals(project.getEstablishment().getId())) {
+                throw new IllegalStateException("Projet hors de ce locataire.");
+            }
+            pedagogicalProjectRepository.delete(project);
+            redirectAttributes.addFlashAttribute("success", "Projet supprimé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur projet : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+    }
+
+    @PostMapping("/tenant/app/projects/import")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String importProjects(
+            @RequestParam(required = false) MultipartFile projectsFile,
+            @RequestParam(required = false) String projectsInput,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        int created = 0;
+        int skipped = 0;
+        try {
+            Set<String> lines = new LinkedHashSet<>();
+            if (projectsFile != null && !projectsFile.isEmpty()) {
+                String content = new String(projectsFile.getBytes(), StandardCharsets.UTF_8);
+                lines.addAll(List.of(content.split("\\r?\\n")));
+            }
+            if (projectsInput != null && !projectsInput.isBlank()) {
+                lines.addAll(List.of(projectsInput.split("\\r?\\n")));
+            }
+            for (String line : lines) {
+                if (line == null) continue;
+                String trimmed = line.trim();
+                if (trimmed.isBlank()) continue;
+                String lower = trimmed.toLowerCase();
+                if (lower.contains("titre") && lower.contains("annee")) {
+                    continue;
+                }
+                String[] parts = trimmed.split("[,;\\t]");
+                if (parts.length < 1) {
+                    skipped++;
+                    continue;
+                }
+                String title = parts[0].trim();
+                if (title.isBlank()) {
+                    skipped++;
+                    continue;
+                }
+                if (pedagogicalProjectRepository.findByEstablishmentIdAndTitleIgnoreCase(tenantId, title).isPresent()) {
+                    skipped++;
+                    continue;
+                }
+                PedagogicalProject project = new PedagogicalProject();
+                project.setEstablishment(est.get());
+                project.setTitle(title);
+                project.setAcademicYear(parts.length > 1 ? parts[1].trim() : null);
+                project.setResponsible(parts.length > 2 ? parts[2].trim() : null);
+                project.setStatus(parts.length > 3 ? parts[3].trim() : null);
+                if (parts.length > 4 && !parts[4].trim().isBlank()) {
+                    project.setBudget(new java.math.BigDecimal(parts[4].trim().replace(",", ".")));
+                }
+                if (parts.length > 5) {
+                    StringBuilder desc = new StringBuilder();
+                    for (int i = 5; i < parts.length; i++) {
+                        if (desc.length() > 0) desc.append(" ");
+                        desc.append(parts[i].trim());
+                    }
+                    project.setDescription(desc.toString());
+                }
+                pedagogicalProjectRepository.save(project);
+                created++;
+            }
+            redirectAttributes.addFlashAttribute("success", "Import projets terminé. Créés: " + created + ", ignorés: " + skipped + ".");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import projets : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-pedagogical_projects";
+    }
+
+    @PostMapping("/tenant/app/insertion")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String saveInsertion(
+            @RequestParam(required = false) Long insertionId,
+            @RequestParam String type,
+            @RequestParam String partnerName,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String levelOrClass,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String responsible,
+            @RequestParam(required = false) String contactName,
+            @RequestParam(required = false) String contactEmail,
+            @RequestParam(required = false) String contactPhone,
+            @RequestParam(required = false) String description,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            String trimmedType = type != null ? type.trim() : "";
+            String trimmedPartner = partnerName != null ? partnerName.trim() : "";
+            if (trimmedType.isBlank() || trimmedPartner.isBlank()) {
+                redirectAttributes.addFlashAttribute("error", "Type et partenaire requis.");
+                return "redirect:/tenant/app?tenantId=" + tenantId + "#module-insertion_pro";
+            }
+            ProfessionalInsertion insertion = insertionId != null
+                    ? professionalInsertionRepository.findById(insertionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Insertion introuvable."))
+                    : new ProfessionalInsertion();
+
+            if (insertion.getEstablishment() != null && !tenantId.equals(insertion.getEstablishment().getId())) {
+                throw new IllegalStateException("Insertion hors de ce locataire.");
+            }
+            if (insertion.getId() == null) {
+                insertion.setEstablishment(est.get());
+            }
+            insertion.setType(trimmedType);
+            insertion.setPartnerName(trimmedPartner);
+            insertion.setTitle(title != null ? title.trim() : null);
+            insertion.setLevelOrClass(levelOrClass != null ? levelOrClass.trim() : null);
+            insertion.setResponsible(responsible != null ? responsible.trim() : null);
+            insertion.setContactName(contactName != null ? contactName.trim() : null);
+            insertion.setContactEmail(contactEmail != null ? contactEmail.trim() : null);
+            insertion.setContactPhone(contactPhone != null ? contactPhone.trim() : null);
+            insertion.setDescription(description != null ? description.trim() : null);
+            insertion.setStartDate(startDate != null && !startDate.isBlank() ? LocalDate.parse(startDate) : null);
+            insertion.setEndDate(endDate != null && !endDate.isBlank() ? LocalDate.parse(endDate) : null);
+            professionalInsertionRepository.save(insertion);
+            redirectAttributes.addFlashAttribute("success", insertionId == null ? "Insertion créée." : "Insertion mise à jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur insertion : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-insertion_pro";
+    }
+
+    @PostMapping("/tenant/app/insertion/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String archiveInsertion(
+            @RequestParam Long insertionId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            ProfessionalInsertion insertion = professionalInsertionRepository.findById(insertionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Insertion introuvable."));
+            if (!tenantId.equals(insertion.getEstablishment().getId())) {
+                throw new IllegalStateException("Insertion hors de ce locataire.");
+            }
+            insertion.setArchived(archived);
+            professionalInsertionRepository.save(insertion);
+            redirectAttributes.addFlashAttribute("success", archived ? "Insertion archivée." : "Insertion restaurée.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur insertion : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-insertion_pro";
+    }
+
+    @PostMapping("/tenant/app/insertion/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String deleteInsertion(
+            @RequestParam Long insertionId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            ProfessionalInsertion insertion = professionalInsertionRepository.findById(insertionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Insertion introuvable."));
+            if (!tenantId.equals(insertion.getEstablishment().getId())) {
+                throw new IllegalStateException("Insertion hors de ce locataire.");
+            }
+            professionalInsertionRepository.delete(insertion);
+            redirectAttributes.addFlashAttribute("success", "Insertion supprimée.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur insertion : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-insertion_pro";
+    }
+
+    @PostMapping("/tenant/app/insertion/import")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String importInsertion(
+            @RequestParam(required = false) MultipartFile insertionFile,
+            @RequestParam(required = false) String insertionInput,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        int created = 0;
+        int skipped = 0;
+        try {
+            Set<String> lines = new LinkedHashSet<>();
+            if (insertionFile != null && !insertionFile.isEmpty()) {
+                String content = new String(insertionFile.getBytes(), StandardCharsets.UTF_8);
+                lines.addAll(List.of(content.split("\\r?\\n")));
+            }
+            if (insertionInput != null && !insertionInput.isBlank()) {
+                lines.addAll(List.of(insertionInput.split("\\r?\\n")));
+            }
+            for (String line : lines) {
+                if (line == null) continue;
+                String trimmed = line.trim();
+                if (trimmed.isBlank()) continue;
+                String lower = trimmed.toLowerCase();
+                if (lower.contains("partenaire") && lower.contains("type")) {
+                    continue;
+                }
+                String[] parts = trimmed.split("[,;\\t]");
+                if (parts.length < 2) {
+                    skipped++;
+                    continue;
+                }
+                String type = parts[0].trim();
+                String partner = parts[1].trim();
+                if (type.isBlank() || partner.isBlank()) {
+                    skipped++;
+                    continue;
+                }
+                ProfessionalInsertion insertion = new ProfessionalInsertion();
+                insertion.setEstablishment(est.get());
+                insertion.setType(type);
+                insertion.setPartnerName(partner);
+                insertion.setTitle(parts.length > 2 ? parts[2].trim() : null);
+                insertion.setLevelOrClass(parts.length > 3 ? parts[3].trim() : null);
+                insertion.setStartDate(parts.length > 4 && !parts[4].trim().isBlank() ? LocalDate.parse(parts[4].trim()) : null);
+                insertion.setEndDate(parts.length > 5 && !parts[5].trim().isBlank() ? LocalDate.parse(parts[5].trim()) : null);
+                insertion.setResponsible(parts.length > 6 ? parts[6].trim() : null);
+                insertion.setContactName(parts.length > 7 ? parts[7].trim() : null);
+                insertion.setContactEmail(parts.length > 8 ? parts[8].trim() : null);
+                insertion.setContactPhone(parts.length > 9 ? parts[9].trim() : null);
+                if (parts.length > 10) {
+                    StringBuilder desc = new StringBuilder();
+                    for (int i = 10; i < parts.length; i++) {
+                        if (desc.length() > 0) desc.append(" ");
+                        desc.append(parts[i].trim());
+                    }
+                    insertion.setDescription(desc.toString());
+                }
+                professionalInsertionRepository.save(insertion);
+                created++;
+            }
+            redirectAttributes.addFlashAttribute("success", "Import insertion terminé. Créés: " + created + ", ignorés: " + skipped + ".");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import insertion : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-insertion_pro";
+    }
+
+    @PostMapping("/tenant/app/career-paths")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String saveCareerPath(
+            @RequestParam(required = false) Long pathId,
+            @RequestParam String name,
+            @RequestParam Long levelId,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) List<Long> subjectIds,
+            @RequestParam(required = false) List<Long> projectIds,
+            @RequestParam(required = false) List<Long> insertionIds,
+            @RequestParam(required = false) List<Long> studentIds,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            if (name == null || name.isBlank()) {
+                throw new IllegalArgumentException("Nom du parcours requis.");
+            }
+            String trimmedName = name.trim();
+            careerPathRepository.findByEstablishmentIdAndNameIgnoreCase(tenantId, trimmedName)
+                    .filter(existing -> pathId == null || !existing.getId().equals(pathId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Ce parcours existe deja.");
+                    });
+            Level level = levelRepository.findById(levelId)
+                    .orElseThrow(() -> new IllegalArgumentException("Niveau introuvable."));
+            if (!tenantId.equals(level.getEstablishment().getId())) {
+                throw new IllegalStateException("Niveau hors de ce locataire.");
+            }
+            CareerPath careerPath = pathId == null
+                    ? new CareerPath()
+                    : careerPathRepository.findById(pathId)
+                    .orElseThrow(() -> new IllegalArgumentException("Parcours introuvable."));
+            if (careerPath.getEstablishment() != null
+                    && !tenantId.equals(careerPath.getEstablishment().getId())) {
+                throw new IllegalStateException("Parcours hors de ce locataire.");
+            }
+            careerPath.setEstablishment(est.get());
+            careerPath.setName(trimmedName);
+            careerPath.setDescription(description != null && !description.isBlank() ? description.trim() : null);
+            careerPath.setLevel(level);
+            if (pathId == null) {
+                careerPath.setArchived(false);
+            }
+
+            List<Subject> subjects = subjectIds == null || subjectIds.isEmpty()
+                    ? List.of()
+                    : subjectRepository.findAllById(subjectIds);
+            for (Subject subject : subjects) {
+                if (!tenantId.equals(subject.getEstablishment().getId())) {
+                    throw new IllegalStateException("Matiere hors de ce locataire.");
+                }
+            }
+            List<PedagogicalProject> projects = projectIds == null || projectIds.isEmpty()
+                    ? List.of()
+                    : pedagogicalProjectRepository.findAllById(projectIds);
+            for (PedagogicalProject project : projects) {
+                if (!tenantId.equals(project.getEstablishment().getId())) {
+                    throw new IllegalStateException("Projet hors de ce locataire.");
+                }
+            }
+            List<ProfessionalInsertion> insertions = insertionIds == null || insertionIds.isEmpty()
+                    ? List.of()
+                    : professionalInsertionRepository.findAllById(insertionIds);
+            for (ProfessionalInsertion insertion : insertions) {
+                if (!tenantId.equals(insertion.getEstablishment().getId())) {
+                    throw new IllegalStateException("Insertion hors de ce locataire.");
+                }
+            }
+            List<User> students = studentIds == null || studentIds.isEmpty()
+                    ? List.of()
+                    : userRepository.findAllById(studentIds);
+            for (User student : students) {
+                if (!tenantId.equals(student.getEstablishmentId())) {
+                    throw new IllegalStateException("Apprenant hors de ce locataire.");
+                }
+                boolean isStudent = student.getRoles().stream().anyMatch(r -> "APPRENANT".equals(r.getName()));
+                if (!isStudent) {
+                    throw new IllegalStateException("Utilisateur non apprenant.");
+                }
+            }
+            careerPath.setSubjects(Set.copyOf(subjects));
+            careerPath.setProjects(Set.copyOf(projects));
+            careerPath.setInsertions(Set.copyOf(insertions));
+            careerPath.setStudents(Set.copyOf(students));
+            careerPathRepository.save(careerPath);
+            redirectAttributes.addFlashAttribute("success", pathId == null ? "Parcours cree." : "Parcours mis a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur parcours : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-career_paths";
+    }
+
+    @PostMapping("/tenant/app/career-paths/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String archiveCareerPath(
+            @RequestParam Long pathId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            CareerPath careerPath = careerPathRepository.findById(pathId)
+                    .orElseThrow(() -> new IllegalArgumentException("Parcours introuvable."));
+            if (!tenantId.equals(careerPath.getEstablishment().getId())) {
+                throw new IllegalStateException("Parcours hors de ce locataire.");
+            }
+            careerPath.setArchived(archived);
+            careerPathRepository.save(careerPath);
+            redirectAttributes.addFlashAttribute("success", archived ? "Parcours archive." : "Parcours restaure.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur parcours : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-career_paths";
+    }
+
+    @PostMapping("/tenant/app/career-paths/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','DIRECTEUR','DIRECTEUR_RH')")
+    public String deleteCareerPath(
+            @RequestParam Long pathId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            CareerPath careerPath = careerPathRepository.findById(pathId)
+                    .orElseThrow(() -> new IllegalArgumentException("Parcours introuvable."));
+            if (!tenantId.equals(careerPath.getEstablishment().getId())) {
+                throw new IllegalStateException("Parcours hors de ce locataire.");
+            }
+            careerPathRepository.delete(careerPath);
+            redirectAttributes.addFlashAttribute("success", "Parcours supprime.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur parcours : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-career_paths";
+    }
+
+    @PostMapping("/tenant/app/students/update")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','SECRETAIRE','COMPTABLE')")
+    public String updateStudent(
+            @RequestParam Long studentId,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam(required = false) String phoneFixed,
+            @RequestParam(required = false) String phoneMobile,
+            @RequestParam(required = false) Long schoolClassId,
+            @RequestParam(required = false) List<Long> subjectIds,
+            @RequestParam(required = false) MultipartFile photoFile,
+            @RequestParam(required = false) MultipartFile[] adminDocuments,
+            @RequestParam(required = false) String observation,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User student = userRepository.findById(studentId)
+                    .orElseThrow(() -> new IllegalArgumentException("Apprenant introuvable."));
+            if (!tenantId.equals(student.getEstablishmentId())) {
+                throw new IllegalStateException("Apprenant hors de ce locataire.");
+            }
+            boolean isStudent = student.getRoles().stream().anyMatch(r -> "APPRENANT".equals(r.getName()));
+            if (!isStudent) {
+                throw new IllegalStateException("Cet utilisateur n'est pas un apprenant.");
+            }
+            if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) {
+                throw new IllegalArgumentException("Nom et prenoms sont requis.");
+            }
+            if (email == null || email.isBlank()) {
+                throw new IllegalArgumentException("Email est requis.");
+            }
+            String username = email.trim().toLowerCase();
+            userRepository.findByUsername(username)
+                    .filter(existing -> !existing.getId().equals(studentId))
+                    .ifPresent(existing -> {
+                        throw new IllegalArgumentException("Cet email est déjà utilisé.");
+                    });
+            SchoolClass schoolClass = null;
+            if (schoolClassId != null) {
+                schoolClass = schoolClassRepository.findById(schoolClassId)
+                        .orElseThrow(() -> new IllegalArgumentException("Classe introuvable."));
+                if (!tenantId.equals(schoolClass.getEstablishment().getId())) {
+                    throw new IllegalStateException("Classe hors de ce locataire.");
+                }
+            }
+            student.setFirstName(firstName.trim());
+            student.setLastName(lastName.trim());
+            student.setEmail(email.trim());
+            student.setUsername(username);
+            student.setPhoneFixed(phoneFixed != null && !phoneFixed.isBlank() ? phoneFixed.trim() : null);
+            student.setPhoneMobile(phoneMobile != null && !phoneMobile.isBlank() ? phoneMobile.trim() : null);
+            student.setSchoolClass(schoolClass);
+            student.setObservation(observation != null && !observation.isBlank() ? observation.trim() : null);
+            student.setSubjects(resolveSubjects(subjectIds, tenantId));
+            String photoUrl = buildPhotoDataUrl(photoFile);
+            if (photoUrl != null) {
+                student.setPhotoUrl(photoUrl);
+            }
+            userRepository.save(student);
+            saveStudentDocuments(student, adminDocuments);
+            redirectAttributes.addFlashAttribute("success", "Apprenant mis a jour.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur apprenant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+    }
+
+    @PostMapping("/tenant/app/students/archive")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','SECRETAIRE','COMPTABLE')")
+    public String archiveStudent(
+            @RequestParam Long studentId,
+            @RequestParam boolean archived,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User student = userRepository.findById(studentId)
+                    .orElseThrow(() -> new IllegalArgumentException("Apprenant introuvable."));
+            if (!tenantId.equals(student.getEstablishmentId())) {
+                throw new IllegalStateException("Apprenant hors de ce locataire.");
+            }
+            student.setArchived(archived);
+            if (archived) {
+                student.setEnabled(false);
+            }
+            userRepository.save(student);
+            redirectAttributes.addFlashAttribute("success", archived ? "Apprenant archivé." : "Apprenant restauré.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur apprenant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+    }
+
+    @PostMapping("/tenant/app/students/delete")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','SECRETAIRE','COMPTABLE')")
+    public String deleteStudent(
+            @RequestParam Long studentId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Long tenantId = est.get().getId();
+        try {
+            User student = userRepository.findById(studentId)
+                    .orElseThrow(() -> new IllegalArgumentException("Apprenant introuvable."));
+            if (!tenantId.equals(student.getEstablishmentId())) {
+                throw new IllegalStateException("Apprenant hors de ce locataire.");
+            }
+            userRepository.delete(student);
+            redirectAttributes.addFlashAttribute("success", "Apprenant supprimé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur apprenant : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+    }
+
+    @PostMapping("/tenant/app/students/import")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','SECRETAIRE','COMPTABLE')")
+    public String importStudents(
+            @RequestParam(required = false) MultipartFile studentsFile,
+            @RequestParam(required = false) String studentsInput,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        Establishment current = est.get();
+        Long tenantId = current.getId();
+        int created = 0;
+        int skipped = 0;
+        int missingEmail = 0;
+        try {
+            Role studentRole = roleRepository.findByName("APPRENANT")
+                    .orElseGet(() -> roleRepository.save(new Role("APPRENANT")));
+            Set<String> lines = new LinkedHashSet<>();
+            if (studentsFile != null && !studentsFile.isEmpty()) {
+                String content = new String(studentsFile.getBytes(), StandardCharsets.UTF_8);
+                lines.addAll(List.of(content.split("\\r?\\n")));
+            }
+            if (studentsInput != null && !studentsInput.isBlank()) {
+                lines.addAll(List.of(studentsInput.split("\\r?\\n")));
+            }
+            for (String line : lines) {
+                if (line == null) continue;
+                String trimmed = line.trim();
+                if (trimmed.isBlank()) continue;
+                String lower = trimmed.toLowerCase();
+                if (lower.contains("email") && lower.contains("prenom")) {
+                    continue;
+                }
+                String[] parts = trimmed.split("[,;\\t]");
+                if (parts.length < 3) {
+                    skipped++;
+                    continue;
+                }
+                String firstName = parts[0].trim();
+                String lastName = parts[1].trim();
+                String email = parts[2].trim();
+                String phone = parts.length > 3 ? parts[3].trim() : "";
+                String className = parts.length > 4 ? parts[4].trim() : "";
+                if (email.isBlank()) {
+                    missingEmail++;
+                    continue;
+                }
+                String username = email.toLowerCase();
+                if (userRepository.findByUsername(username).isPresent()) {
+                    skipped++;
+                    continue;
+                }
+                SchoolClass schoolClass = null;
+                if (!className.isBlank()) {
+                    schoolClass = schoolClassRepository.findByEstablishmentIdAndNameIgnoreCase(tenantId, className)
+                            .orElse(null);
+                }
+                String tempPassword = buildTempStudentPassword();
+                User student = new User();
+                student.setUsername(username);
+                student.setPassword(passwordEncoder.encode(tempPassword));
+                student.setFirstName(firstName);
+                student.setLastName(lastName);
+                student.setEmail(email);
+                student.setPhoneMobile(phone.isBlank() ? null : phone);
+                student.setSchoolClass(schoolClass);
+                student.setEnabled(true);
+                student.setEstablishmentId(tenantId);
+                student.setArchived(false);
+                student.getRoles().add(studentRole);
+                userRepository.save(student);
+                created++;
+            }
+            redirectAttributes.addFlashAttribute("success",
+                    "Import terminé. Créés: " + created + ", ignorés: " + skipped + ", emails manquants: " + missingEmail + ".");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur import apprenants : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + tenantId + "#module-students";
+    }
+
+    @PostMapping("/tenant/app/modules/toggle")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String toggleTenantModule(
+            @RequestParam Long moduleId,
+            @RequestParam String status,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        try {
+            ModuleDefinition module = moduleDefinitionRepository.findById(moduleId)
+                    .orElseThrow(() -> new IllegalArgumentException("Module introuvable"));
+            ModuleStatus target = "ACTIVE".equalsIgnoreCase(status) ? ModuleStatus.ACTIVE : ModuleStatus.INACTIVE;
+            ModuleSubscription sub = moduleSubscriptionRepository
+                    .findByEstablishmentIdAndModuleId(est.get().getId(), moduleId)
+                    .orElseGet(() -> new ModuleSubscription(est.get(), module, ModuleStatus.INACTIVE));
+            sub.setStatus(target);
+            moduleSubscriptionRepository.save(sub);
+            redirectAttributes.addFlashAttribute("success", target == ModuleStatus.ACTIVE ? "Module activé." : "Module désactivé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur module : " + ex.getMessage());
+        }
+        return "redirect:/tenant/app?tenantId=" + est.get().getId();
+    }
+
+    @PostMapping("/tenant/dashboard/modules/toggle")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String toggleTenantModuleFromDashboard(
+            @RequestParam Long moduleId,
+            @RequestParam String status,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        try {
+            ModuleDefinition module = moduleDefinitionRepository.findById(moduleId)
+                    .orElseThrow(() -> new IllegalArgumentException("Module introuvable"));
+            ModuleStatus target = "ACTIVE".equalsIgnoreCase(status) ? ModuleStatus.ACTIVE : ModuleStatus.INACTIVE;
+            ModuleSubscription sub = moduleSubscriptionRepository
+                    .findByEstablishmentIdAndModuleId(est.get().getId(), moduleId)
+                    .orElseGet(() -> new ModuleSubscription(est.get(), module, ModuleStatus.INACTIVE));
+            if (target == ModuleStatus.ACTIVE) {
+                sub.setStatus(ModuleStatus.ACTIVE);
+                sub.setActivatedAt(LocalDateTime.now());
+            } else {
+                sub.setStatus(ModuleStatus.INACTIVE);
+            }
+            moduleSubscriptionRepository.save(sub);
+            redirectAttributes.addFlashAttribute("success", target == ModuleStatus.ACTIVE ? "Module activé." : "Module désactivé.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur module : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/modules/request")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public String requestPremiumModule(
+            @RequestParam Long moduleId,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+
+        try {
+            if (est.get().getSubscriptionPlan() != SubscriptionPlan.PREMIUM) {
+                redirectAttributes.addFlashAttribute("error", "Option premium inactive. Contactez la direction.");
+                return "redirect:/tenant/dashboard";
+            }
+            ModuleDefinition module = moduleDefinitionRepository.findById(moduleId)
+                    .orElseThrow(() -> new IllegalArgumentException("Module introuvable"));
+            if (module.getCategory() != ModuleCategory.PREMIUM) {
+                redirectAttributes.addFlashAttribute("error", "Ce module est deja inclus dans l'offre de base.");
+                return "redirect:/tenant/dashboard";
+            }
+
+            Optional<ModuleSubscription> existing = moduleSubscriptionRepository
+                    .findByEstablishmentIdAndModuleId(est.get().getId(), moduleId);
+
+            if (existing.isPresent()) {
+                ModuleSubscription sub = existing.get();
+                if (sub.getStatus() == ModuleStatus.ACTIVE) {
+                    redirectAttributes.addFlashAttribute("success", "Module deja actif.");
+                    return "redirect:/tenant/dashboard";
+                }
+                if (sub.getStatus() == ModuleStatus.REQUESTED) {
+                    redirectAttributes.addFlashAttribute("success", "Demande deja en cours.");
+                    return "redirect:/tenant/dashboard";
+                }
+                sub.setStatus(ModuleStatus.REQUESTED);
+                sub.setRequestedAt(LocalDateTime.now());
+                moduleSubscriptionRepository.save(sub);
+            } else {
+                ModuleSubscription sub = new ModuleSubscription(est.get(), module, ModuleStatus.REQUESTED);
+                sub.setRequestedAt(LocalDateTime.now());
+                moduleSubscriptionRepository.save(sub);
+            }
+            redirectAttributes.addFlashAttribute("success", "Demande envoyee a la direction.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Erreur demande module : " + ex.getMessage());
+        }
+        return "redirect:/tenant/dashboard";
+    }
+
+    @PostMapping("/tenant/dashboard/complete-setup")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public String completeSetup(RedirectAttributes redirectAttributes) {
+        Optional<Establishment> est = loadCurrentTenant();
+        if (est.isEmpty()) return "error-tenant";
+        if (!emailService.isTenantConfigured(est.get())) {
+            redirectAttributes.addFlashAttribute("error", "Configurez le SMTP de l'établissement avant de finaliser le paramétrage.");
+            return "redirect:/tenant/dashboard";
+        }
+
+        Establishment establishment = est.get();
+        int created = 0;
+        int skipped = 0;
+        int missingEmail = 0;
+        int emailFailed = 0;
+        int emailSent = 0;
+
+        Role userRole = roleRepository.findByName("USER")
+                .orElseGet(() -> roleRepository.save(new Role("USER")));
+
+        List<Employee> employees = employeeRepository.findByEstablishmentId(establishment.getId());
+        for (Employee employee : employees) {
+            String email = employee.getEmail();
+            if (email == null || email.isBlank()) {
+                missingEmail++;
+                continue;
+            }
+            String username = email.trim().toLowerCase();
+            if (userRepository.findByUsername(username).isPresent()) {
+                skipped++;
+                continue;
+            }
+            String tempPassword = buildTempPassword(employee);
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(tempPassword));
+            user.setEnabled(true);
+            user.setEstablishmentId(establishment.getId());
+            user.getRoles().add(userRole);
+            userRepository.save(user);
+            created++;
+
+            String baseUrl = tenantBaseUrl(establishment);
+            String loginUrl = baseUrl + "/tenant/login";
+            System.out.println("STAFF ACCOUNT: " + username + " / " + tempPassword);
+            System.out.println("Login link: " + loginUrl);
+
+            String subject = "OSM - Votre compte personnel";
+            String body = buildAccountEmailBody(establishment, username, tempPassword, loginUrl);
+            if (emailService.sendForTenant(establishment, email, subject, body)) {
+                emailSent++;
+            } else {
+                emailFailed++;
+            }
+        }
+
+        if (!establishment.isReady()) {
+            establishment.setReady(true);
+            establishment.setReadyAt(LocalDateTime.now());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            establishment.setReadyBy(auth != null ? auth.getName() : "SYSTEM");
+            establishmentRepository.save(establishment);
+        }
+
+        redirectAttributes.addFlashAttribute(
+                "success",
+                "Parametrage termine. Comptes crees: " + created +
+                        ", existants: " + skipped +
+                        ", sans email: " + missingEmail +
+                        ", emails envoyes: " + emailSent +
+                        ", emails en echec: " + emailFailed + "."
+        );
+        return "redirect:/tenant/dashboard";
+    }
+
+    @GetMapping("/api/tenant")
+    public ResponseEntity<?> tenantInfo() {
+        Optional<Establishment> est = loadCurrentTenant();
+        return est.<ResponseEntity<?>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private Optional<Establishment> loadCurrentTenant() {
+        Long id = TenantContext.getCurrentTenantId();
+        if (id == null) return Optional.empty();
+        return establishmentRepository.findById(id);
+    }
+
+    private List<Role> tenantAssignableRoles() {
+        Set<String> allowed = allowedRoleNamesForCurrentUser();
+        return roleRepository.findAll().stream()
+                .filter(r -> allowed.contains(r.getName()))
+                .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
+                .toList();
+    }
+
+    private Set<String> allowedRoleNamesForCurrentUser() {
+        Set<String> currentRoles = currentUserRoleNames();
+        Set<String> allowed = new java.util.HashSet<>();
+        if (currentRoles.contains("SUPER_ADMIN")) {
+            allowed.addAll(Set.of("ADMIN", "DIRECTEUR", "SECRETAIRE", "COMPTABLE", "DIRECTEUR_RH", "ENSEIGNANT", "APPRENANT"));
+        }
+        if (currentRoles.contains("ADMIN")) {
+            allowed.addAll(Set.of("DIRECTEUR", "SECRETAIRE", "COMPTABLE", "DIRECTEUR_RH"));
+        }
+        if (currentRoles.contains("DIRECTEUR_RH")) {
+            allowed.add("ENSEIGNANT");
+        }
+        if (currentRoles.contains("SECRETAIRE") || currentRoles.contains("COMPTABLE")) {
+            allowed.add("APPRENANT");
+        }
+        return allowed;
+    }
+
+    private boolean canManageUser(User user, Set<String> allowedRoles, boolean isSuperAdmin) {
+        if (isSuperAdmin) return true;
+        Set<String> targetRoles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        if (targetRoles.contains("ADMIN")) return false;
+        for (String role : targetRoles) {
+            if (allowedRoles.contains(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<String> currentUserRoleNames() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities() == null) return Set.of();
+        return auth.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring("ROLE_".length()))
+                .collect(Collectors.toSet());
+    }
+
+    private boolean isSuperAdmin() {
+        return currentUserRoleNames().contains("SUPER_ADMIN");
+    }
+
+    private String buildTempPassword(Employee employee) {
+        String base = employee.getId() != null ? employee.getId().toString() : Long.toString(System.currentTimeMillis() % 10000);
+        return "Emp" + base + "2024!";
+    }
+
+    private String buildTempStudentPassword() {
+        long seed = System.currentTimeMillis() % 100000;
+        return "Std" + seed + "!";
+    }
+
+    private String buildTempTeacherPassword() {
+        long seed = System.currentTimeMillis() % 100000;
+        return "Ens" + seed + "!";
+    }
+
+    private Set<Subject> resolveSubjects(List<Long> subjectIds, Long tenantId) {
+        if (subjectIds == null || subjectIds.isEmpty()) {
+            return new java.util.HashSet<>();
+        }
+        Set<Subject> subjects = new java.util.HashSet<>();
+        for (Long subjectId : subjectIds) {
+            if (subjectId == null) continue;
+            Subject subject = subjectRepository.findById(subjectId)
+                    .orElseThrow(() -> new IllegalArgumentException("Matiere introuvable."));
+            if (!tenantId.equals(subject.getEstablishment().getId())) {
+                throw new IllegalStateException("Matiere hors de ce locataire.");
+            }
+            subjects.add(subject);
+        }
+        return subjects;
+    }
+
+    private String buildPhotoDataUrl(MultipartFile photoFile) throws Exception {
+        if (photoFile == null || photoFile.isEmpty()) {
+            return null;
+        }
+        String contentType = photoFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Photo invalide.");
+        }
+        BufferedImage original = ImageIO.read(photoFile.getInputStream());
+        if (original == null) {
+            throw new IllegalArgumentException("Photo invalide.");
+        }
+        int maxSize = 300;
+        int width = original.getWidth();
+        int height = original.getHeight();
+        int maxDim = Math.max(width, height);
+        int targetWidth = width;
+        int targetHeight = height;
+        if (maxDim > maxSize) {
+            double scale = (double) maxSize / maxDim;
+            targetWidth = (int) Math.round(width * scale);
+            targetHeight = (int) Math.round(height * scale);
+        }
+        int imageType = contentType.contains("png") ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+        BufferedImage resized = new BufferedImage(targetWidth, targetHeight, imageType);
+        Graphics2D g = resized.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.drawImage(original, 0, 0, targetWidth, targetHeight, null);
+        g.dispose();
+        String format = contentType.contains("png") ? "png" : "jpg";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(resized, format, baos);
+        String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
+        return "data:" + contentType + ";base64," + base64;
+    }
+
+    private void saveStudentDocuments(User student, MultipartFile[] adminDocuments) throws Exception {
+        if (adminDocuments == null || adminDocuments.length == 0) {
+            return;
+        }
+        for (MultipartFile doc : adminDocuments) {
+            if (doc == null || doc.isEmpty()) continue;
+            String contentType = doc.getContentType();
+            if (contentType == null || !(contentType.startsWith("image/") || "application/pdf".equals(contentType))) {
+                throw new IllegalArgumentException("Document invalide (PDF ou image).");
+            }
+            StudentDocument document = new StudentDocument(
+                    student,
+                    doc.getOriginalFilename(),
+                    contentType,
+                    doc.getBytes(),
+                    LocalDateTime.now()
+            );
+            studentDocumentRepository.save(document);
+        }
+    }
+
+    private boolean looksLikeEmail(String value) {
+        if (value == null) return false;
+        String v = value.trim();
+        return v.contains("@") && v.contains(".");
+    }
+
+    private String tenantBaseUrl(Establishment establishment) {
+        String base = establishment.getAccessUrl();
+        if (base == null || base.isBlank()) {
+            base = "http://localhost:8081";
+        }
+        return base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+    }
+
+    private void applyAcademicYearData(String yearLabel,
+                                       String periodType,
+                                       String startDate,
+                                       String endDate,
+                                       String term1Start,
+                                       String term1End,
+                                       String term2Start,
+                                       String term2End,
+                                       String term3Start,
+                                       String term3End,
+                                       AcademicYear year) {
+        PeriodType type = "TRIMESTER".equalsIgnoreCase(periodType) ? PeriodType.TRIMESTER : PeriodType.SEMESTER;
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        LocalDate t1Start = LocalDate.parse(term1Start);
+        LocalDate t1End = LocalDate.parse(term1End);
+        LocalDate t2Start = LocalDate.parse(term2Start);
+        LocalDate t2End = LocalDate.parse(term2End);
+        LocalDate t3Start = null;
+        LocalDate t3End = null;
+
+        if (type == PeriodType.SEMESTER) {
+            boolean hasTrimesterValues = (term3Start != null && !term3Start.isBlank())
+                    || (term3End != null && !term3End.isBlank());
+            if (hasTrimesterValues) {
+                throw new IllegalArgumentException("Organisation invalide : choisissez soit semestres, soit trimestres.");
+            }
+        }
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("La date de debut doit preceder la date de fin.");
+        }
+        if (t1Start.isAfter(t1End) || t2Start.isAfter(t2End)) {
+            throw new IllegalArgumentException("Dates de periode invalides.");
+        }
+        if (t1Start.isBefore(start) || t2End.isAfter(end)) {
+            throw new IllegalArgumentException("Les periodes doivent etre dans l'annee.");
+        }
+        if (t1End.isAfter(t2Start)) {
+            throw new IllegalArgumentException("La periode 2 doit commencer apres la periode 1.");
+        }
+        if (type == PeriodType.TRIMESTER) {
+            if (term3Start == null || term3Start.isBlank() || term3End == null || term3End.isBlank()) {
+                throw new IllegalArgumentException("Les dates du trimestre 3 sont requises.");
+            }
+            t3Start = LocalDate.parse(term3Start);
+            t3End = LocalDate.parse(term3End);
+            if (t3Start.isAfter(t3End)) {
+                throw new IllegalArgumentException("Dates du trimestre 3 invalides.");
+            }
+            if (t2End.isAfter(t3Start)) {
+                throw new IllegalArgumentException("Le trimestre 3 doit commencer apres le trimestre 2.");
+            }
+            if (t3End.isAfter(end)) {
+                throw new IllegalArgumentException("Le trimestre 3 depasse la fin de l'annee.");
+            }
+        }
+
+        year.setAcademicYear(yearLabel);
+        year.setStartDate(start);
+        year.setEndDate(end);
+        year.setPeriodType(type);
+        year.setTerm1Start(t1Start);
+        year.setTerm1End(t1End);
+        year.setTerm2Start(t2Start);
+        year.setTerm2End(t2End);
+        year.setTerm3Start(t3Start);
+        year.setTerm3End(t3End);
+    }
+
+    private String buildAccountEmailBody(Establishment establishment, String username, String tempPassword, String loginUrl) {
+        return "Bonjour,\n\n" +
+                "Votre compte OSM a ete cree.\n\n" +
+                "Etablissement : " + establishment.getName() + "\n" +
+                "Identifiant   : " + username + "\n" +
+                "Mot de passe  : " + tempPassword + "\n\n" +
+                "Connexion : " + loginUrl + "\n\n" +
+                "Conseil : changez le mot de passe apres votre premiere connexion.\n\n" +
+                "OSM Open Suku Manager";
+    }
+}

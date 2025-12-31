@@ -1,0 +1,14 @@
+el>
+                        <input id="subjectHoursTd" name="hoursTd" type="number" min="0" step="1" value="0">
+                    </div>
+                    <div class="field">
+                        <label for="subjectHoursTp">Heures TP</label>
+                        <input id="subjectHoursTp" name="hoursTp" type="number" min="0" step="1" value="0">
+                    </div>
+                    <div class="field">
+                        <label for="subjectHoursCm">Heures CM</label>
+                        <input id="subjectHoursCm" name="hoursCm" type="number" min="0" step="1" value="0">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" onclick="closeSubjectModal()">Annuler</butto
